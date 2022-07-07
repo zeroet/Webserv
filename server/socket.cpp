@@ -1,54 +1,69 @@
 #include "socket.hpp"
 
-Socket::Socket(void) {}
+Socket::Socket(void) { }
 
-Socket::Socket(const Socket &other) : socketFd_(other.socketFd_)
+Socket::Socket(const std::vector<Block> &block) : vecBloc_(block), error_(0)
+{
+    this->error_ = create_socket();
+    if (error_ == ERROR)
+    { 
+        std::cout << "Message : socket create error" << std::endl;
+        close(socketFd);
+    }
+}
+
+Socket::Socket(const Socket &other) : vecBloc_(other.vecBloc_)
 {
     *this = other;
+    return *this;
 }
 
 Socket::~Socket(void) {}
 
-
-// Socket create && non blocking socket setting 
-// only non-blocking socket needed for this project
-for (block.size)
-{
-    block size 만큼 create server socket && std::vector<int> vecServ; fd 저장
-}
-
 int     Socket::create_socket()
 {
-    this->socketFd_ = socket(PF_INET, SOCK_STREAM, 0);
-    if (this->socketFd_ < 0)
-        return (ERROR);
- 
-    //server fd Non-Blocking Socket 으로 설정. Edge-Trigger사용 위해
-    int flags = fcntl(this->socketFd_, F_GETFL);
-    flags |= O_NONBLOCK;
-    if (fcntl(this->socketFd_, F_SETFL, flags) < 0)
-        return (ERROR);
+    int     blockCount = 4;
+    int     socketFd = 0;
+    struct  socketaddr_in sockAddr;
 
-    // Option -> SO_REUSEADDR : 비정상종료 포트 재사용
-    int option = true;
-    this->error_ = setsockopt(this->socketFd_, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
-    if (this->error_ < 0)
-    { 
-        close(this->socketFd_);
-        return (ERROR);
+    for (int i = 0; i < blockCount; i++)
+    {
+        socketFd = socket(PF_INET, SOCK_STREAM, 0);
+        if (error < 0)
+            return (ERROR);
+        socketFd = serverSocket_setting(socketFd);
+        memset(&sockAddr, 0, sizeof(sockAddr));
+        sockAddr.sin_family = AF_INET;
+        sockAddr.sin_port = htons(vecBlock_[i].getter_portNumber());
+        sockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+        vecBlock_[i].setter_socketaddr(sockAddr);
+
+        this->error_ = bind(socketFd, (struct sockaddr*)&sockAddr, sizeof(sockAddr));
+        if (this->error_ < 0)
+            return (ERROR);
+        this-error_ = listen(socketFd, LISTEN_BACKLONG);
+        if (this->error_ < 0)
+            return (ERROR);
+        vecServ_[i].setter_serverFd(socketFd);
     }
-    std::cout << "Create socket [" << this->socketFd_ <<"] " << std::endl; 
+}
+
+int     Socket::serverSocket_setting(int socketFd)
+{
+    int flags = fcntl(socketFd, F_GETFL);
+    int option = true;
+    int error = 0;
+
+    flags |= O_NONBLOCK;
+    if (fcntl(socketFd, F_SETFL, flags) < 0)
+        return (ERROR);
+    error = setsockopt(socketFd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+    if (error < 0)
+        return (ERROR);
     return (OK);
 }
 
-
-// getter && setter 
-void    Socket::setSocketFd(int fd)
+vecBloc Socket::getter_vecBloc() const
 {
-
-}
-
-int     Socket::getSocketFd(void)
-{ 
-
+    return this->vecBloc_;
 }
