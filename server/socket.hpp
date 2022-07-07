@@ -10,30 +10,55 @@
 #include <arpa/inet.h>
 
 #define LISTEN_BACKLOG 15
+#define DEFAULT -1
 #define ERROR 1
 #define OK 0
 
+// Need declaration ???
+struct socketaddr_in
+{
+	short sin_family;
+	u_short	sin_port;
+	struct in_addr sin_addr;
+	char sin_zero[8];
+};
+
+// Test Block Class 
 class Block
 {
 private:
-	int fd_;
+	int socketFd_;
+	socketaddr_in sockAddr_;
+	int	portNum_;
 
 public:
-	Block() {};
-	int getter() { return this->fd_; };
+
+	Block(int port) : socketFd_(-1), portNum_(port) {
+		memset(&sockAddr_, 0, sizeof(sockAddr_));
+	};
+	~Block() {};
+
+	int getter_socketFd() { return this->socketFd_; };
+	int getter_portNumber() { return this->portNum_; };
+	void setter_socketFd(int fd) { this->socketFd_ = fd; }
+	void setter_socketaddr(socketaddr_in tmp) { this->sockAddr_ = tmp; }
+
 };
 
 
 class Socket 
 {
 public:
+	typedef std::vector<Block> vecBloc;
+
 	Socket(void);
-	Socket(const std::vector<Block> &block);
+	Socket(std::vector<Block> block);
 	Socket(const Socket &other);
 	~Socket(void);
 
 	int		create_socket(); // return socket fd
-	int		serverSocket_setting(int socketFd);
+	int		&socket_nonBlock_setting(int &socketFd);
+	int		&socket_reUse_setting(int &socketFd);
 
 	vecBloc	getter_vecBloc() const;
 
