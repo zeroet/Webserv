@@ -2,6 +2,8 @@
 
 Socket::Socket(void) { }
 
+//Construct 
+
 Socket::Socket(std::vector<Block> block) : vecBloc_(block), error_(0)
 {
     this->error_ = create_socket();
@@ -13,6 +15,9 @@ Socket::Socket(const Socket &other) : vecBloc_(other.vecBloc_)
 {
     *this = other;
 }
+
+// Create Socket fd
+//if socketFd status is "listen" -> save server fd in vecBloc_
 
 Socket::~Socket(void) {}
 
@@ -56,6 +61,10 @@ int     Socket::create_socket()
     return (OK);
 }
 
+// socket option setting 
+// NONBLOCK
+// REUSE
+
 int     &Socket::socket_nonBlock_setting(int &socketFd)
 {
     int flags = fcntl(socketFd, F_GETFL);
@@ -76,6 +85,8 @@ int     &Socket::socket_reUse_setting(int &socketFd)
         exit(1);
     return (socketFd);
 }
+
+// getter && setter 
 
 Socket::vecBloc Socket::getter_vecBloc() const
 {
