@@ -2,24 +2,32 @@
 #include <sys/epoll.h>
 #include <map>
 
-// #include "request.hpp"
+# define MAX_EVENT 1024
+# define TIMEOUT -1
+
+class Request
+{
+    Request();
+};
 
 class Epoll
 {
+
 public:
-    typedef std::vector<Block>      vecBloc;
-    typedef std::map<int, Block>    mapClnt; // key : clnt socket number, value : Block class for socket && config data
-    
-    Epoll();
-    Epoll(std::vector<Block> block);
-    Epoll(const Epoll &other);
-    ~Epoll();
+    typedef int                         clntFd;
+    typedef std::vector<Block>          vecBloc;
+    typedef std::map<clntFd, Request>   mapClnt;
+    typedef struct epoll_event          event;
 
 private:
     vecBloc vecBloc_;
     mapClnt mapClnt_;
+    event   ev_[MAX_EVENT];
+    int     epollFd_;
 
-
-
-
-}
+public:
+    Epoll();
+    Epoll(std::vector<Block> block); // epoll fd create
+    Epoll(const Epoll &other);
+    ~Epoll();
+};
