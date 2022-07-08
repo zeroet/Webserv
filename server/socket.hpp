@@ -51,6 +51,11 @@ class Socket
 public:
 	typedef std::vector<Block> vecBloc;
 
+private:
+	vecBloc vecBloc_;
+	int		error_;
+
+public:
 	Socket(void);
 	Socket(std::vector<Block> block);
 	Socket(const Socket &other);
@@ -61,10 +66,4 @@ public:
 	int		&socket_reUse_setting(int &socketFd);
 
 	vecBloc	getter_vecBloc() const;
-
-
-private:
-	vecBloc vecBloc_;
-	int		error_;
-
 };
