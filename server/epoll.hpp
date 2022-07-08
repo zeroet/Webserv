@@ -22,7 +22,7 @@ public:
 private:
     vecBloc vecBloc_;
     mapClnt mapClnt_;
-    event   ev_[MAX_EVENT];
+    event   epWait_[MAX_EVENT];
     int     epollFd_;
 
 public:
@@ -30,4 +30,9 @@ public:
     Epoll(std::vector<Block> block); // epoll fd create
     Epoll(const Epoll &other);
     ~Epoll();
+
+    void            create_epoll_fd();
+    void            epoll_add(int fd);
+    void            close_all_serv_socket();
+
 };

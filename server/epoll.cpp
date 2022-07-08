@@ -26,6 +26,16 @@ void    Epoll::create_epoll_fd()
     }
 }
 
+void    Epoll::epoll_add(int fd)
+{
+    
+    event ev;
+    ev.events = EPOLLIN | EPOLLET;
+    ev.data.fd = fd;
+    if (epoll_ctl(this->epollFd_, EPOLL_CTL_ADD, fd, &ev) < 0)
+        close_all_serv_socket();
+}
+
 void    Epoll::close_all_serv_socket()
 {
     int count = vecBloc_.size();
