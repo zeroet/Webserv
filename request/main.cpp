@@ -1,8 +1,10 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 #include "Request.hpp"
 
 int	main(int ac, char** av) {
-	(void)av;
 	if (ac != 2)
 	{
 		std::cout << "parse exemple needed" << std::endl;
@@ -10,7 +12,11 @@ int	main(int ac, char** av) {
 	}
 	else
 	{
-		std::cout << "parse" << std::endl;
+		std::ifstream file(av[1]);
+		std::string line;
+		while (std::getline(file, line))
+			std::cout << line << std::endl;
+		// std::cout << "parse" << std::endl;
 	}
 	return (0);
 }
