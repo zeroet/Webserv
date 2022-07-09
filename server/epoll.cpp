@@ -5,7 +5,9 @@ Epoll::Epoll() {}
 Epoll::Epoll(std::vector<Block> block) : vecBloc_(block)
 {
     init_server_socket();
-    epoll_server_wait();
+    std::cout << "Webserver Run" << std::endl;
+    epoll_server_manager();
+    std::cout << "Webserver Close" << std::endl;
 }
 
 Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), mapClnt_(other.mapClnt_), epollFd_(other.epollFd_)
@@ -53,11 +55,10 @@ int    Epoll::epoll_add(int fd)
     return (OK);
 }
 
-void    Epoll::epoll_server_wait()
+void    Epoll::epoll_server_manager()
 {
     int                 evCount;
     event               epEvent[MAX_EVENT];
-    std::pair<int,int>  clnt_serv_pair;
     
     while (1)
     {
@@ -67,16 +68,33 @@ void    Epoll::epoll_server_wait()
             std::cout << "Epoll event count error" << std::endl;
         for (int i = 0; i < evCount; i++)
         {
-            clnt_serv_pair = find_server_socket(epEvent[i].data.fd);
-            if (clnt_serv_pair.first == ERROR)
-                std::cout << "Server socket Not Fount" << std::endl;
-            if ((epoll_add(clnt_serv_pair.first)) == ERROR)
+            if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP) || (!(epEvent[i].events & EPOLLIN)))
+            {    
+                std::cout << "Epoll event error" << std::endl;
+                close(epEvent[i].data.fd);
                 continue ;
+            }
+            else if ((find_server_fd(epEvent[i].data.fd)) == OK)
+                create_clnt_socket(epEvent[i].data.fd);
+            else
+                Request request();   
         }
     }
 }
 
-std::pair<int,int>   Epoll::find_server_socket(int &fd)
+int     Epoll::find_server_fd(int fd)
+{
+    int size = vecBloc_.size();
+
+    for (int i = 0; i < size; i++)
+    {
+        if (fd == vecBloc_[i].getter_socketFd())
+            return (OK);
+    }
+    return (ERROR);
+}
+
+std::pair<int,int>   Epoll::create_clnt_socket(int &fd)
 {
     int                     size = this->vecBloc_.size();
     struct socketaddr_in    clnt_addr;

@@ -34,8 +34,9 @@ public:
     void            init_server_socket();
     void            create_epoll_fd();
     int             epoll_add(int fd);
-    void            epoll_server_wait();
+    void            epoll_server_manager();
     void            close_all_serv_socket();
 
-    std::pair<int,int>  find_server_socket(int &fd);
+    int                 find_server_fd(int fd);
+    std::pair<int,int>  create_clnt_socket(int &fd);
 };
