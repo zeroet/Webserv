@@ -11,7 +11,7 @@
 
 #define LISTEN_BACKLOG 15
 #define DEFAULT -1
-#define ERROR 1
+#define ERROR -1
 #define OK 0
 
 // Need declaration ???

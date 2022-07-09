@@ -3,8 +3,8 @@
 int main()
 {
     std::vector<Block> server;
-    Block a(8000);
-    Block b(8080);
+    Block a(8080);
+    Block b(8000);
     Block c(7000);
     server.push_back(a);
     server.push_back(b);
