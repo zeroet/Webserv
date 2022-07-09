@@ -7,7 +7,10 @@
 
 class Request
 {
-    Request() {std::cout <<" hi im request!" <<std::endl;};
+public:
+    Request() {};
+    Request(std::vector<Block> block) { std::cout << "[" << block[0].getter_socketFd() << "] hi im request!" <<std::endl; };
+    ~Request() {};
 };
 
 class Epoll
@@ -19,7 +22,9 @@ public:
     typedef std::map<clntFd, Request>   mapClnt;
     typedef struct epoll_event          event;
     Socket                              sock;
-
+    Request                             request;
+    typedef std::pair<int, Request>     mapPair;
+ 
 private:
     vecBloc vecBloc_;
     mapClnt mapClnt_;
@@ -37,6 +42,6 @@ public:
     void            epoll_server_manager();
     void            close_all_serv_socket();
 
-    int                 find_server_fd(int fd);
-    std::pair<int,int>  create_clnt_socket(int &fd);
+    int             find_server_fd(int fd);
+    int             create_clnt_socket(int &fd);
 };

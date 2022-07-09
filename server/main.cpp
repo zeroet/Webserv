@@ -1,4 +1,5 @@
-#include "socket.hpp"
+//#include "socket.hpp"
+#include "epoll.hpp"
 
 int main()
 {
@@ -21,7 +22,8 @@ int main()
 
     std::cout << "Server Fd : " << test[2].getter_socketFd() << std::endl;
     std::cout << "Server Port : " << test[2].getter_portNumber() << std::endl;
-
+	
+	Epoll epoll(test);
 
 
 
