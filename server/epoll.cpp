@@ -85,7 +85,10 @@ void    Epoll::epoll_server_manager()
             {
                 clntFd = create_clnt_socket(epEvent[i].data.fd);
                 if (clntFd != ERROR)
+                { 
                     epoll_add(clntFd);
+                    this->mapClnt_.insert( std::make_pair (clntFd, Request(clntFd)));
+                }
                 else
                 {
                     std::cout << "accept() error !" << std::endl;
@@ -96,7 +99,8 @@ void    Epoll::epoll_server_manager()
             else
             { 
                 int fd = epEvent[i].data.fd;
-                this->mapClnt_[fd] = Request(this->vecBloc_);
+                mapClnt::iterator it = this->mapClnt_.find(fd);
+                Request(it->second);
             }
         }
     }
