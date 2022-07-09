@@ -15,7 +15,10 @@ Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), mapClnt_(other.mapC
     *this = other;
 }
 
-Epoll::~Epoll() { }
+Epoll::~Epoll() { close_all_serv_socket(); }
+
+
+
 
 void    Epoll::init_server_socket()
 {
@@ -58,6 +61,7 @@ int    Epoll::epoll_add(int fd)
 void    Epoll::epoll_server_manager()
 {
     int                 evCount;
+    int                 clntFd;
     event               epEvent[MAX_EVENT];
     
     while (1)
@@ -65,7 +69,10 @@ void    Epoll::epoll_server_manager()
         evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
         std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
         if (evCount < 0)
+        {           
             std::cout << "Epoll event count error" << std::endl;
+            break ;
+        }
         for (int i = 0; i < evCount; i++)
         {
             if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP) || (!(epEvent[i].events & EPOLLIN)))
@@ -75,9 +82,22 @@ void    Epoll::epoll_server_manager()
                 continue ;
             }
             else if ((find_server_fd(epEvent[i].data.fd)) == OK)
-                create_clnt_socket(epEvent[i].data.fd);
+            {
+                clntFd = create_clnt_socket(epEvent[i].data.fd);
+                if (clntFd != ERROR)
+                    epoll_add(clntFd);
+                else
+                {
+                    std::cout << "accept() error !" << std::endl;
+                    close(clntFd);
+                    continue ;
+                }
+            }
             else
-                Request request();   
+            { 
+                int fd = epEvent[i].data.fd;
+                this->mapClnt_[fd] = Request(this->vecBloc_);
+            }
         }
     }
 }
@@ -94,13 +114,12 @@ int     Epoll::find_server_fd(int fd)
     return (ERROR);
 }
 
-std::pair<int,int>   Epoll::create_clnt_socket(int &fd)
+int   Epoll::create_clnt_socket(int &fd)
 {
     int                     size = this->vecBloc_.size();
     struct socketaddr_in    clnt_addr;
     int                     clntFd;
     int                     clntLen = sizeof(clnt_addr);
-    std::pair<int,int>      ret;
 
     for (int i = 0; i < size; i++)
     {
@@ -111,16 +130,10 @@ std::pair<int,int>   Epoll::create_clnt_socket(int &fd)
             if (0 > (clntFd = sock.socket_nonBlock_setting(clntFd)))
                 std::cout << "accept() error" << std::endl;
             else
-            { 
-                ret.first = clntFd;
-                ret.second = this->vecBloc_[i].getter_socketFd();
-                return (ret);
-            }
+                return (clntFd);
         }
     }
-    ret.first = fd;
-    ret.second = -1;
-    return (ret);
+    return (ERROR);
 
 }
 
