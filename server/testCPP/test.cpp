@@ -11,6 +11,13 @@ class Block
     };
 };
 
+int &refer(int *fd)
+{
+    std::cout << *fd << std::endl;
+    *fd = 10;
+    return *fd;
+}
+
 
 int main()
 {
@@ -20,6 +27,10 @@ int main()
     block.push_back(b);
 
     std::cout << block[0].getter() << std::endl;
+
+    int fd = 20;
+    fd = refer(&fd);
+    std::cout << fd << std::endl;
 
     return (0);
 }
