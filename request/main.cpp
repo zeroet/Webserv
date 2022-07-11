@@ -15,8 +15,12 @@ int	main(int ac, char** av) {
 		std::ifstream file(av[1]);
 		std::string line;
 		while (std::getline(file, line))
+		{
 			std::cout << line << std::endl;
-		// std::cout << "parse" << std::endl;
+			if (line.find("\r\n\r\n") != (std::string::npos))
+				std::cout << "fin" << std::endl;
+		}
+
 	}
 	return (0);
 }
