@@ -1,6 +1,9 @@
 #include "socket.hpp"
 #include <sys/epoll.h>
 #include <map>
+#include "../response/Response.hpp"
+#include <stdlib.h>
+#include <stdio.h>
 
 # define MAX_EVENT 1024
 # define TIMEOUT -1
