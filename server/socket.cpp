@@ -49,7 +49,10 @@ int     Socket::create_socket()
         // socket bind && listen
         this->error_ = bind(socketFd, (struct sockaddr*)&sockAddr, sizeof(sockAddr));
         if (this->error_ < 0)
-            return (ERROR);
+        {
+            std::cout << "Bind Error || Wrong port number [" << vecBloc_[i].getter_portNumber() << "]" << std::endl;
+            continue ;
+        }
         this->error_ = listen(socketFd, LISTEN_BACKLOG);
         if (this->error_ < 0)
             return (ERROR);
