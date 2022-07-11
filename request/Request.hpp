@@ -11,7 +11,7 @@
 //2: size > 
 class RecvRequest { 
 	public:
-		RecvRequest(void);
+		RecvRequest(void) {}
 		RecvRequest(RecvRequest const &src);
 		RecvRequest &operator=(RecvRequest const &src);
 		~RecvRequest(void);
@@ -20,15 +20,26 @@ class RecvRequest {
 		std::string buf;
 };
 
-class RequestParse {
+//Parsing buf
+class ParseRequest {
+	public:
+		ParseRequest(void) {}
+		ParseRequest(ParseRequest const &src);
+		ParseRequest &operator=(ParseRequest const &src);
+		~ParseRequest(void);
+		
+		void	SetRequest(RequestComplet &request);
 
-	// private:
-		// RequestComplet Complet_;
+	private:
+		std::vector<std::string>			RequestLine_[3];
+		std::map<std::string, std::string>	RequestHeader_;
+		std::string							RequestBody_;
 };
 
+//Class for Response
 class RequestComplet {
 	public:
-		RequestComplet(void);
+		RequestComplet(void) {}
 		RequestComplet(RequestComplet const &src);
 		RequestComplet &operator=(RequestComplet const &src);
 		~RequestComplet(void);

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <istream>
 #include "Request.hpp"
 
 int	main(int ac, char** av) {
@@ -20,7 +21,6 @@ int	main(int ac, char** av) {
 			if (line.find("\r\n\r\n") != (std::string::npos))
 				std::cout << "fin" << std::endl;
 		}
-
 	}
 	return (0);
 }
