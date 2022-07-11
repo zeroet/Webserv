@@ -1,15 +1,30 @@
 #include "socket.hpp"
 #include <sys/epoll.h>
 #include <map>
+#include "../response/Response.hpp"
+#include <stdlib.h>
+#include <stdio.h>
 
 # define MAX_EVENT 1024
 # define TIMEOUT -1
 
 class Request
 {
+private:
+    int fd;
+
 public:
-    Request() {};
-    Request(std::vector<Block> block) { std::cout << "[" << block[0].getter_socketFd() << "] hi im request!" <<std::endl; };
+    Request() {std::cout << "in the map" << std::endl;};
+    Request(const Request &other) : fd(other.fd)
+    {
+        char buf[1024];
+        int i = read(fd, &buf, sizeof(buf));
+        write(1, &buf, i);
+    };
+    Request(int num) : fd(num)
+    { 
+        std::cout << "[" << this->fd << "] client socket number!" <<std::endl; 
+    };
     ~Request() {};
 };
 
@@ -22,7 +37,6 @@ public:
     typedef std::map<clntFd, Request>   mapClnt;
     typedef struct epoll_event          event;
     Socket                              sock;
-    Request                             request;
     typedef std::pair<int, Request>     mapPair;
  
 private:
@@ -43,5 +57,5 @@ public:
     void            close_all_serv_socket();
 
     int             find_server_fd(int fd);
-    int             create_clnt_socket(int &fd);
+    int             create_clnt_socket(int fd);
 };
