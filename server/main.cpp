@@ -4,8 +4,13 @@
 int main()
 {
     std::vector<Block> server;
+<<<<<<< HEAD
     Block a(10);
     Block b(8010);
+=======
+    Block a(1000);
+    Block b(10);
+>>>>>>> bdb677060fa4dd7e10aa69b543b274972bf540f3
     Block c(9500);
     server.push_back(a);
     server.push_back(b);

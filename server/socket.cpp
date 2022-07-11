@@ -33,8 +33,8 @@ int     Socket::create_socket()
         // socket create
         socketFd = socket(PF_INET, SOCK_STREAM, 0);
         if (socketFd < 0)
-            return (ERROR);
-        if ((socketFd = socket_nonBlock_setting(socketFd)) < 0)
+			return (ERROR);
+		if ((socketFd = socket_nonBlock_setting(socketFd)) < 0)
             return (ERROR);
         if ((socketFd = socket_reUse_setting(socketFd)) < 0)
             return (ERROR);
@@ -49,10 +49,10 @@ int     Socket::create_socket()
         // socket bind && listen
         this->error_ = bind(socketFd, (struct sockaddr*)&sockAddr, sizeof(sockAddr));
         if (this->error_ < 0)
-        {
-            std::cout << "Bind Error || Wrong port number [" << vecBloc_[i].getter_portNumber() << "]" << std::endl;
-            continue ;
-        }
+		{
+			std::cout << "Bind error ! PortNumber [" << vecBloc_[i].getter_portNumber() <<  "]"<< std::endl;
+			continue;
+		}
         this->error_ = listen(socketFd, LISTEN_BACKLOG);
         if (this->error_ < 0)
             return (ERROR);
