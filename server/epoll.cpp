@@ -118,7 +118,7 @@ int     Epoll::find_server_fd(int fd)
     return (ERROR);
 }
 
-int   Epoll::create_clnt_socket(int &fd)
+int   Epoll::create_clnt_socket(int fd)
 {
     int                     size = this->vecBloc_.size();
     struct socketaddr_in    clnt_addr;

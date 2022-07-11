@@ -54,5 +54,5 @@ public:
     void            close_all_serv_socket();
 
     int             find_server_fd(int fd);
-    int             create_clnt_socket(int &fd);
+    int             create_clnt_socket(int fd);
 };
