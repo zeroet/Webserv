@@ -12,16 +12,24 @@ class Request
 {
 private:
     int fd;
+    std::vector<char> vecStr;
 
 public:
     Request() {std::cout << "in the map" << std::endl;};
     Request(const Request &other) : fd(other.fd)
     {
-        int i = 0;
-        std::string buf;
-        if(0 >(i = read(fd, &buf, sizeof(buf))))
-            buf+=buf;
-        write(1, &buf, i);
+        char str;
+
+        std::cout << "my socket number [" << fd << "]" << std::endl;
+        int i = read(fd, &str, 1);
+        vecStr.push_back(str);
+        for(int i = 0; i < vecStr.size(); i++)
+        {
+            std::cout << vecStr.size() << std::endl;
+            std::cout << vecStr[i] << std::endl;
+        }
+        
+        // std::cout << str << std::endl;
     };
     Request(int num) : fd(num)
     { 
