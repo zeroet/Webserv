@@ -17,8 +17,10 @@ public:
     Request() {std::cout << "in the map" << std::endl;};
     Request(const Request &other) : fd(other.fd)
     {
-        char buf[1024];
-        int i = read(fd, &buf, sizeof(buf));
+        int i = 0;
+        std::string buf;
+        if(0 >(i = read(fd, &buf, sizeof(buf))))
+            buf+=buf;
         write(1, &buf, i);
     };
     Request(int num) : fd(num)
