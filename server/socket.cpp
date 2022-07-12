@@ -1,9 +1,13 @@
 #include "socket.hpp"
 
-Socket::Socket(void) { }
+//
+//Canonical Form
+//
 
 //Construct 
+Socket::Socket(void) { }
 
+//Construct for excute
 Socket::Socket(std::vector<Block> block) : vecBloc_(block), error_(0)
 {
     this->error_ = create_socket();
@@ -11,16 +15,19 @@ Socket::Socket(std::vector<Block> block) : vecBloc_(block), error_(0)
         std::cout << "Message : socket create error" << std::endl;
 }
 
+//Copy Construct
 Socket::Socket(const Socket &other) : vecBloc_(other.vecBloc_)
 {
     *this = other;
 }
 
-// Create Socket fd
-//if socketFd status is "listen" -> save server fd in vecBloc_
-
+//Destruct
 Socket::~Socket(void) {}
 
+//
+// Create Socket fd
+//if socketFd status is "listen" -> save server fd in vecBloc_
+//
 int     Socket::create_socket()
 {
     int     blockCount = vecBloc_.size();

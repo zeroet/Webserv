@@ -13,10 +13,11 @@ class Request
 private:
     int fd;
     std::string buf_;
+    Block block_;
 
 public:
     Request() {std::cout << "in the map" << std::endl;};
-    Request(const Request &other) : fd(other.fd)
+    Request(const Request &other, Block block) : fd(other.fd), block_(block)
     {
     };
     Request(int num) : fd(num)
@@ -26,6 +27,7 @@ public:
 
     void    add_string()
     {
+        block_.test_block();
         std::string tmp;
         char buf[10];
 
@@ -58,12 +60,19 @@ public:
     Epoll(const Epoll &other);
     ~Epoll();
 
+    //Epoll utility functions
     void            init_server_socket();
     void            create_epoll_fd();
     int             epoll_add(int fd);
-    void            epoll_server_manager();
-    void            close_all_serv_socket();
 
+    //Epoll Main management function
+    void            epoll_server_manager();
+
+    //Utility Functions
+    void            close_all_serv_socket();
     int             find_server_fd(int fd);
     int             create_clnt_socket(int fd);
+
+    //Block class or utile ????
+    Block           get_location_block(int fd);
 };
