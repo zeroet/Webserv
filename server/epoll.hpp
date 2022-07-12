@@ -12,29 +12,27 @@ class Request
 {
 private:
     int fd;
-    std::vector<char> vecStr;
+    std::string buf_;
 
 public:
     Request() {std::cout << "in the map" << std::endl;};
     Request(const Request &other) : fd(other.fd)
     {
-        char str;
-
-        std::cout << "my socket number [" << fd << "]" << std::endl;
-        int i = read(fd, &str, 1);
-        vecStr.push_back(str);
-        for(int i = 0; i < vecStr.size(); i++)
-        {
-            std::cout << vecStr.size() << std::endl;
-            std::cout << vecStr[i] << std::endl;
-        }
-        
-        // std::cout << str << std::endl;
     };
     Request(int num) : fd(num)
     { 
         std::cout << "[" << this->fd << "] client socket number!" <<std::endl; 
     };
+
+    void    add_string()
+    {
+        std::string tmp;
+        char buf[10];
+
+        read(fd, &buf, sizeof(buf));
+        this->buf_ += buf;
+        std::cout << buf_ << std::endl;
+    }
     ~Request() {};
 };
 
