@@ -57,7 +57,6 @@ Response::Response(const std::string &status)
 	response_manager();
 }
 
-
 Response::~Response()
 {
 }
