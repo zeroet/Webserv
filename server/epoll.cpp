@@ -100,9 +100,14 @@ void    Epoll::epoll_server_manager()
             { 
                 int fd = epEvent[i].data.fd;
                 mapClnt::iterator it = this->mapClnt_.find(fd);
+<<<<<<< HEAD
                 it->second.add_string();
                 
                 // Response a("200 OK");
+=======
+                 Request(it->second);
+//                 Response a("200 OK");
+>>>>>>> main
             }
         }
     }
