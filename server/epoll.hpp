@@ -12,21 +12,27 @@ class Request
 {
 private:
     int fd;
+    std::string buf_;
 
 public:
     Request() {std::cout << "in the map" << std::endl;};
     Request(const Request &other) : fd(other.fd)
     {
-        int i = 0;
-        std::string buf;
-        if(0 >(i = read(fd, &buf, sizeof(buf))))
-            buf+=buf;
-        write(1, &buf, i);
     };
     Request(int num) : fd(num)
     { 
         std::cout << "[" << this->fd << "] client socket number!" <<std::endl; 
     };
+
+    void    add_string()
+    {
+        std::string tmp;
+        char buf[10];
+
+        read(fd, &buf, sizeof(buf));
+        this->buf_ += buf;
+        std::cout << buf_ << std::endl;
+    }
     ~Request() {};
 };
 
