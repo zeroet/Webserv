@@ -177,8 +177,9 @@ void    Epoll::close_all_serv_socket()
 Block   Epoll::get_location_block(int fd)
 {
     Block tmp;
-    
-    for (int i = 0; i < this->vecBloc_.size(); i++)
+    int   size = this->vecBloc_.size();
+
+    for (int i = 0; i < size; i++)
     {
         if (fd == vecBloc_[i].getter_socketFd())
             return(tmp = vecBloc_[i]);

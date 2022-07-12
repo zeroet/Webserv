@@ -29,8 +29,10 @@ public:
     {
         block_.test_block();
         std::string tmp;
-        char buf[10];
+        char buf[500];
 
+        memset(&buf,0,sizeof(buf));
+        buf[499] = '\0';
         read(fd, &buf, sizeof(buf));
         this->buf_ += buf;
         std::cout << buf_ << std::endl;
