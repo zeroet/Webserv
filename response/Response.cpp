@@ -1,4 +1,42 @@
 #include "Response.hpp"
+void		Response::map_make_pair(void)
+{
+//	mapStatus_.insert(std::make_pair(100, "Continue"));
+//	mapStatus_.insert(std::make_pair(101, "Switching Protocols"));
+//	mapStatus_.insert(std::make_pair(103, "Early Hints"));
+	mapStatus_.insert(std::make_pair("200", "OK"));
+/*
+	mapStatus_.insert(std::make_pair(201, "Created"));
+	mapStatus_.insert(std::make_pair(202, "Accepted"));
+	mapStatus_.insert(std::make_pair(203, "Non-Authoritative Information"));
+	mapStatus_.insert(std::make_pair(204, "No Content"));
+	mapStatus_.insert(std::make_pair(205, "Reset Content"));
+	mapStatus_.insert(std::make_pair(206, "Partial Content"));
+	mapStatus_.insert(std::make_pair(300, "Multiple Choices"));
+	mapStatus_.insert(std::make_pair(301, "Moved Permanently"));
+	mapStatus_.insert(std::make_pair(302, "Found"));
+	mapStatus_.insert(std::make_pair(303, "See Other"));
+	mapStatus_.insert(std::make_pair(304, "Not Modified"));
+	mapStatus_.insert(std::make_pair(305, "Use Proxy"));
+	mapStatus_.insert(std::make_pair(306, "unsued"));
+	mapStatus_.insert(std::make_pair(307, "304 Not Modified"));
+	mapStatus_.insert(std::make_pair(304, "304 Not Modified"));
+	mapStatus_.insert(std::make_pair(304, "304 Not Modified"));
+	mapStatus_.insert(std::make_pair(304, "304 Not Modified"));
+	mapStatus_.insert(std::make_pair(304, "304 Not Modified"));
+	mapStatus_.insert(std::make_pair(304, "304 Not Modified"));
+	mapStatus_.insert(std::make_pair(304, "304 Not Modified"));
+	mapStatus_.insert(std::make_pair(304, "304 Not Modified"));	
+*/	
+	std::map<std::string, std::string>::iterator it;
+	it = this->mapStatus_.find("200");
+	this->status_code = it->first;
+	std::cout << status_code << std::endl;
+	std::cout << status_message << std::endl;
+	this->status_message = it->second;	
+}
+		
+
 Response::Response()
 {
 }
@@ -6,14 +44,10 @@ Response::Response()
 
 Response::Response(const std::string &status)
 {
-	this->status_code = status.substr(0, 3);
-	// // get 3 string(number) in the status.
-	this->status_message = status.substr(4);
-	// //from index 4 to end
-	//should be added values in the status.(ex: 200 ok);
-	// std::cout << this->status_code << std::endl;
-	// std::cout << this->status_message << std::endl;
-	// response_manager();
+	std::cout << this->status_code << std::endl;
+	std::cout << this->status_message << std::endl;
+	map_make_pair();
+	response_manager();
 }
 
 
@@ -21,15 +55,15 @@ Response::~Response()
 {
 }
 
-// void	Response::response_manager()
-// {
-// 	std::string str;
+ void	Response::response_manager()
+ {
+ 	std::string str;
 
-// 	str = makeHeader();
-// 	std::cout << str << std::endl;
-// 	makeStatusBody();
-// 	std::cout << body << std::endl;
-// }
+ 	str = makeHeader();
+ 	std::cout << str << std::endl;
+ 	makeStatusBody();
+ 	std::cout << body << std::endl;
+ }
 
 void Response::appendHeader(std::string first, std::string second)
 {
