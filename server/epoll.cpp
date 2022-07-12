@@ -1,7 +1,13 @@
 #include "epoll.hpp"
 
+//
+//Canocial Form
+//
+
+//Default Construct
 Epoll::Epoll() {}
 
+//Construct for excute
 Epoll::Epoll(std::vector<Block> block) : vecBloc_(block)
 {
     init_server_socket();
@@ -10,16 +16,20 @@ Epoll::Epoll(std::vector<Block> block) : vecBloc_(block)
     std::cout << "Webserver Close" << std::endl;
 }
 
+//Copy Construct
 Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), mapClnt_(other.mapClnt_), epollFd_(other.epollFd_)
 {
     *this = other;
 }
 
+//Destruct
 Epoll::~Epoll() { close_all_serv_socket(); }
 
+//
+//Epoll utility functions
+//
 
-
-
+//Init Epoll Server Fd list
 void    Epoll::init_server_socket()
 {
     int numServerFd = vecBloc_.size();
@@ -32,6 +42,7 @@ void    Epoll::init_server_socket()
     }   
 }
 
+//Create Epoll Fd 
 void    Epoll::create_epoll_fd()
 {
     this->epollFd_ = epoll_create(MAX_EVENT);
@@ -44,6 +55,7 @@ void    Epoll::create_epoll_fd()
     }
 }
 
+//Epoll_ctl ADD function
 int    Epoll::epoll_add(int fd)
 {
     
@@ -58,6 +70,33 @@ int    Epoll::epoll_add(int fd)
     return (OK);
 }
 
+//Epoll create client FD && accept()
+int   Epoll::create_clnt_socket(int fd)
+{
+    int                     size = this->vecBloc_.size();
+    struct socketaddr_in    clnt_addr;
+    int                     clntFd;
+    int                     clntLen = sizeof(clnt_addr);
+
+    for (int i = 0; i < size; i++)
+    {
+        if (fd == this->vecBloc_[i].getter_socketFd())
+        {
+            clntFd = accept(this->vecBloc_[i].getter_socketFd(), 
+            (struct sockaddr*)&clnt_addr, (socklen_t *)&clntLen);
+            if (0 > (clntFd = sock.socket_nonBlock_setting(clntFd)))
+                std::cout << "accept() error" << std::endl;
+            else
+                return (clntFd);
+        }
+    }
+    return (ERROR);
+
+}
+
+//
+//Epoll Main management Function
+//
 void    Epoll::epoll_server_manager()
 {
     int                 evCount;
@@ -87,7 +126,8 @@ void    Epoll::epoll_server_manager()
                 if (clntFd != ERROR)
                 { 
                     epoll_add(clntFd);
-                    this->mapClnt_.insert( std::make_pair (clntFd, Request(clntFd)));
+                    Block requestBlock = get_location_block(epEvent[i].data.fd);
+                    this->mapClnt_.insert( std::make_pair (clntFd, Request(clntFd, requestBlock)));
                 }
                 else
                 {
@@ -106,6 +146,10 @@ void    Epoll::epoll_server_manager()
     }
 }
 
+//
+//Utility Functions for Epoll class
+//
+
 int     Epoll::find_server_fd(int fd)
 {
     int size = vecBloc_.size();
@@ -118,28 +162,6 @@ int     Epoll::find_server_fd(int fd)
     return (ERROR);
 }
 
-int   Epoll::create_clnt_socket(int fd)
-{
-    int                     size = this->vecBloc_.size();
-    struct socketaddr_in    clnt_addr;
-    int                     clntFd;
-    int                     clntLen = sizeof(clnt_addr);
-
-    for (int i = 0; i < size; i++)
-    {
-        if (fd == this->vecBloc_[i].getter_socketFd())
-        {
-            clntFd = accept(this->vecBloc_[i].getter_socketFd(), 
-            (struct sockaddr*)&clnt_addr, (socklen_t *)&clntLen);
-            if (0 > (clntFd = sock.socket_nonBlock_setting(clntFd)))
-                std::cout << "accept() error" << std::endl;
-            else
-                return (clntFd);
-        }
-    }
-    return (ERROR);
-
-}
 
 void    Epoll::close_all_serv_socket()
 {
@@ -149,4 +171,18 @@ void    Epoll::close_all_serv_socket()
         close(this->vecBloc_[i].getter_socketFd());
     close(this->epollFd_);
     std::cout << "all socket closed" << std::endl;
+}
+
+// Block class or utile  ???? 
+Block   Epoll::get_location_block(int fd)
+{
+    Block tmp;
+    int   size = this->vecBloc_.size();
+
+    for (int i = 0; i < size; i++)
+    {
+        if (fd == vecBloc_[i].getter_socketFd())
+            return(tmp = vecBloc_[i]);
+    }
+    return (0);
 }
