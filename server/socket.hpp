@@ -33,15 +33,28 @@ private:
 
 public:
 
+	Block() : socketFd_(-1)
+	{};
 	Block(int port) : socketFd_(-1), portNum_(port) {
 		memset(&sockAddr_, 0, sizeof(sockAddr_));
 	};
+
+	Block(const Block &other) : socketFd_(other.socketFd_), sockAddr_(other.sockAddr_), portNum_(other.portNum_)
+	{
+		*this = other;
+	}
 	~Block() {};
 
 	int getter_socketFd() { return this->socketFd_; };
 	int getter_portNumber() { return this->portNum_; };
 	void setter_socketFd(int fd) { this->socketFd_ = fd; }
 	void setter_socketaddr(socketaddr_in tmp) { this->sockAddr_ = tmp; }
+
+	// test function 
+	void	test_block()
+	{
+		std::cout << "MY PORT NUMBER IS [" << this->portNum_ << "]" << std::endl;
+	}
 
 };
 
@@ -65,5 +78,6 @@ public:
 	int		&socket_nonBlock_setting(int &socketFd);
 	int		&socket_reUse_setting(int &socketFd);
 
+	// Block class or utile
 	vecBloc	getter_vecBloc() const;
 };
