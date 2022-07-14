@@ -53,7 +53,7 @@ public:
 	// test function 
 	void	test_block()
 	{
-		std::cout << "MY PORT NUMBER IS [" << this->portNum_ << "]" << std::endl;
+		// std::cout << "MY PORT NUMBER IS [" << this->portNum_ << "]" << std::endl;
 	}
 
 };
