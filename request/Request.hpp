@@ -50,6 +50,7 @@ class RequestComplet {
 		std::string							Version_;
 		std::map<std::string, std::string>	RequestHeader_;
 		std::string							RequestBody_;
+		int									ResponseCode_;
 };
 
 #endif
