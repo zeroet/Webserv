@@ -1,7 +1,7 @@
 #include "socket.hpp"
 #include <sys/epoll.h>
 #include <map>
-#include "../response/Response.hpp"
+#include "response/Response.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
@@ -19,7 +19,7 @@ private:
 
 public:
     Request() {std::cout << "in the map" << std::endl;};
-    Request(const Request &other, Block block) : fd(other.fd), block_(block)
+    Request(const int &other, Block block) : fd(other), block_(block)
     {
         this->status_ =  "connect";
     };
@@ -29,15 +29,15 @@ public:
 
     void    add_string()
     {
-        block_.test_block();
+        // block_.test_block();
         std::string tmp;
         char buf[500];
-        char c;
+        // char c;
 
-       while(0 < recv(fd, &c, 1))
-        {
+    //    while(0 < recv(fd, &c, 1))
+    //     {
 
-        }
+    //     }
 
         memset(&buf,0,sizeof(buf));
         buf[499] = '\0';
