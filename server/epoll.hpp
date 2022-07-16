@@ -33,8 +33,13 @@ public:
         block_.test_block();
         std::string tmp;
         char buf[500];
-        int i = 0;
+        char c;
+
+       while(0 < recv(fd, &c, 1))
+        {
             
+        }
+
         memset(&buf,0,sizeof(buf));
         buf[499] = '\0';
         while (0 < read(fd, &buf, sizeof(buf)))
