@@ -1,20 +1,12 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <istream>
-#include "server/epoll.hpp"
-#include "Request.hpp"
+//#include "socket.hpp"
+#include "epoll.hpp"
 
-int	main(int ac, char** av) {
-
-	(void)av;
-	(void)ac;
-
-	std::vector<Block> server;
-    Block a(8080);
-    Block b(8000);
-    Block c(7000);
+int main()
+{
+    std::vector<Block> server;
+    Block a(10);
+    Block b(8010);
+    Block c(9500);
     server.push_back(a);
     server.push_back(b);
     server.push_back(c);
@@ -32,15 +24,8 @@ int	main(int ac, char** av) {
     std::cout << "Server Port : " << test[2].getter_portNumber() << std::endl;
 
 	Epoll epoll(test);
-	// if (ac != 2)
-	// {
-	// 	std::cout << "parse exemple needed" << std::endl;
-	// 	return (1);
-	// }
-	// else
-	// {
 
 
-	// }
-	return (0);
+
+    return (0);
 }
