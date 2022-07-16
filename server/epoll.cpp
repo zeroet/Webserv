@@ -67,6 +67,7 @@ int    Epoll::epoll_add(int fd)
         close(fd);
         return (ERROR);
     }
+    this->epStruct_.insert(std::make_pair(fd, &ev));
     return (OK);
 }
 
@@ -106,7 +107,7 @@ void    Epoll::epoll_server_manager()
     while (1)
     {
         evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
-        std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
+        // std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
         if (evCount < 0)
         {           
             std::cout << "Epoll event count error" << std::endl;
@@ -140,7 +141,13 @@ void    Epoll::epoll_server_manager()
             { 
                 int fd = epEvent[i].data.fd;
                 mapClnt::iterator it = this->mapClnt_.find(fd);
-                it->second.add_string();
+                it->second.add_string(); // Recv request buf
+                // if (it->second.getter_status() == "more")
+                // {
+                //     mapEpoll::iterator it2 = this->epStruct_.find(fd);
+                //     it2->second->events = EPOLLOUT;
+                //     epoll_ctl(this->epollFd_, EPOLL_CTL_MOD, fd, it2->second);
+                // } 
             }
         }
     }
