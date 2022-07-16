@@ -1,1 +1,4 @@
 .vscode
+.nfs*
+a.out
+server_git
