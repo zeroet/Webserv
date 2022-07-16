@@ -37,10 +37,10 @@ void		Response::map_make_pair(void)
 
 	std::map<std::string, std::string>::iterator it;
 	it = this->mapStatus_.find("100");
-	this->status_code = it->first;
-	this->status_message = it->second;	
-	std::cout << status_code << std::endl;
-	std::cout << status_message << std::endl;
+	this->StatusCode_ = it->first;
+	this->StatusMessage_ = it->second;	
+	std::cout << StatusCode_ << std::endl;
+	std::cout << StatusMessage_ << std::endl;
 }
 		
 
@@ -55,8 +55,8 @@ Response::Response(Response const & copy)
 
 Response::Response(const std::string &status)
 {
-	std::cout << this->status_code << std::endl;
-	std::cout << this->status_message << std::endl;
+	std::cout << this->StatusCode_ << std::endl;
+	std::cout << this->StatusMessage_ << std::endl;
 	map_make_pair();
 	response_manager();
 }
@@ -78,7 +78,7 @@ Response::~Response()
  	str = makeHeader();
  	std::cout << str << std::endl;
  	makeStatusBody();
- 	std::cout << body << std::endl;
+ 	std::cout << Body_ << std::endl;
  }
 
 void Response::appendHeader(std::string first, std::string second)
@@ -88,14 +88,14 @@ void Response::appendHeader(std::string first, std::string second)
 
 void Response::setBody(std::string & str)
 {
-	this->body = str;
+	this->Body_ = str;
 }
 
 std::string Response::makeHeader()
 {
 	std::string outcome;
 	
-	outcome.append("HTTP/1.1 " + this->status_code + " " + this->status_message + "\r\n");
+	outcome.append("HTTP/1.1 " + this->StatusCode_ + " " + this->StatusMessage_ + "\r\n");
 	for (std::map<std::string, std::string>::iterator it = Headers_.begin(); it != Headers_.end(); it++)
 		outcome.append((*it).first + ": " + (*it).second + "\r\n");
 	outcome.append("\r\n");
@@ -107,21 +107,21 @@ void Response::makeStatusBody()
 	std::string outcome;
 	
 	outcome.append("<!DOCTYPEhtml><html><head><meta charset=\"UTF-8\"/><title>webserv</title></head>");
-	outcome.append("<body>");
-	outcome.append("<h1>" + status_code + "</h1>");
-	outcome.append("<h3>" + status_message + "/h3>");
+	outcome.append("<Body_>");
+	outcome.append("<h1>" + StatusCode_ + "</h1>");
+	outcome.append("<h3>" + StatusMessage_ + "/h3>");
 	outcome.append("<p>Click <a href=\"/\">here</a> to return home.</p>");
-	outcome.append("</body></html>\r\n\r\n");
+	outcome.append("</Body_></html>\r\n\r\n");
 	
-	body.clear();
-	body = outcome;
+	Body_.clear();
+	Body_ = outcome;
 }
 
 void Response::makeStatusBody(std::string url)
 {
 	std::string outcome;
 	outcome.append(url);
-	body.clear();
-	body = outcome;
+	Body_.clear();
+	Body_ = outcome;
 }
 
