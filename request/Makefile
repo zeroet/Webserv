@@ -1,6 +1,6 @@
 NAME = request
 
-SRCS = main.cpp ../server/socket.cpp  ../server/epoll.cpp
+SRCS = main.cpp server/socket.cpp  server/epoll.cpp
 
 CXX = c++
 
