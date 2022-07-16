@@ -32,20 +32,22 @@ public:
     {
         block_.test_block();
         std::string tmp;
-        char buf[500];
+        // char buf[500];
         char c;
+        int i = 0;
 
-       while(0 < recv(fd, &c, 1))
-        {
-            
-        }
-
-        memset(&buf,0,sizeof(buf));
-        buf[499] = '\0';
-        while (0 < read(fd, &buf, sizeof(buf)))
-            this->buf_ += buf;
         dup2(this->fd, STDOUT_FILENO);
-        std::cout << buf_ << std::endl;
+        while (0 < recv(fd, &c, sizeof(char), 0))
+        {
+            this->buf_ += c;
+            //
+            if (i == 5) //rnrn
+            {
+                std::cout << "first message" <<  buf_ << std::endl;
+                i = 0;
+            }
+            i++;
+        };
     }
     ~Request() {};
 
