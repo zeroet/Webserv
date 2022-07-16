@@ -48,6 +48,10 @@ Response::Response()
 {
 }
 
+Response::Response(Response const & copy)
+{
+	(*this) = copy;
+}
 
 Response::Response(const std::string &status)
 {
@@ -55,6 +59,12 @@ Response::Response(const std::string &status)
 	std::cout << this->status_message << std::endl;
 	map_make_pair();
 	response_manager();
+}
+
+Response & Response::operator=(Response const & copy)
+{
+	(void) copy;
+	return (*this);
 }
 
 Response::~Response()
@@ -73,7 +83,7 @@ Response::~Response()
 
 void Response::appendHeader(std::string first, std::string second)
 {
-	mHeaders.insert(std::make_pair(first, second));
+	Headers_.insert(std::make_pair(first, second));
 }
 
 void Response::setBody(std::string & str)
@@ -86,7 +96,7 @@ std::string Response::makeHeader()
 	std::string outcome;
 	
 	outcome.append("HTTP/1.1 " + this->status_code + " " + this->status_message + "\r\n");
-	for (std::map<std::string, std::string>::iterator it = mHeaders.begin(); it != mHeaders.end(); it++)
+	for (std::map<std::string, std::string>::iterator it = Headers_.begin(); it != Headers_.end(); it++)
 		outcome.append((*it).first + ": " + (*it).second + "\r\n");
 	outcome.append("\r\n");
 	return outcome;
