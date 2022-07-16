@@ -2,3 +2,4 @@
 .nfs*
 a.out
 *.swp
+*.o
