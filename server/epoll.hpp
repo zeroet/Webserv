@@ -24,8 +24,8 @@ public:
         this->status_ =  "connect";
     };
     Request(int num) : fd(num)
-    { 
-        std::cout << "[" << this->fd << "] client socket number!" <<std::endl; 
+    {
+        std::cout << "[" << this->fd << "] client socket number!" <<std::endl;
     };
 
     void    add_string()
@@ -37,7 +37,7 @@ public:
 
        while(0 < recv(fd, &c, 1))
         {
-            
+
         }
 
         memset(&buf,0,sizeof(buf));
@@ -68,7 +68,7 @@ public:
     typedef std::map<clntFd, pEvent>    mapEpoll;
     Socket                              sock;
     typedef std::pair<int, Request>     mapPair;
- 
+
 private:
     vecBloc vecBloc_;
     mapClnt mapClnt_;
