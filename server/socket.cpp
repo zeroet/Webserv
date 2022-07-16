@@ -45,8 +45,8 @@ int     Socket::create_socket()
             return (ERROR);
         if ((socketFd = socket_reUse_setting(socketFd)) < 0)
             return (ERROR);
-        
-        // socket struct 
+
+        // socket struct
         memset(&sockAddr, 0, sizeof(sockAddr));
         sockAddr.sin_family = AF_INET;
         sockAddr.sin_port = htons(vecBloc_[i].getter_portNumber());
@@ -71,7 +71,7 @@ int     Socket::create_socket()
     return (OK);
 }
 
-// socket option setting 
+// socket option setting
 // NONBLOCK
 // REUSE
 
@@ -96,7 +96,7 @@ int     &Socket::socket_reUse_setting(int &socketFd)
     return (socketFd);
 }
 
-// getter && setter 
+// getter && setter
 
 Socket::vecBloc Socket::getter_vecBloc() const
 {

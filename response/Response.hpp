@@ -10,6 +10,8 @@ class Response
 	public:
 		Response();
 		Response(const std::string &status);
+		Response(Response const & copy);
+		Response & operator =(Response const & copy);
 		~Response();
 	
 		typedef std::map<std::string, std::string> mapStatus;	
@@ -24,10 +26,10 @@ class Response
 		void	response_manager();
 
 	private:
-		std::map<std::string, std::string> mHeaders;
-		std::string status_code;
-		std::string status_message;
-		std::string body;
+		std::map<std::string, std::string> Headers_;
+		std::string StatusCode_;
+		std::string StatusMessage_;
+		std::string Body_;
 		mapStatus mapStatus_;
 
 		

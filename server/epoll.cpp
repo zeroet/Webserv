@@ -39,7 +39,7 @@ void    Epoll::init_server_socket()
     {
         if (OK != (epoll_add(vecBloc_[i].getter_socketFd())))
             std::cout << "epoll add server socket failed" << std::endl;
-    }   
+    }
 }
 
 //Create Epoll Fd 
@@ -47,7 +47,7 @@ void    Epoll::create_epoll_fd()
 {
     this->epollFd_ = epoll_create(MAX_EVENT);
     if (epollFd_ < 0)
-    { 
+    {
         close_all_serv_socket();
         // tmp exit error
         std::cout << "Epoll fail" << std::endl;
@@ -58,12 +58,12 @@ void    Epoll::create_epoll_fd()
 //Epoll_ctl ADD function
 int    Epoll::epoll_add(int fd)
 {
-    
+
     event ev;
     ev.events = EPOLLIN | EPOLLET;
     ev.data.fd = fd;
     if (epoll_ctl(this->epollFd_, EPOLL_CTL_ADD, fd, &ev) < 0)
-    { 
+    {
         close(fd);
         return (ERROR);
     }
@@ -103,20 +103,20 @@ void    Epoll::epoll_server_manager()
     int                 evCount;
     int                 clntFd;
     event               epEvent[MAX_EVENT];
-    
+
     while (1)
     {
         evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
         // std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
         if (evCount < 0)
-        {           
+        {
             std::cout << "Epoll event count error" << std::endl;
             break ;
         }
         for (int i = 0; i < evCount; i++)
         {
             if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP) || (!(epEvent[i].events & EPOLLIN)))
-            {    
+            {
                 std::cout << "Epoll event error" << std::endl;
                 close(epEvent[i].data.fd);
                 continue ;
@@ -138,7 +138,7 @@ void    Epoll::epoll_server_manager()
                 }
             }
             else
-            { 
+            {
                 int fd = epEvent[i].data.fd;
                 mapClnt::iterator it = this->mapClnt_.find(fd);
                 it->second.add_string(); // Recv request buf
@@ -147,6 +147,7 @@ void    Epoll::epoll_server_manager()
                 //     mapEpoll::iterator it2 = this->epStruct_.find(fd);
                 //     it2->second->events = EPOLLOUT;
                 //     epoll_ctl(this->epollFd_, EPOLL_CTL_MOD, fd, it2->second);
+
                 // } 
             }
         }
@@ -173,14 +174,14 @@ int     Epoll::find_server_fd(int fd)
 void    Epoll::close_all_serv_socket()
 {
     int count = this->vecBloc_.size();
-    
+
     for(int i = 0; i < count; i++)
         close(this->vecBloc_[i].getter_socketFd());
     close(this->epollFd_);
     std::cout << "all socket closed" << std::endl;
 }
 
-// Block class or utile  ???? 
+// Block class or utile  ????
 Block   Epoll::get_location_block(int fd)
 {
     Block tmp;

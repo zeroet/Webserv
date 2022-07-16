@@ -1,6 +1,9 @@
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 
+# define CR '\r'
+# define LF '\n'
+
 # include <string>
 # include <vector>
 # include <map>
@@ -8,14 +11,14 @@
 //recevie all until \r\n\r\n
 //error
 //1: timeout (timestamp)
-//2: size > 
-class RecvRequest { 
+//2: size >
+class RecvRequest {
 	public:
 		RecvRequest(void) {}
 		RecvRequest(RecvRequest const &src);
 		RecvRequest &operator=(RecvRequest const &src);
 		~RecvRequest(void);
-	
+
 	private:
 		std::string buf;
 };
@@ -27,8 +30,8 @@ class ParseRequest {
 		ParseRequest(ParseRequest const &src);
 		ParseRequest &operator=(ParseRequest const &src);
 		~ParseRequest(void);
-		
-		void	SetRequest(RequestComplet &request);
+
+		// void	SetRequest(RequestComplet &request);
 
 	private:
 		std::vector<std::string>			RequestLine_[3];
@@ -43,7 +46,7 @@ class RequestComplet {
 		RequestComplet(RequestComplet const &src);
 		RequestComplet &operator=(RequestComplet const &src);
 		~RequestComplet(void);
-	
+
 	private:
 		std::string							Method_;
 		std::string							Path_;
