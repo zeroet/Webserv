@@ -1,6 +1,6 @@
-NAME = request
+NAME = webserv
 
-SRCS = main.cpp server/socket.cpp  server/epoll.cpp
+SRCS = main.cpp R_server/socket.cpp  R_server/epoll.cpp
 
 CXX = c++
 
