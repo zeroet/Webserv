@@ -1,4 +1,4 @@
-// Socket class 
+// Socket class
 #include <iostream>
 #include <string.h>
 #include <fcntl.h>
@@ -23,7 +23,7 @@ struct socketaddr_in
 	char sin_zero[8];
 };
 
-// Test Block Class 
+// Test Block Class
 class Block
 {
 private:
@@ -59,7 +59,7 @@ public:
 };
 
 
-class Socket 
+class Socket
 {
 public:
 	typedef std::vector<Block> vecBloc;
