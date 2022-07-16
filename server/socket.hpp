@@ -50,7 +50,7 @@ public:
 	void setter_socketFd(int fd) { this->socketFd_ = fd; }
 	void setter_socketaddr(socketaddr_in tmp) { this->sockAddr_ = tmp; }
 
-	// test function
+	// test function 
 	void	test_block()
 	{
 		// std::cout << "MY PORT NUMBER IS [" << this->portNum_ << "]" << std::endl;

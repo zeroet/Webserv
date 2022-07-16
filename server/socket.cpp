@@ -4,7 +4,7 @@
 //Canonical Form
 //
 
-//Construct
+//Construct 
 Socket::Socket(void) { }
 
 //Construct for excute

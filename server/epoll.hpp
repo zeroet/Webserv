@@ -23,9 +23,8 @@ public:
     {
         this->status_ =  "connect";
     };
-    Request(int num) : fd(num)
-    {
-        std::cout << "[" << this->fd << "] client socket number!" <<std::endl;
+    Request(int num) : fd(num) {
+        std::cout << "[" << this->fd << "] client socket number!" <<std::endl; 
     };
 
     void    add_string()

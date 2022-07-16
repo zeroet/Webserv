@@ -1,3 +1,4 @@
 .vscode
 .nfs*
 a.out
+*.swp

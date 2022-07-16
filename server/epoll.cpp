@@ -42,7 +42,7 @@ void    Epoll::init_server_socket()
     }
 }
 
-//Create Epoll Fd
+//Create Epoll Fd 
 void    Epoll::create_epoll_fd()
 {
     this->epollFd_ = epoll_create(MAX_EVENT);
@@ -83,7 +83,7 @@ int   Epoll::create_clnt_socket(int fd)
     {
         if (fd == this->vecBloc_[i].getter_socketFd())
         {
-            clntFd = accept(this->vecBloc_[i].getter_socketFd(),
+            clntFd = accept(this->vecBloc_[i].getter_socketFd(), 
             (struct sockaddr*)&clnt_addr, (socklen_t *)&clntLen);
             if (0 > (clntFd = sock.socket_nonBlock_setting(clntFd)))
                 std::cout << "accept() error" << std::endl;
@@ -125,7 +125,7 @@ void    Epoll::epoll_server_manager()
             {
                 clntFd = create_clnt_socket(epEvent[i].data.fd);
                 if (clntFd != ERROR)
-                {
+                { 
                     epoll_add(clntFd);
                     Block requestBlock = get_location_block(epEvent[i].data.fd);
                     this->mapClnt_.insert( std::make_pair (clntFd, Request(clntFd, requestBlock)));
@@ -147,7 +147,8 @@ void    Epoll::epoll_server_manager()
                 //     mapEpoll::iterator it2 = this->epStruct_.find(fd);
                 //     it2->second->events = EPOLLOUT;
                 //     epoll_ctl(this->epollFd_, EPOLL_CTL_MOD, fd, it2->second);
-                // }
+
+                // } 
             }
         }
     }
