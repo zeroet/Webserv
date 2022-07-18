@@ -14,13 +14,20 @@
 //2: size >
 class RecvRequest {
 	public:
-		RecvRequest(void) {}
+		RecvRequest(void);
+		RecvRequest(int	client_fd);
 		RecvRequest(RecvRequest const &src);
 		RecvRequest &operator=(RecvRequest const &src);
 		~RecvRequest(void);
 
 	private:
-		std::string buf;
+		int			client_fd_;
+		char		buf_;
+
+	public:
+		const int	&get_client_fd(void) const;
+		char		&get_buf(void);
+		void		set_buf(char buf);
 };
 
 //Parsing buf
