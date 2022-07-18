@@ -1,4 +1,5 @@
 #include "epoll.hpp"
+#include "../Request.hpp"
 
 //
 //Canocial Form
@@ -140,9 +141,16 @@ void    Epoll::epoll_server_manager()
 			else
 			{
 				// std::cout << "connect" << std::endl;
-				int fd = epEvent[i].data.fd;
-				mapClnt::iterator it = this->mapClnt_.find(fd);
-				it->second.add_string(); // Recv request buf
+				// int fd = epEvent[i].data.fd;
+				
+				RecvRequest request(epEvent[i].data.fd);
+				std::cout << "client fd: " << request.get_client_fd() << std::endl;
+				int r = recv(request.get_client_fd(), &request.get_buf(), 1, 0);
+				
+				std::cout << "r: " << r << std::endl;
+				std::cout << request.get_buf() << std::endl;
+				// mapClnt::iterator it = this->mapClnt_.find(fd);
+				// it->second.add_string(); // Recv request buf
 				// if (it->second.getter_status() == "more")
 				// {
 				//     mapEpoll::iterator it2 = this->epStruct_.find(fd);
