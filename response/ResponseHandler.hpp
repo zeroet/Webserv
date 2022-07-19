@@ -8,7 +8,7 @@ class ResponseHandler
 {
 	private:
 
-		std::string	_file_path;
+		std::string	filePath_;
 
 	public:
 		ResponseHandler();
@@ -19,6 +19,7 @@ class ResponseHandler
 		void	checkFilePath();
 		std::string ft_itos(int num);
 		std::string getLastTime(time_t time);
+		std::string	AutoIndex();
 };
 
 #endif
