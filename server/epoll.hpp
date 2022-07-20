@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <fstream>
 
+
 # define MAX_EVENT 1024
 # define TIMEOUT -1
 
@@ -13,8 +14,9 @@ class Request
 {
 private:
     int fd;
-    std::string buf_;
+    char buf[512];
     Block block_;
+    std::string str_;
     std::string status_;
 
 public:
@@ -30,24 +32,18 @@ public:
 
     void    add_string()
     {
-        block_.test_block();
-        std::string tmp;
-        // char buf[500];
-        char c;
-        int i = 0;
-
-        dup2(this->fd, STDOUT_FILENO);
-        while (0 < recv(fd, &c, sizeof(char), 0))
-        {
-            this->buf_ += c;
-            //
-            if (i == 5) //rnrn
-            {
-                std::cout << "first message" <<  buf_ << std::endl;
-                i = 0;
-            }
-            i++;
-        };
+        memset(&buf, 0, sizeof(buf));
+        while ( 0 < (recv(fd, &buf, sizeof(buf), 0)))
+        { 
+            str_ += buf;
+            std::cout << "in the recv" << std::endl;
+        }
+    }
+    void    send_string()
+    {
+        std::cout << "in the send" << std::endl;
+        send(fd, &str_, str_.size(), 0);
+    
     }
     ~Request() {};
 

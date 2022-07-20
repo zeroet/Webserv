@@ -8,6 +8,7 @@
 #include <sys/unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
 
 #define LISTEN_BACKLOG 15
 #define DEFAULT -1

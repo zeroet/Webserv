@@ -107,7 +107,7 @@ void    Epoll::epoll_server_manager()
     while (1)
     {
         evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
-        // std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
+        std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
         if (evCount < 0)
         {           
             std::cout << "Epoll event count error" << std::endl;
@@ -115,7 +115,7 @@ void    Epoll::epoll_server_manager()
         }
         for (int i = 0; i < evCount; i++)
         {
-            if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP) || (!(epEvent[i].events & EPOLLIN)))
+            if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP))
             {    
                 std::cout << "Epoll event error" << std::endl;
                 close(epEvent[i].data.fd);
@@ -137,18 +137,32 @@ void    Epoll::epoll_server_manager()
                     continue ;
                 }
             }
-            else
+            else if(epEvent[i].events & EPOLLIN)
             { 
                 int fd = epEvent[i].data.fd;
+                event ev;
+                ev.data.fd = fd;
+                ev.events = EPOLLOUT;
                 mapClnt::iterator it = this->mapClnt_.find(fd);
-                it->second.add_string(); // Recv request buf
-                // if (it->second.getter_status() == "more")
-                // {
-                //     mapEpoll::iterator it2 = this->epStruct_.find(fd);
-                //     it2->second->events = EPOLLOUT;
-                //     epoll_ctl(this->epollFd_, EPOLL_CTL_MOD, fd, it2->second);
-                // } 
+                mapEpoll::iterator it2 = this->epStruct_.find(fd);
+                epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
+                it2->second = &ev;
+                it->second.add_string();
             }
+            else if(epEvent[i].events & EPOLLOUT)
+            {
+                int fd = epEvent[i].data.fd;
+                event ev;
+                mapClnt::iterator it = this->mapClnt_.find(fd);
+                mapEpoll::iterator it2 = this->epStruct_.find(fd);
+                ev = *it2->second;
+                it->second.send_string();
+                epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, &ev);
+                mapClnt_.erase(it);
+                epStruct_.erase(it2);
+                close(fd);
+            }
+
         }
     }
 }
