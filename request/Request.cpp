@@ -1,22 +1,25 @@
 #include "Request.hpp"
 
-RecvRequest::RecvRequest(void) {}
+Request::Request(void) {}
 
-RecvRequest::RecvRequest(int client_fd) : buf_(0) {
-    this->client_fd_ = client_fd;
+Request::~Request(void) {}
+
+std::string	const	&Request::getMethod(void) const {
+	return (this->Method_);
 }
 
-RecvRequest::~RecvRequest(void) {}
-
-int const &RecvRequest::get_client_fd(void) const {
-    return (this->client_fd_);
+std::string	const	&Request::getPath(void) const {
+	return (this->Path_);
 }
 
-char	&RecvRequest::get_buf(void) {
-    return (this->buf_);
+std::string	const	&Request::getVersion(void) const {
+	return (this->Version_);
 }
 
-void        RecvRequest::set_buf(char buf) {
-    this->buf_ = buf;
+std::map<std::string, std::string>	const	&Request::getRequestHeader(void) const {
+	return (this->RequestHeader_);
 }
 
+std::string	const	&Request::getRequestBody(void) const {
+	return (this->RequestBody_);
+}
