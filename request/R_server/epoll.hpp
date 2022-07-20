@@ -1,15 +1,10 @@
-#pragma once
-
 #include "socket.hpp"
 #include <sys/epoll.h>
 #include <map>
-
-// #include "response/Response.hpp"
+#include "R_response/Response.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-
-
 
 # define MAX_EVENT 1024
 # define TIMEOUT -1
@@ -18,15 +13,13 @@ class Request
 {
 private:
     int fd;
-    char buf[512];
+    std::string buf_;
     Block block_;
-    std::string str_;
     std::string status_;
-    int i_;
 
 public:
     Request() {std::cout << "in the map" << std::endl;};
-    Request(const int &other, Block block) : fd(other), block_(block), str_("")
+    Request(const int &other, Block block) : fd(other), block_(block)
     {
         this->status_ =  "connect";
     };
@@ -34,24 +27,25 @@ public:
         std::cout << "[" << this->fd << "] client socket number!" <<std::endl;
     };
 
-    void    treat_request()
+    void    add_string()
     {
-        memset(&buf, 0, sizeof(buf));
-        i_ = recv(fd, &buf, sizeof(buf), 0); 
-        str_ += buf;
-        std::cout << "in the recv" << std::endl;
-        // ep->epoll_Ctl_Mode(this->fd, EPOLLOUT);
+        // block_.test_block();
+        std::string tmp;
+        char buf[500];
+        // char c;
 
+    //    while(0 < recv(fd, &c, 1))
+    //     {
+
+    //     }
+
+        memset(&buf,0,sizeof(buf));
+        buf[499] = '\0';
+        while (0 < read(fd, &buf, sizeof(buf)))
+            this->buf_ += buf;
+        dup2(this->fd, STDOUT_FILENO);
+        std::cout << buf_ << std::endl;
     }
-
-    int    send_string()
-    {
-        std::cout << "in the send" << std::endl;
-        send(fd, str_.c_str(), str_.size(), 0);
-        // ep->epoll_Ctl_Mode(this->fd, EPOLLIN);
-        return 0;
-    }
-
     ~Request() {};
 
     std::string getter_status(void)
@@ -61,22 +55,24 @@ public:
 
 };
 
-
 class Epoll
 {
+
 public:
     typedef int                         clntFd;
     typedef std::vector<Block>          vecBloc;
     typedef std::map<clntFd, Request>   mapClnt;
     typedef struct epoll_event          event;
-    typedef event*                      pEvent;;
-    typedef std::pair<int, Request>     mapPair;
+    typedef event*                      pEvent;
+    typedef std::map<clntFd, pEvent>    mapEpoll;
     Socket                              sock;
+    typedef std::pair<int, Request>     mapPair;
 
 private:
     vecBloc vecBloc_;
     mapClnt mapClnt_;
     int     epollFd_;
+    mapEpoll epStruct_;
 
 public:
     Epoll();
@@ -88,8 +84,6 @@ public:
     void            init_server_socket();
     void            create_epoll_fd();
     int             epoll_add(int fd);
-    void            epoll_Ctl_Mode(int fd, int op);
-
 
     //Epoll Main management function
     void            epoll_server_manager();
@@ -101,6 +95,4 @@ public:
 
     //Block class or utile ????
     Block           get_location_block(int fd);
-
 };
-

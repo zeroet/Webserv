@@ -22,7 +22,7 @@ class Response
 		void			makeStatusBody();
 		void			makeStatusBody(std::string url);
 		int				getBodySize();
-		void	map_make_pair(std::string code);
+		void	map_make_pair();
 		void	response_manager();
 
 	private:

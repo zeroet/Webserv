@@ -1,6 +1,6 @@
-NAME = request
+NAME = webserv
 
-SRCS = main.cpp
+SRCS = main.cpp Request.cpp 
 
 CXX = c++
 

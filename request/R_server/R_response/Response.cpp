@@ -1,6 +1,6 @@
 #include "Response.hpp"
 
-void		Response::map_make_pair(std::string code)
+void		Response::map_make_pair(void)
 {
 	mapStatus_.insert(std::make_pair("100", "Continue"));
 	mapStatus_.insert(std::make_pair("101", "Switching Protocols"));
@@ -36,7 +36,7 @@ void		Response::map_make_pair(std::string code)
 	mapStatus_.insert(std::make_pair("505", "HTTP Version Not Supported"));	
 
 	std::map<std::string, std::string>::iterator it;
-	it = this->mapStatus_.find(code);
+	it = this->mapStatus_.find("100");
 	this->StatusCode_ = it->first;
 	this->StatusMessage_ = it->second;	
 	std::cout << StatusCode_ << std::endl;
@@ -57,7 +57,7 @@ Response::Response(const std::string &status)
 {
 	std::cout << this->StatusCode_ << std::endl;
 	std::cout << this->StatusMessage_ << std::endl;
-	map_make_pair(this->StatusCode_);
+	map_make_pair();
 	response_manager();
 }
 

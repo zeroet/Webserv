@@ -2,3 +2,5 @@
 .nfs*
 a.out
 *.swp
+*.o
+webserv

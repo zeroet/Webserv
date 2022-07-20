@@ -1,5 +1,3 @@
-#pragma once
-
 // Socket class
 #include <iostream>
 #include <string.h>
@@ -11,19 +9,27 @@
 #include <sys/unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <sys/types.h>
 
 #define LISTEN_BACKLOG 15
 #define DEFAULT -1
 #define ERROR -1
 #define OK 0
 
+// Need declaration ???
+struct socketaddr_in
+{
+	short sin_family;
+	u_short	sin_port;
+	struct in_addr sin_addr;
+	char sin_zero[8];
+};
+
 // Test Block Class
 class Block
 {
 private:
 	int socketFd_;
-	sockaddr_in sockAddr_;
+	socketaddr_in sockAddr_;
 	int	portNum_;
 
 public:
@@ -43,7 +49,7 @@ public:
 	int getter_socketFd() { return this->socketFd_; };
 	int getter_portNumber() { return this->portNum_; };
 	void setter_socketFd(int fd) { this->socketFd_ = fd; }
-	void setter_socketaddr(sockaddr_in tmp) { this->sockAddr_ = tmp; }
+	void setter_socketaddr(socketaddr_in tmp) { this->sockAddr_ = tmp; }
 
 	// test function
 	void	test_block()
