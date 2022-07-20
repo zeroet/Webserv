@@ -1,5 +1,4 @@
 #include "epoll.hpp"
-
 //
 //Canocial Form
 //
@@ -67,7 +66,6 @@ int    Epoll::epoll_add(int fd)
 		close(fd);
 		return (ERROR);
 	}
-	this->epStruct_.insert(std::make_pair(fd, &ev));
 	return (OK);
 }
 
@@ -75,7 +73,7 @@ int    Epoll::epoll_add(int fd)
 int   Epoll::create_clnt_socket(int fd)
 {
 	int                     size = this->vecBloc_.size();
-	struct socketaddr_in    clnt_addr;
+	struct sockaddr_in    clnt_addr;
 	int                     clntFd;
 	int                     clntLen = sizeof(clnt_addr);
 
@@ -100,59 +98,88 @@ int   Epoll::create_clnt_socket(int fd)
 //
 void    Epoll::epoll_server_manager()
 {
-	int                 evCount;
-	int                 clntFd;
-	event               epEvent[MAX_EVENT];
+    int                 evCount;
+    int                 clntFd;
+    event               epEvent[MAX_EVENT];
+    
+    while (1)
+    {
+        evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
+        std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
+        if (evCount < 0)
+        {           
+            std::cout << "Epoll event count error" << std::endl;
+            break ;
+        }
+        for (int i = 0; i < evCount; i++)
+        {
+            if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP))
+            {    
+                std::cout << "Epoll event error" << std::endl;
+                close(epEvent[i].data.fd);
+                continue ;
+            }
+            else if ((find_server_fd(epEvent[i].data.fd)) == OK)
+            {
+                clntFd = create_clnt_socket(epEvent[i].data.fd);
+                if (clntFd != ERROR)
+                { 
+                    epoll_add(clntFd);
+                    Block requestBlock = get_location_block(epEvent[i].data.fd);
+                    this->mapClnt_.insert(std::make_pair (clntFd, Request(clntFd, requestBlock)));
+                }
+                else
+                {
+                    std::cout << "accept() error !" << std::endl;
+                    close(clntFd);
+                    continue ;
+                }
+            }
+            else if(epEvent[i].events & EPOLLIN)
+            { 
+                int fd = epEvent[i].data.fd;
+                mapClnt::iterator it = this->mapClnt_.find(fd);
+                epoll_Ctl_Mode(fd, EPOLLOUT);
+                it->second.treat_request(); //treat_request()
+            }
+            else if(epEvent[i].events & EPOLLOUT)
+            {
+                int fd = epEvent[i].data.fd;
+                mapClnt::iterator it = this->mapClnt_.find(fd);
+                it->second.send_string();
+                epoll_Ctl_Mode(fd, EPOLLIN);
+                // if (epEvent[i].events & EPOLLOUT)
+                // {
+                //     event ev;
+                //     ev.data.fd = fd;
+                //     epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, &ev);
+                //     mapClnt_.erase(it);
+                //     close(fd);
+                // }
+            }
 
-	while (1)
-	{
-		evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
-		// std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
-		if (evCount < 0)
-		{
-			std::cout << "Epoll event count error" << std::endl;
-			break ;
-		}
-		for (int i = 0; i < evCount; i++)
-		{
-			if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP) || (!(epEvent[i].events & EPOLLIN)))
-			{
-				std::cout << "Epoll event error" << std::endl;
-				close(epEvent[i].data.fd);
-				continue ;
-			}
-			else if ((find_server_fd(epEvent[i].data.fd)) == OK)
-			{
-				clntFd = create_clnt_socket(epEvent[i].data.fd);
-				if (clntFd != ERROR)
-				{
-					epoll_add(clntFd);
-					Block requestBlock = get_location_block(epEvent[i].data.fd);
-					this->mapClnt_.insert( std::make_pair (clntFd, Request(clntFd, requestBlock)));
-				}
-				else
-				{
-					std::cout << "accept() error !" << std::endl;
-					close(clntFd);
-					continue ;
-				}
-			}
-			else
-			{
-				// std::cout << "connect" << std::endl;
-				int fd = epEvent[i].data.fd;
-				mapClnt::iterator it = this->mapClnt_.find(fd);
-				it->second.add_string(); // Recv request buf
-				// if (it->second.getter_status() == "more")
-				// {
-				//     mapEpoll::iterator it2 = this->epStruct_.find(fd);
-				//     it2->second->events = EPOLLOUT;
-				//     epoll_ctl(this->epollFd_, EPOLL_CTL_MOD, fd, it2->second);
+        }
+    }
+}
 
-				// }
-			}
-		}
-	}
+void    Epoll::epoll_Ctl_Mode(int fd, int op)
+{
+    event ev;
+
+    if (op == EPOLLIN)
+    {
+        ev.data.fd = fd;
+        ev.events = EPOLLIN | EPOLLET;
+        epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
+    }
+    else if (op == EPOLLOUT)
+    {
+        ev.data.fd = fd;
+        ev.events = EPOLLOUT | EPOLLET;
+        epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
+    }
+    else
+        std::cout << "EPOLL CTL FUNC ERROR" << std::endl;
 }
 
 //

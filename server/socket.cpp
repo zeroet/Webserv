@@ -31,7 +31,7 @@ Socket::~Socket(void) {}
 int     Socket::create_socket()
 {
     int     blockCount = vecBloc_.size();
-    struct  socketaddr_in sockAddr;
+    struct  sockaddr_in sockAddr;
 
     for (int i = 0; i < blockCount; i++)
     {
