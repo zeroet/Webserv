@@ -8,51 +8,13 @@
 # include <vector>
 # include <map>
 
-//recevie all until \r\n\r\n
-//error
-//1: timeout (timestamp)
-//2: size >
-class RecvRequest {
+//Class for Response - Complete Response
+class Request {
 	public:
-		RecvRequest(void);
-		RecvRequest(int	client_fd);
-		RecvRequest(RecvRequest const &src);
-		RecvRequest &operator=(RecvRequest const &src);
-		~RecvRequest(void);
-
-	private:
-		int			client_fd_;
-		char		buf_;
-
-	public:
-		const int	&get_client_fd(void) const;
-		char		&get_buf(void);
-		void		set_buf(char buf);
-};
-
-//Parsing buf
-class ParseRequest {
-	public:
-		ParseRequest(void) {}
-		ParseRequest(ParseRequest const &src);
-		ParseRequest &operator=(ParseRequest const &src);
-		~ParseRequest(void);
-
-		// void	SetRequest(RequestComplet &request);
-
-	private:
-		std::vector<std::string>			RequestLine_[3];
-		std::map<std::string, std::string>	RequestHeader_;
-		std::string							RequestBody_;
-};
-
-//Class for Response
-class RequestComplet {
-	public:
-		RequestComplet(void) {}
-		RequestComplet(RequestComplet const &src);
-		RequestComplet &operator=(RequestComplet const &src);
-		~RequestComplet(void);
+		Request(void);
+		Request(Request const &src);
+		Request &operator=(Request const &src);
+		~Request(void);
 
 	private:
 		std::string							Method_;
@@ -60,7 +22,30 @@ class RequestComplet {
 		std::string							Version_;
 		std::map<std::string, std::string>	RequestHeader_;
 		std::string							RequestBody_;
-		int									ResponseCode_;
+		// int									ResponseCode_;
+
+	public:
+		// void				setRequest(Request *req);
+		void				setMethod(std::string method);
+		void				setPath(std::string path);
+		void				setVersion(std::string version);
+		void				setRequestBody(std::string requestbody);
+
+		Request	const		&getRequest(void)	const;
+		std::string	const	&getMethod(void)	const;
+		std::string const	&getPath(void)	const;
+		std::string	const	&getVersion(void)	const;
+		std::map<std::string, std::string>	&getRequestHeader(void);
+		std::string	const	&getRequestBody(void)	const;
+
+		//example for response (200 OK)
+		void	GET1Req(Request *req);
+		void	GET2Req(Request *req);
+		void	GET3Req(Request *req);
+		void	PUTReq(Request *req);
+		void	POST1Req(Request *req);
+		void	POST2Req(Request *req);
+		void	DELETEReq(Request *req);
 };
 
 #endif
