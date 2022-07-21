@@ -37,7 +37,13 @@ void    Epoll::init_server_socket()
 	for (int i = 0; i < numServerFd; i++)
 	{
 		if (OK != (epoll_add(vecBloc_[i].getter_socketFd())))
-			std::cout << "epoll add server socket failed" << std::endl;
+			std::cout << RED << "PortNumber [" << vecBloc_[i].getter_portNumber() <<
+            "] Epoll_Ctl_Add failed" << FIN <<std::endl;
+        else
+        {
+            std::cout << GREEN << "PortNumber [" << vecBloc_[i].getter_portNumber() <<
+            "] Epoll_Ctl_Add Success" << FIN << std::endl;
+        }   
 	}
 }
 
@@ -59,7 +65,7 @@ int    Epoll::epoll_add(int fd)
 {
 
 	event ev;
-	ev.events = EPOLLIN | EPOLLET;
+	ev.events = EPOLLIN | EPOLLET | EPOLLERR | EPOLLHUP;
 	ev.data.fd = fd;
 	if (epoll_ctl(this->epollFd_, EPOLL_CTL_ADD, fd, &ev) < 0)
 	{
@@ -139,23 +145,16 @@ void    Epoll::epoll_server_manager()
             { 
                 int fd = epEvent[i].data.fd;
                 mapClnt::iterator it = this->mapClnt_.find(fd);
-                epoll_Ctl_Mode(fd, EPOLLOUT);
                 it->second.treat_request(); //treat_request()
+                // if server is ready to response change mod EPOLLOUT
+                // make the flag READY  ex: it->second.check_flag();
+                epoll_Ctl_Mode(fd, EPOLLOUT);
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
                 int fd = epEvent[i].data.fd;
                 mapClnt::iterator it = this->mapClnt_.find(fd);
                 it->second.send_string();
-                epoll_Ctl_Mode(fd, EPOLLIN);
-                // if (epEvent[i].events & EPOLLOUT)
-                // {
-                //     event ev;
-                //     ev.data.fd = fd;
-                //     epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, &ev);
-                //     mapClnt_.erase(it);
-                //     close(fd);
-                // }
             }
 
         }
@@ -169,13 +168,13 @@ void    Epoll::epoll_Ctl_Mode(int fd, int op)
     if (op == EPOLLIN)
     {
         ev.data.fd = fd;
-        ev.events = EPOLLIN | EPOLLET;
+        ev.events = EPOLLIN | EPOLLET | EPOLLHUP | EPOLLERR;
         epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
     }
     else if (op == EPOLLOUT)
     {
         ev.data.fd = fd;
-        ev.events = EPOLLOUT | EPOLLET;
+        ev.events = EPOLLOUT | EPOLLET | EPOLLHUP | EPOLLERR;
         epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
     }
     else
