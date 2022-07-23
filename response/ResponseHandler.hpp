@@ -17,9 +17,11 @@ class ResponseHandler
 		~ResponseHandler();
 
 		void	checkFilePath();
+		void	DeleteMethod();
 		std::string ft_itos(int num);
 		std::string getLastTime(time_t time);
 		std::string	AutoIndex();
+		
 };
 
 #endif
