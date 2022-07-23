@@ -3,6 +3,7 @@
 
 #include "Response.hpp"
 #include <sys/stat.h>
+#include <time.h>
 
 class ResponseHandler
 {
