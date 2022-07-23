@@ -13,7 +13,7 @@ ResponseHandler::~ResponseHandler()
 std::string ResponseHandler::getLastTime(time_t time)
 {
 	char s[200];
-	struct tm *get_time = std::gmtime(&time);
+	struct tm *get_time = gmtime(&time);
 
 	strftime(s, sizeof(s), "%a, %d %b %Y %T GMT", get_time);
 	return (s);
