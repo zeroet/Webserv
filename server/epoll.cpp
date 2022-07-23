@@ -148,7 +148,7 @@ void    Epoll::epoll_server_manager()
                 it->second.treat_request(); //treat_request()
                 // if server is ready to response change mod EPOLLOUT
                 // make the flag READY  ex: it->second.check_flag();
-                epoll_Ctl_Mode(fd, EPOLLOUT);
+                // epoll_Ctl_Mode(fd, EPOLLOUT);
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
