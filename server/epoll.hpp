@@ -25,13 +25,16 @@ private:
     int i_;
 
 public:
-    Request() {std::cout << "in the map" << std::endl;};
+    Request() {};
     Request(const int &other, Block block) : fd(other), block_(block), str_("")
     {
         this->status_ =  "connect";
-    };
-    Request(int num) : fd(num) {
-        std::cout << "[" << this->fd << "] client socket number!" <<std::endl;
+        std::cout << YELLOW << "--- Connection info ---" << std::endl;
+        std::cout << "Server Fd  : " << block.getter_socketFd() << std::endl;
+        std::cout << "Client Fd  : " << this->fd << std::endl;
+        std::cout << "Server PortNumber : " << block.getter_portNumber() << std::endl;
+        std::cout << "Connection Status : " << this->status_ << std::endl;
+        std::cout << FIN << std::endl;
     };
 
     void    treat_request()
@@ -74,9 +77,9 @@ public:
     Socket                              sock;
 
 private:
-    vecBloc vecBloc_;
-    mapClnt mapClnt_;
-    int     epollFd_;
+    vecBloc vecBloc_; // vector type location block 
+    mapClnt mapClnt_; // map type connection poll 
+    int     epollFd_; 
 
 public:
     Epoll();
