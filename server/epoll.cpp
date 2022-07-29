@@ -16,7 +16,7 @@ Epoll::Epoll(std::vector<Block> block) : vecBloc_(block)
 }
 
 //Copy Construct
-Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), mapClnt_(other.mapClnt_), epollFd_(other.epollFd_)
+Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), c_(other.c_), epollFd_(other.epollFd_)
 {
 	*this = other;
 }
@@ -131,8 +131,8 @@ void    Epoll::epoll_server_manager()
                 if (clntFd != ERROR)
                 { 
                     epoll_add(clntFd);
-                    Block requestBlock = get_location_block(epEvent[i].data.fd);
-                    this->mapClnt_.insert(std::make_pair (clntFd, Request(clntFd, requestBlock)));
+                    Block serverBlock = get_location_block(epEvent[i].data.fd);
+                    this->c_.insert(std::make_pair (clntFd, Connection(clntFd, serverBlock, this)));
                 }
                 else
                 {
@@ -144,8 +144,8 @@ void    Epoll::epoll_server_manager()
             else if(epEvent[i].events & EPOLLIN)
             { 
                 int fd = epEvent[i].data.fd;
-                mapClnt::iterator it = this->mapClnt_.find(fd);
-                it->second.treat_request(); //treat_request()
+                mapConnection::iterator it = this->c_.find(fd);
+                it->second.requestRecv(); //treat_request()
                 // if server is ready to response change mod EPOLLOUT
                 // make the flag READY  ex: it->second.check_flag();
                 // epoll_Ctl_Mode(fd, EPOLLOUT);
@@ -153,8 +153,8 @@ void    Epoll::epoll_server_manager()
             else if(epEvent[i].events & EPOLLOUT)
             {
                 int fd = epEvent[i].data.fd;
-                mapClnt::iterator it = this->mapClnt_.find(fd);
-                it->second.send_string();
+                mapConnection::iterator it = this->c_.find(fd);
+                it->second.response();
             }
 
         }
