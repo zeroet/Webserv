@@ -145,10 +145,7 @@ void    Epoll::epoll_server_manager()
             { 
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
-                it->second.requestRecv(); //treat_request()
-                // if server is ready to response change mod EPOLLOUT
-                // make the flag READY  ex: it->second.check_flag();
-                // epoll_Ctl_Mode(fd, EPOLLOUT);
+                it->second.requestRecv();
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
@@ -156,7 +153,6 @@ void    Epoll::epoll_server_manager()
                 mapConnection::iterator it = this->c_.find(fd);
                 it->second.response();
             }
-
         }
     }
 }
