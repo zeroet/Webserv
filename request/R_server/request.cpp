@@ -31,7 +31,7 @@ void    Request::parsingBuffer(void)
 {
     std::string tmp;
     std::string::size_type posEndBuff(-1);
-    std::string::size_type posCRLF(-1);
+    // std::string::size_type posCRLF(-1);
 
     std::cout << posEndBuff << " est pos End Buff" <<  std::endl;
     /*

@@ -1,5 +1,6 @@
 // #include "socket.hpp"
 #include "epoll.hpp"
+#include <ostream>
 // #include "requestTest.hpp"
 
 int main()

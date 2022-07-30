@@ -34,7 +34,7 @@ int	main(int ac, char** av) {
 		std::ifstream	file(av[1]);
 		std::string		line;
 		char			c;
-		int				flag = 0;
+		// int				flag = 0;
 		// int i = 0;
 		while(std::getline(file, line, '\r'))
 		{
@@ -47,7 +47,7 @@ int	main(int ac, char** av) {
 			{
 				file.rdbuf()->sputbackc(c);
 			// if (line.find("\r\n") != std::string::npos)
-				flag = 1;
+				// flag = 1;
 				std::cout << "IN" << std::endl;
 			}
 
