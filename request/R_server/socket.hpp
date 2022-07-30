@@ -1,3 +1,5 @@
+#pragma once
+
 // Socket class
 #include <iostream>
 #include <string.h>
@@ -9,27 +11,29 @@
 #include <sys/unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
 
 #define LISTEN_BACKLOG 15
 #define DEFAULT -1
 #define ERROR -1
 #define OK 0
 
-// Need declaration ???
-struct socketaddr_in
-{
-	short sin_family;
-	u_short	sin_port;
-	struct in_addr sin_addr;
-	char sin_zero[8];
-};
+# define YELLOW "\033[0;38;5;220m"
+# define GREEN "\033[0;38;5;42m"
+# define RED "\033[0;38;5;196m"
+# define BLUE "\033[0;38;5;21m"
+# define PINK "\033[0;38;5;205m"
+# define PURPLE "\033[0;38;5;93m"
+# define ORANGE "\033[38;5;202m"
+# define FIN "\033[0m"
+
 
 // Test Block Class
 class Block
 {
 private:
 	int socketFd_;
-	socketaddr_in sockAddr_;
+	sockaddr_in sockAddr_;
 	int	portNum_;
 
 public:
@@ -49,7 +53,7 @@ public:
 	int getter_socketFd() { return this->socketFd_; };
 	int getter_portNumber() { return this->portNum_; };
 	void setter_socketFd(int fd) { this->socketFd_ = fd; }
-	void setter_socketaddr(socketaddr_in tmp) { this->sockAddr_ = tmp; }
+	void setter_socketaddr(sockaddr_in tmp) { this->sockAddr_ = tmp; }
 
 	// test function
 	void	test_block()

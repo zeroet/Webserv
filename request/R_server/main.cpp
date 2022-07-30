@@ -1,5 +1,6 @@
-//#include "socket.hpp"
+// #include "socket.hpp"
 #include "epoll.hpp"
+// #include "requestTest.hpp"
 
 int main()
 {
@@ -13,16 +14,6 @@ int main()
 
     Socket socket(server);
     std::vector<Block> test = socket.getter_vecBloc();
-
-    std::cout << "Server Fd : " << test[0].getter_socketFd() << std::endl;
-    std::cout << "Server Port : " << test[0].getter_portNumber() << std::endl;
-
-    std::cout << "Server Fd : " << test[1].getter_socketFd() << std::endl;
-    std::cout << "Server Port : " << test[1].getter_portNumber() << std::endl;
-
-    std::cout << "Server Fd : " << test[2].getter_socketFd() << std::endl;
-    std::cout << "Server Port : " << test[2].getter_portNumber() << std::endl;
-
 	Epoll epoll(test);
 
 
