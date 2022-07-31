@@ -22,6 +22,7 @@ void    Connection::requestRecv()
 	std::cout << "buf_: " << std::endl;
 	for (unsigned int i = 0; i < buf_.size(); i++)
 	{
+        // std::cout << "buf size: " << buf_.size() << std::endl;
 		std::cout << buf_[i];
 	}
 

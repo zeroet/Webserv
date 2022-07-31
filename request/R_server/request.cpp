@@ -19,6 +19,39 @@ const	Request	&Request::operator=(const Request &x) {
 
 Request::~Request(void) {}
 
+//getter
+const	std::string	&Request::getMethod(void) const {
+	return (method_);
+}
+
+const	std::string &Request::getPath(void)	const {
+	return (path_);
+}
+
+const	std::string	&Request::getVersion(void)	const {
+	return (version_);
+}
+
+const	mapHeader	&Request::getRequestHeaders(void)	const {
+	return (requestHeaders_);
+}
+
+const	std::string	Request::getHeaderValue(std::string key) const {
+	std::transform(key.begin(), key.end(), key.begin(), toupper);
+	for (mapHeader::const_iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++)
+	{
+		if (it->first == key)
+			return (it->second);
+	}
+	return (NULL);
+}
+
+const	vecByte		&Request::getBody(void)	const {
+	return (body_);
+}
+
+//setter
+
 // void    Request::addBuffer(void)
 // {
 //     // memset(&buf, 0, sizeof(buf));

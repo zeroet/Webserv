@@ -7,6 +7,9 @@
 #include <sys/epoll.h>
 #include <map>
 #include <vector>
+#include <algorithm>
+#include <cctype>
+// #include <cstdlib>
 
 typedef std::map<std::string, std::string> 	mapHeader;
 typedef std::vector<unsigned int>			vecByte;
@@ -27,6 +30,15 @@ class Request
 		Request(Request const &x);
 		const Request &operator=(const Request &x);
 		~Request(void);
+
+		//getter
+		const	std::string	&getMethod(void) const;
+		const	std::string &getPath(void)	const;
+		const	std::string	&getVersion(void)	const;
+		const	mapHeader	&getRequestHeaders(void)	const;
+		const	std::string	getHeaderValue(std::string key) const;
+		const	vecByte		&getBody(void)	const;
+
 
 		// void    addBuffer(void);
 		// void    parsingBuffer(void);
