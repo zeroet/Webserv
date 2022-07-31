@@ -1,9 +1,4 @@
 #include "epoll.hpp"
-#include "../Request.hpp"
-
-//
-//Canocial Form
-//
 
 //Default Construct
 Epoll::Epoll() {}
@@ -18,7 +13,7 @@ Epoll::Epoll(std::vector<Block> block) : vecBloc_(block)
 }
 
 //Copy Construct
-Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), mapClnt_(other.mapClnt_), epollFd_(other.epollFd_)
+Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), c_(other.c_), epollFd_(other.epollFd_)
 {
 	*this = other;
 }
@@ -39,7 +34,13 @@ void    Epoll::init_server_socket()
 	for (int i = 0; i < numServerFd; i++)
 	{
 		if (OK != (epoll_add(vecBloc_[i].getter_socketFd())))
-			std::cout << "epoll add server socket failed" << std::endl;
+			std::cout << RED << "PortNumber [" << vecBloc_[i].getter_portNumber() <<
+            "] Epoll_Ctl_Add failed" << FIN <<std::endl;
+        else
+        {
+            std::cout << GREEN << "PortNumber [" << vecBloc_[i].getter_portNumber() <<
+            "] Epoll_Ctl_Add Success" << FIN << std::endl;
+        }   
 	}
 }
 
@@ -61,14 +62,13 @@ int    Epoll::epoll_add(int fd)
 {
 
 	event ev;
-	ev.events = EPOLLIN | EPOLLET;
+	ev.events = EPOLLIN | EPOLLET | EPOLLERR | EPOLLHUP;
 	ev.data.fd = fd;
 	if (epoll_ctl(this->epollFd_, EPOLL_CTL_ADD, fd, &ev) < 0)
 	{
 		close(fd);
 		return (ERROR);
 	}
-	this->epStruct_.insert(std::make_pair(fd, &ev));
 	return (OK);
 }
 
@@ -76,7 +76,7 @@ int    Epoll::epoll_add(int fd)
 int   Epoll::create_clnt_socket(int fd)
 {
 	int                     size = this->vecBloc_.size();
-	struct socketaddr_in    clnt_addr;
+	struct sockaddr_in    clnt_addr;
 	int                     clntFd;
 	int                     clntLen = sizeof(clnt_addr);
 
@@ -101,66 +101,81 @@ int   Epoll::create_clnt_socket(int fd)
 //
 void    Epoll::epoll_server_manager()
 {
-	int                 evCount;
-	int                 clntFd;
-	event               epEvent[MAX_EVENT];
+    int                 evCount;
+    int                 clntFd;
+    event               epEvent[MAX_EVENT];
+    
+    while (1)
+    {
+        evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
+        std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
+        if (evCount < 0)
+        {           
+            std::cout << "Epoll event count error" << std::endl;
+            break ;
+        }
+        for (int i = 0; i < evCount; i++)
+        {
+            if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP))
+            {    
+                std::cout << "Epoll event error" << std::endl;
+                close(epEvent[i].data.fd);
+                continue ;
+            }
+            else if ((find_server_fd(epEvent[i].data.fd)) == OK)
+            {
+                clntFd = create_clnt_socket(epEvent[i].data.fd);
+                if (clntFd != ERROR)
+                { 
+                    epoll_add(clntFd);
+                    Block serverBlock = get_location_block(epEvent[i].data.fd);
+                    this->c_.insert(std::make_pair (clntFd, Connection(clntFd, serverBlock, this)));
+                }
+                else
+                {
+                    std::cout << "accept() error !" << std::endl;
+                    close(clntFd);
+                    continue ;
+                }
+            }
+            else if(epEvent[i].events & EPOLLIN)
+            { 
+                int fd = epEvent[i].data.fd;
+                mapConnection::iterator it = this->c_.find(fd);
+                it->second.processRequest(); //treat_request()
+                // if server is ready to response change mod EPOLLOUT
+                // make the flag READY  ex: it->second.check_flag();
+                // epoll_Ctl_Mode(fd, EPOLLOUT);
+            }
+            else if(epEvent[i].events & EPOLLOUT)
+            {
+                int fd = epEvent[i].data.fd;
+                mapConnection::iterator it = this->c_.find(fd);
+                it->second.response();
+            }
 
-	while (1)
-	{
-		evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
-		// std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
-		if (evCount < 0)
-		{
-			std::cout << "Epoll event count error" << std::endl;
-			break ;
-		}
-		for (int i = 0; i < evCount; i++)
-		{
-			if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP) || (!(epEvent[i].events & EPOLLIN)))
-			{
-				std::cout << "Epoll event error" << std::endl;
-				close(epEvent[i].data.fd);
-				continue ;
-			}
-			else if ((find_server_fd(epEvent[i].data.fd)) == OK)
-			{
-				clntFd = create_clnt_socket(epEvent[i].data.fd);
-				if (clntFd != ERROR)
-				{
-					epoll_add(clntFd);
-					Block requestBlock = get_location_block(epEvent[i].data.fd);
-					this->mapClnt_.insert( std::make_pair (clntFd, Request(clntFd, requestBlock)));
-				}
-				else
-				{
-					std::cout << "accept() error !" << std::endl;
-					close(clntFd);
-					continue ;
-				}
-			}
-			else
-			{
-				// std::cout << "connect" << std::endl;
-				// int fd = epEvent[i].data.fd;
-				
-				RecvRequest request(epEvent[i].data.fd);
-				std::cout << "client fd: " << request.get_client_fd() << std::endl;
-				int r = recv(request.get_client_fd(), &request.get_buf(), 1, 0);
-				
-				std::cout << "r: " << r << std::endl;
-				std::cout << request.get_buf() << std::endl;
-				// mapClnt::iterator it = this->mapClnt_.find(fd);
-				// it->second.add_string(); // Recv request buf
-				// if (it->second.getter_status() == "more")
-				// {
-				//     mapEpoll::iterator it2 = this->epStruct_.find(fd);
-				//     it2->second->events = EPOLLOUT;
-				//     epoll_ctl(this->epollFd_, EPOLL_CTL_MOD, fd, it2->second);
+        }
+    }
+}
 
-				// }
-			}
-		}
-	}
+void    Epoll::epoll_Ctl_Mode(int fd, int op)
+{
+    event ev;
+
+    if (op == EPOLLIN)
+    {
+        ev.data.fd = fd;
+        ev.events = EPOLLIN | EPOLLET | EPOLLHUP | EPOLLERR;
+        epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
+    }
+    else if (op == EPOLLOUT)
+    {
+        ev.data.fd = fd;
+        ev.events = EPOLLOUT | EPOLLET | EPOLLHUP | EPOLLERR;
+        epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
+    }
+    else
+        std::cout << "EPOLL CTL FUNC ERROR" << std::endl;
 }
 
 //
