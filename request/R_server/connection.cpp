@@ -6,7 +6,7 @@ Connection::Connection(int fd, Block block, Epoll *ep) : clntFd_(fd), block_(blo
 
 Connection::~Connection() { }
 
-void    Connection::requestRecv()
+void    Connection::processRequest()
 {
     // this->request_.addBuffer();
     int n = recv(this->clntFd_, &buffer, sizeof(buffer), 0); 
