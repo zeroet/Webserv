@@ -17,7 +17,7 @@ void    Connection::processRequest()
 		//need function to quit
 		//return (Error); or return (-1);
 	}
-	std::cout << "n: " << n << std::endl;
+	// std::cout << "n: " << n << std::endl;
     buf_.insert(buf_.end(), buffer, buffer + n);
 	std::cout << "buf_: " << std::endl;
 	for (unsigned int i = 0; i < buf_.size(); i++)
@@ -25,7 +25,20 @@ void    Connection::processRequest()
         // std::cout << "buf size: " << buf_.size() << std::endl;
 		std::cout << buf_[i];
 	}
-    request_.printRequestMsg();
+	
+	
+	// while (1)
+	// {
+	// 	Request &request = getRequest();
+	// 	if (request.empty())
+	// 	{
+	// 		printf("yes it's empty\n");
+
+    // 		// request.printRequestMsg();
+	// 		break;
+	// 	}
+	// }
+
     // this->request_.parsingBuffer();
     // std::cout << this->request_.getBuffer();
     // std::cout << "Recv" << std::endl;
@@ -36,4 +49,8 @@ void    Connection::processRequest()
 void    Connection::response()
 {
     std::cout <<"Response " <<std::endl;
+}
+
+Request	&Connection::getRequest(void) {
+	return (request_);
 }

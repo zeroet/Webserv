@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <map>
 #include <vector>
+#include <deque>
 
 # define CRLF "\r\n"
 # define END_BUF "\r\n\r\n"
@@ -35,7 +36,9 @@ class Connection
 		Connection(int fd, Block block, Epoll *ep);
 		~Connection();
 
-		void    requestRecv();
+		Request	&getRequest(void);
+
+		void    processRequest();
 		void    response();
 
 };

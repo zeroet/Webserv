@@ -1,6 +1,6 @@
 #include "request.hpp"
 
-Request::Request(void) : method_(""), path_(""), version_(""), requestHeaders_(), body_() {} 
+Request::Request(void) : method_(""), path_(""), version_(""), requestHeaders_(), body_(), phase_(ft::START_LINE_INCOMPLETE) {} 
 
 Request::Request(Request const &x) {
 	*this = x;
