@@ -50,6 +50,23 @@ const	vecByte		&Request::getBody(void)	const {
 	return (body_);
 }
 
+void	Request::printRequestMsg(void) {
+	printf("====Request Parser====\n");
+	printf("method_: %s\n", method_.c_str());
+	printf("path_: %s\n", path_.c_str());
+	printf("version_: %s\n", version_.c_str());
+	// for (mapHeader::iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++) {
+		// printf("%s: ", (*it).first.c_str());
+		// printf("\n");
+	// }
+	// printf("body:\n");
+	// 	// body_.push_back('\0');
+	// 	// printf("%s\n", reinterpret_cast<const char *>(body_.data()));
+	// 	// body_.pop_back();
+	// // }
+	printf("=====================\n");
+}
+
 //setter
 
 // void    Request::addBuffer(void)

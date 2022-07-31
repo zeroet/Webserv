@@ -23,6 +23,7 @@ class Request
 		mapHeader	requestHeaders_;
 		vecByte		body_;
 		
+		enum 
 
 	public:
 		Request(void);
@@ -39,6 +40,8 @@ class Request
 		const	std::string	getHeaderValue(std::string key) const;
 		const	vecByte		&getBody(void)	const;
 
+		//tmp
+		void	printRequestMsg(void);
 
 		// void    addBuffer(void);
 		// void    parsingBuffer(void);

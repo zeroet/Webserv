@@ -25,7 +25,7 @@ void    Connection::requestRecv()
         // std::cout << "buf size: " << buf_.size() << std::endl;
 		std::cout << buf_[i];
 	}
-
+    request_.printRequestMsg();
     // this->request_.parsingBuffer();
     // std::cout << this->request_.getBuffer();
     // std::cout << "Recv" << std::endl;
