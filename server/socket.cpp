@@ -57,7 +57,7 @@ int     Socket::create_socket()
         this->error_ = bind(socketFd, (struct sockaddr*)&sockAddr, sizeof(sockAddr));
         if (this->error_ < 0)
 		{
-			std::cout << "Bind error ! PortNumber [" << vecBloc_[i].getter_portNumber() <<  "]"<< std::endl;
+			std::cout << RED << "Bind error ! PortNumber [" << vecBloc_[i].getter_portNumber() <<  "]"<< FIN << std::endl;
 			continue;
 		}
         this->error_ = listen(socketFd, LISTEN_BACKLOG);
