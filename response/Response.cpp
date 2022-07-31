@@ -1,6 +1,6 @@
 #include "Response.hpp"
 
-void		Response::map_make_pair(std::string code)
+void		Response::MapStatusCode(std::string code)
 {
 	mapStatus_.insert(std::make_pair("100", "Continue"));
 	mapStatus_.insert(std::make_pair("101", "Switching Protocols"));
@@ -53,13 +53,13 @@ Response::Response(Response const & copy)
 	(*this) = copy;
 }
 
-Response::Response(const std::string &status)
+/*Response::Response(const std::string &status)
 {
 	std::cout << this->StatusCode_ << std::endl;
 	std::cout << this->StatusMessage_ << std::endl;
-	map_make_pair(this->StatusCode_);
+	MapStatusCode(this->StatusCode_);
 	response_manager();
-}
+}*/
 
 Response & Response::operator=(Response const & copy)
 {
@@ -71,6 +71,15 @@ Response::~Response()
 {
 }
 
+std::string	Response::getStatusCode()
+{
+	return (this->StatusCode_);
+}
+
+void	Response::setStatusCode(std::string code)
+{
+	this->StatusCode_ = code;
+}
  void	Response::response_manager()
  {
  	std::string str;

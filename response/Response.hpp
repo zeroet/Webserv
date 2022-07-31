@@ -9,7 +9,7 @@ class Response
 {
 	public:
 		Response();
-		Response(const std::string &status);
+//		Response(const std::string &status);
 		Response(Response const & copy);
 		Response & operator =(Response const & copy);
 		~Response();
@@ -22,9 +22,11 @@ class Response
 		void			makeStatusBody();
 		void			makeStatusBody(std::string url);
 		int				getBodySize();
-		void	map_make_pair(std::string code);
-		void	response_manager();
-
+		void			MapStatusCode(std::string code);
+		void			response_manager();
+		std::string		getStatusCode();
+		void			setStatusCode(std::string code);
+	
 	private:
 		std::map<std::string, std::string> Headers_;
 		std::string StatusCode_;

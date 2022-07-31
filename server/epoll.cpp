@@ -16,7 +16,7 @@ Epoll::Epoll(std::vector<Block> block) : vecBloc_(block)
 }
 
 //Copy Construct
-Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), mapClnt_(other.mapClnt_), epollFd_(other.epollFd_)
+Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), c_(other.c_), epollFd_(other.epollFd_)
 {
 	*this = other;
 }
@@ -37,7 +37,13 @@ void    Epoll::init_server_socket()
 	for (int i = 0; i < numServerFd; i++)
 	{
 		if (OK != (epoll_add(vecBloc_[i].getter_socketFd())))
-			std::cout << "epoll add server socket failed" << std::endl;
+			std::cout << RED << "PortNumber [" << vecBloc_[i].getter_portNumber() <<
+            "] Epoll_Ctl_Add failed" << FIN <<std::endl;
+        else
+        {
+            std::cout << GREEN << "PortNumber [" << vecBloc_[i].getter_portNumber() <<
+            "] Epoll_Ctl_Add Success" << FIN << std::endl;
+        }   
 	}
 }
 
@@ -59,7 +65,7 @@ int    Epoll::epoll_add(int fd)
 {
 
 	event ev;
-	ev.events = EPOLLIN | EPOLLET;
+	ev.events = EPOLLIN | EPOLLET | EPOLLERR | EPOLLHUP;
 	ev.data.fd = fd;
 	if (epoll_ctl(this->epollFd_, EPOLL_CTL_ADD, fd, &ev) < 0)
 	{
@@ -125,8 +131,8 @@ void    Epoll::epoll_server_manager()
                 if (clntFd != ERROR)
                 { 
                     epoll_add(clntFd);
-                    Block requestBlock = get_location_block(epEvent[i].data.fd);
-                    this->mapClnt_.insert(std::make_pair (clntFd, Request(clntFd, requestBlock)));
+                    Block serverBlock = get_location_block(epEvent[i].data.fd);
+                    this->c_.insert(std::make_pair (clntFd, Connection(clntFd, serverBlock, this)));
                 }
                 else
                 {
@@ -138,26 +144,15 @@ void    Epoll::epoll_server_manager()
             else if(epEvent[i].events & EPOLLIN)
             { 
                 int fd = epEvent[i].data.fd;
-                mapClnt::iterator it = this->mapClnt_.find(fd);
-                epoll_Ctl_Mode(fd, EPOLLOUT);
-                it->second.treat_request(); //treat_request()
+                mapConnection::iterator it = this->c_.find(fd);
+                it->second.requestRecv();
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
                 int fd = epEvent[i].data.fd;
-                mapClnt::iterator it = this->mapClnt_.find(fd);
-                it->second.send_string();
-                epoll_Ctl_Mode(fd, EPOLLIN);
-                // if (epEvent[i].events & EPOLLOUT)
-                // {
-                //     event ev;
-                //     ev.data.fd = fd;
-                //     epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, &ev);
-                //     mapClnt_.erase(it);
-                //     close(fd);
-                // }
+                mapConnection::iterator it = this->c_.find(fd);
+                it->second.response();
             }
-
         }
     }
 }
@@ -169,13 +164,13 @@ void    Epoll::epoll_Ctl_Mode(int fd, int op)
     if (op == EPOLLIN)
     {
         ev.data.fd = fd;
-        ev.events = EPOLLIN | EPOLLET;
+        ev.events = EPOLLIN | EPOLLET | EPOLLHUP | EPOLLERR;
         epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
     }
     else if (op == EPOLLOUT)
     {
         ev.data.fd = fd;
-        ev.events = EPOLLOUT | EPOLLET;
+        ev.events = EPOLLOUT | EPOLLET | EPOLLHUP | EPOLLERR;
         epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &ev);
     }
     else
