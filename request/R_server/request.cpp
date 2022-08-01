@@ -1,6 +1,6 @@
 #include "request.hpp"
 
-Request::Request(void) : method_(""), path_(""), version_(""), requestHeaders_(), body_(), phase_(ft::START_LINE_INCOMPLETE) {} 
+Request::Request(void) : method_(""), path_(""), version_(""), requestHeaders_(), body_("") {}
 
 Request::Request(Request const &x) {
 	*this = x;
@@ -46,7 +46,7 @@ const	std::string	Request::getHeaderValue(std::string key) const {
 	return (NULL);
 }
 
-const	vecByte		&Request::getBody(void)	const {
+const	std::string		&Request::getBody(void)	const {
 	return (body_);
 }
 
@@ -72,7 +72,7 @@ void	Request::printRequestMsg(void) {
 // void    Request::addBuffer(void)
 // {
 //     // memset(&buf, 0, sizeof(buf));
-//     int n = recv(this->fd_, &buffer, sizeof(buffer), 0); 
+//     int n = recv(this->fd_, &buffer, sizeof(buffer), 0);
 // 	// std::cout << "i from recv :" << n << std::endl;
 // 	if (n == -1)
 // 	{
