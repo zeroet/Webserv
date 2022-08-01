@@ -8,23 +8,20 @@ Connection::~Connection() { }
 
 void    Connection::processRequest()
 {
-    // this->request_.addBuffer();
+
     int n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0); //except \r
-	// std::cout << "i from recv :" << n << std::endl;
 	if (n == -1)
 	{
-		printf("recv Error\n");
 		//close connection
+		printf("recv Error\n");
 		return ;
 		//need function to quit
 		//return (Error); or return (-1);
 	}
-	std::cout << "n: " << n << std::endl;
-	std::cout << "buffer_char: " << buffer_char << std::endl;
+	// std::cout << "n: " << n << std::endl;
+	// std::cout << "buffer_char: " << buffer_char << std::endl;
 	// std::cout << "buffer_char + n: " << buffer_char + n << std::endl;
     // buf_.insert(buf_.end(), buffer_char, buffer_char + n);
-	// std::string a(buffer_char);
-	// tmp.append(a);
 	buffer_.insert(buffer_.end(), buffer_char, buffer_char + n);
 	std::cout << "buffer_: " << buffer_ << std::endl;
 
