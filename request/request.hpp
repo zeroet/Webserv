@@ -14,8 +14,7 @@
 typedef std::map<std::string, std::string> 	mapHeader;
 // typedef std::vector<unsigned int>			vecByte;
 
-class Request
-{
+class Request {
 	private:
 		std::string 	method_;
 		std::string 	path_;

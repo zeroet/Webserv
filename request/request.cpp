@@ -14,7 +14,7 @@ const	Request	&Request::operator=(const Request &x) {
     requestHeaders_ = x.requestHeaders_;
     body_ = x.body_;
   }
-  return *this;
+  return (*this);
 }
 
 Request::~Request(void) {}

@@ -3,6 +3,7 @@
 #include "epoll.hpp"
 #include "request.hpp"
 #include "socket.hpp"
+#include "OperateRequest.hpp"
 #include <iostream>
 #include <cstdio>
 #include <map>
@@ -19,6 +20,7 @@
 //class Request;
 class Epoll;
 class Request;
+class OperateRequest;
 
 
 enum phaseMsg {
@@ -37,32 +39,29 @@ class Connection
 		int         clntFd_;
 		Block       block_;
 		std::string status_;
-		Epoll       *ep_;
+		Epoll       *ep_; //Epoll stokage
 
-		char			buffer_char[BUFFER_SIZE];
-		std::string		buffer_;
+		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
+		std::string		buffer_;					//append buffer
 
 		Request     			request_;
 		// std::vector<Request>	multi_request;
 		// response		response_;
 
-		bool			Ctl_mode_flag_;
 		int				phase_msg_;
-		// ft::
 		// res
 		// exe
+
 	public:
 		Connection(int fd, Block block, Epoll *ep);
 		~Connection();
 
 		//getter
 		Request	&getRequest(void);
-		bool	&getCtlMode(void);
 		int		&getPhaseMsg(void);
 		std::string &getBuffer(void);
 
 		//setter
-		void	setCtlMode(bool mode);
 		void	setPhaseMsg(int new_msg);
 
 		void    processRequest();
