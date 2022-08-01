@@ -10,7 +10,7 @@
 #include <deque>
 
 # define CRLF "\r\n"
-# define END_BUF "\r\n\r\n"
+# define CRLFCRLF "\r\n\r\n"
 # define LEN_END_BUF 4
 # define LEN_CRLF 2
 
@@ -27,9 +27,13 @@ class Connection
 		Block       block_;
 		std::string status_;
 		Epoll       *ep_;
-		Request     request_;
-		unsigned char               buffer[BUFFER_SIZE];
-        std::vector<unsigned char>  buf_;
+
+		char		buffer_char[BUFFER_SIZE];
+		std::string		buffer_;
+
+		Request     	request_;
+
+		bool			Ctl_mode_flag_;
 		// res
 		// exe
 	public:
@@ -37,6 +41,9 @@ class Connection
 		~Connection();
 
 		Request	&getRequest(void);
+		bool	&getCtlMode(void);
+
+		void	setCtlMode(bool mode);
 
 		void    processRequest();
 		void    response();
