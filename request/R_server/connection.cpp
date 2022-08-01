@@ -68,7 +68,7 @@ void    Connection::processRequest()
 	//to change Ctl Mode when message is done with CRLFCRLF
 	// size_t pos;
 	if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
-			setCtlMode(true);
+		ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 
 
 }
@@ -78,9 +78,9 @@ Request	&Connection::getRequest(void) {
 	return (request_);
 }
 
-bool	&Connection::getCtlMode(void) {
-	return (Ctl_mode_flag_);
-}
+// bool	&Connection::getCtlMode(void) {
+// 	return (Ctl_mode_flag_);
+// }
 
 int		&Connection::getPhaseMsg(void) {
 	return (phase_msg_);
@@ -91,9 +91,9 @@ std::string	&Connection::getBuffer(void) {
 }
 
 //setter
-void	Connection::setCtlMode(bool mode) {
-	Ctl_mode_flag_ = mode;
-}
+// void	Connection::setCtlMode(bool mode) {
+// 	Ctl_mode_flag_ = mode;
+// }
 
 void	Connection::setPhaseMsg(int new_msg) {
 	phase_msg_ = new_msg;
