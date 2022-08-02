@@ -30,26 +30,24 @@ void    Request::addBuffer(void)
 void    Request::parsingBuffer(void)
 {
     std::string tmp;
-    std::string::size_type posEndBuff(-1);
-    std::string::size_type posCRLF(-1);
+    std::string::size_type posEndBuff(this->buf_.find(END_BUF));
+    std::string::size_type posCRLF(this->buf_.find(CRLF));
 
-    std::cout << posEndBuff << " est pos End Buff" <<  std::endl;
-    /*
-    posEndBuff = this->buf_.find(END_BUF);
-    posCRLF = this->buf_.find(CRLF);
-    // buf_ : "abc/r/n/r/ndef"
-    // n = 3
-
-    std::cout << posEndBuff << " est pos End Buff" <<  std::endl;
-
-    if (posEndBuff != -1)
-    {
-        tmp.assign(this->buf_, 0, posEndBuff);
-        this->buf_.erase(0, posEndBuff + LEN_END_BUF);
-    }
-    std::cout << tmp << " est tmp\n";
-    std::cout << buf_ << " est buf\n";
-    */
+    std::cout << posEndBuff << " est posEndBuff" << std::endl;
+    std::cout << posCRLF << " est posCRLF" << std::endl;
+    
+    // if (posEndBuff != std::string::npos)
+    // {
+    //     tmp.assign(this->buf_, 0, posEndBuff);
+    //     this->buf_.erase(0, posEndBuff + LEN_END_BUF);
+    // }
+    // if (posCRLF != std::string::npos)
+    // {
+    //     tmp.assign(this->buf_, 0, posCRLF);
+    //     this->buf_.erase(0, posCRLF + LEN_CRLF);
+    // }
+    // std::cout << tmp << " est tmp\n";
+    // std::cout << buf_ << " est buf\n";
 }
 
 std::string const &Request::getBuffer(void) const
