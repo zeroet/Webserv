@@ -50,6 +50,14 @@ const	std::string		&Request::getBody(void)	const {
 	return (body_);
 }
 
+//setter
+void	Request::setMethod(std::string method) {
+	method_ = method;
+}
+
+void	Request::setPath(std::string path);
+void	Request::setVersion(std::string version);
+
 void	Request::printRequestMsg(void) {
 	printf("====Request Parser====\n");
 	printf("method_: %s\n", method_.c_str());

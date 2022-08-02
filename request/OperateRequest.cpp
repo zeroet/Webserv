@@ -22,6 +22,7 @@ void	OperateRequest::setRequest(Request *req) {
 
 void	OperateRequest::checkRequestMessage(Connection *c) {
 
+	setrequest(c->getRequest());
 	size_t pos = 0;
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
 	{
@@ -60,7 +61,6 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 
 void	OperateRequest::parseStartLine(Connection *c) {
 
-	(void)c;
 	//method check : GET/POST/DELETE -> toupper / if not Error 400
 	std::vector<std::string> split_start_line = splitDelim(startLine_, " ");
 	if (split_start_line.size() != 3)
@@ -82,10 +82,9 @@ void	OperateRequest::parseStartLine(Connection *c) {
 		std::cout << "method wrong request code : " <<  c->getReqStatusCode() <<  std::endl;
 		return ;
 	}
-
-
-
+	else
 	//path check:
+
 
 	//HTTP/1.1 check: 'HTTP/1.1' / if not Error 400
 }
