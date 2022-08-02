@@ -64,10 +64,24 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	//method check : GET/POST/DELETE -> toupper / if not Error 400
 	std::vector<std::string> split_start_line = splitDelim(startLine_, " ");
 	if (split_start_line.size() != 3)
-	for (size_t i = 0; i < split_start_line.size(); i++)
-		std::cout << split_start_line[i] << std::endl;
+	{
+		c->setReqStatusCode(400);
+		std::cout << "start line argument wrong request code : " <<  c->getReqStatusCode() <<  std::endl;
+		return ;
+	}
+	else
+		std::cout << "start line argument OK" <<  std::endl;
+
+	// for (size_t i = 0; i < split_start_line.size(); i++)
+	// 	std::cout << split_start_line[i] << std::endl;
 	// std::string method = startLine_.substr(0, startLine_.find_first_of(" "));
 	// std::cout << method << std::endl;
+	if (!checkMethod(split_start_line[0]))
+	{
+		c->setReqStatusCode(400);
+		std::cout << "method wrong request code : " <<  c->getReqStatusCode() <<  std::endl;
+		return ;
+	}
 
 
 
@@ -88,4 +102,15 @@ std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string d
     }
     res.push_back(s.substr(pos_start));
     return res;
+}
+
+int		OperateRequest::checkMethod(const std::string &s) {
+
+	for(size_t i = 0; i < s.length(); i++)
+	{
+		char c = s[i];
+		if (!isupper(c) || !isalpha(c))
+			return (false);
+	}
+	return (true);
 }

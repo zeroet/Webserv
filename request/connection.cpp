@@ -6,6 +6,7 @@ Connection::Connection(int fd, Block block, Epoll *ep) : clntFd_(fd), block_(blo
     std::cout << ep_->getepollfd() << std::endl;
 	// Ctl_mode_flag_ = false;
 	phase_msg_ = START_LINE_INCOMPLETE;
+	req_status_code_ = DEFAULT;
 }
 
 Connection::~Connection() { }
@@ -86,9 +87,9 @@ Request	&Connection::getRequest(void) {
 	return (request_);
 }
 
-// bool	&Connection::getCtlMode(void) {
-// 	return (Ctl_mode_flag_);
-// }
+int			&Connection::getReqStatusCode(void) {
+	return (req_status_code_);
+}
 
 int		&Connection::getPhaseMsg(void) {
 	return (phase_msg_);
@@ -99,9 +100,9 @@ std::string	&Connection::getBuffer(void) {
 }
 
 //setter
-// void	Connection::setCtlMode(bool mode) {
-// 	Ctl_mode_flag_ = mode;
-// }
+void	Connection::setReqStatusCode(int status_code) {
+	req_status_code_ = status_code;
+}
 
 void	Connection::setPhaseMsg(int new_msg) {
 	phase_msg_ = new_msg;
