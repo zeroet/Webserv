@@ -1,0 +1,98 @@
+\hypertarget{classft_1_1_statement}{}\section{Statement Class Reference}
+\label{classft_1_1_statement}\index{Statement@{Statement}}
+
+
+{\ttfamily \#include $<$Statement.\+hpp$>$}
+
+
+
+Collaboration diagram for Statement\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=165pt]{classft_1_1_statement__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classft_1_1_statement_ad5cb0ada03653eb2e1c8947f05c07ad6}{debug\+Print} () const
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classft_1_1_directive}{Directive} \hyperlink{classft_1_1_statement_a0ab2276aaeac8d93ba6642c22ded7ba9}{directive}
+\item 
+std\+::vector$<$ \hyperlink{classft_1_1_statement}{Statement} $>$ \hyperlink{classft_1_1_statement_aa3968f0789a0c0354fd565636082d043}{parameters}
+\item 
+enum \hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4}{Statement\+Kind} \hyperlink{classft_1_1_statement_ad4e117b2f59a58b0f0091c8fa8bbcb55}{kind}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 19 of file Statement.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classft_1_1_statement_ad5cb0ada03653eb2e1c8947f05c07ad6}\label{classft_1_1_statement_ad5cb0ada03653eb2e1c8947f05c07ad6}} 
+\index{ft\+::\+Statement@{ft\+::\+Statement}!debug\+Print@{debug\+Print}}
+\index{debug\+Print@{debug\+Print}!ft\+::\+Statement@{ft\+::\+Statement}}
+\subsubsection{\texorpdfstring{debug\+Print()}{debugPrint()}}
+{\footnotesize\ttfamily void debug\+Print (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Definition at line 3 of file Statement.\+cpp.
+
+
+\begin{DoxyCode}
+4     \{
+5         std::cout << \hyperlink{classft_1_1_statement_a0ab2276aaeac8d93ba6642c22ded7ba9}{directive}.\hyperlink{classft_1_1_directive_a9b45b3e13bd9167aab02e17e08916231}{name} << std::endl;
+6         \textcolor{keywordflow}{for} (Statement statement : \hyperlink{classft_1_1_statement_aa3968f0789a0c0354fd565636082d043}{parameters})
+7             statement.debugPrint();
+8         std::cout << std::endl;
+9     \}
+\end{DoxyCode}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classft_1_1_statement_a0ab2276aaeac8d93ba6642c22ded7ba9}\label{classft_1_1_statement_a0ab2276aaeac8d93ba6642c22ded7ba9}} 
+\index{ft\+::\+Statement@{ft\+::\+Statement}!directive@{directive}}
+\index{directive@{directive}!ft\+::\+Statement@{ft\+::\+Statement}}
+\subsubsection{\texorpdfstring{directive}{directive}}
+{\footnotesize\ttfamily \hyperlink{classft_1_1_directive}{Directive} directive}
+
+
+
+Definition at line 22 of file Statement.\+hpp.
+
+\mbox{\Hypertarget{classft_1_1_statement_ad4e117b2f59a58b0f0091c8fa8bbcb55}\label{classft_1_1_statement_ad4e117b2f59a58b0f0091c8fa8bbcb55}} 
+\index{ft\+::\+Statement@{ft\+::\+Statement}!kind@{kind}}
+\index{kind@{kind}!ft\+::\+Statement@{ft\+::\+Statement}}
+\subsubsection{\texorpdfstring{kind}{kind}}
+{\footnotesize\ttfamily enum \hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4}{Statement\+Kind} kind}
+
+
+
+Definition at line 24 of file Statement.\+hpp.
+
+\mbox{\Hypertarget{classft_1_1_statement_aa3968f0789a0c0354fd565636082d043}\label{classft_1_1_statement_aa3968f0789a0c0354fd565636082d043}} 
+\index{ft\+::\+Statement@{ft\+::\+Statement}!parameters@{parameters}}
+\index{parameters@{parameters}!ft\+::\+Statement@{ft\+::\+Statement}}
+\subsubsection{\texorpdfstring{parameters}{parameters}}
+{\footnotesize\ttfamily std\+::vector$<$\hyperlink{classft_1_1_statement}{Statement}$>$ parameters}
+
+
+
+Definition at line 23 of file Statement.\+hpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{_statement_8hpp}{Statement.\+hpp}\item 
+\hyperlink{_statement_8cpp}{Statement.\+cpp}\end{DoxyCompactItemize}
