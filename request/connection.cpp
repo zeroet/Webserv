@@ -1,5 +1,7 @@
 #include "connection.hpp"
 
+OperateRequest operateRequest = OperateRequest();
+
 Connection::Connection(int fd, Block block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
     std::cout << ep_->getepollfd() << std::endl;
 	// Ctl_mode_flag_ = false;
@@ -32,8 +34,8 @@ void    Connection::processRequest()
 		|| phase_msg_ == START_LINE_COMPLETE
 		|| phase_msg_ == HEADER_INCOMPLETE
 		|| phase_msg_ == HEADER_COMPLETE)
-		// std::cout << "here" << std::endl;
-		OperateRequest::checkRequestMessage(this);
+		// OperateRequest::checkRequestMessage(this);
+		operateRequest.checkRequestMessage(this);
 
 	/*
 	size_t pos = 0;

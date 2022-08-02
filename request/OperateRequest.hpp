@@ -10,16 +10,25 @@ class Request;
 class OperateRequest {
 
 	private:
-		Request *request_;
+		Request		*request_;
+		std::string	startLine_;
+		std::string	headers_;
+		size_t		tmp_;
 
 	public:
 		OperateRequest(void);
+		// OperateRequest(Connection *c);
 		~OperateRequest(void);
+
+		//getter
+		std::string	&getStartLine(void);
+		std::string	&getHeaders(void);
 
 		//setter
 		void	setRequest(Request *request);
 
-		static void	checkRequestMessage(Connection *c);
+		void	checkRequestMessage(Connection *c);
+		void	parseStartLine(Connection *c);
 
 };
 
