@@ -56,6 +56,7 @@ class OperateRequest {
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
+		// int		checkhttp(const std::string &s);
 
 };
 
