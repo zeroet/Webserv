@@ -16,13 +16,13 @@ std::string	&OperateRequest::getHeaders(void) {
 }
 
 //setter
-void	OperateRequest::setRequest(Request *req) {
-	request_ = req;
-}
+// void	OperateRequest::setRequest(Request *req) {
+// 	request_ = req;
+// }
 
 void	OperateRequest::checkRequestMessage(Connection *c) {
 
-	setrequest(c->getRequest());
+	// setRequest(c->getRequest());
 	size_t pos = 0;
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
 	{
@@ -65,25 +65,24 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	std::vector<std::string> split_start_line = splitDelim(startLine_, " ");
 	if (split_start_line.size() != 3)
 	{
-		c->setReqStatusCode(400);
+		c->setReqStatusCode(BAD_REQUEST);
 		std::cout << "start line argument wrong request code : " <<  c->getReqStatusCode() <<  std::endl;
 		return ;
 	}
-	else
-		std::cout << "start line argument OK" <<  std::endl;
-
 	// for (size_t i = 0; i < split_start_line.size(); i++)
 	// 	std::cout << split_start_line[i] << std::endl;
 	// std::string method = startLine_.substr(0, startLine_.find_first_of(" "));
 	// std::cout << method << std::endl;
 	if (!checkMethod(split_start_line[0]))
 	{
-		c->setReqStatusCode(400);
-		std::cout << "method wrong request code : " <<  c->getReqStatusCode() <<  std::endl;
+		c->setReqStatusCode(BAD_REQUEST);
 		return ;
 	}
 	else
+		c->getRequest().setMethod(split_start_line[0]);
+	
 	//path check:
+	c->getRequest().setPath(split_start_line[1]);
 
 
 	//HTTP/1.1 check: 'HTTP/1.1' / if not Error 400
@@ -113,3 +112,8 @@ int		OperateRequest::checkMethod(const std::string &s) {
 	}
 	return (true);
 }
+
+// int		OperateRequest::checkVersion(const std::string &s) {
+// 	int res = s.compare("HTTP/1.1");
+
+// }

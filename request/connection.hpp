@@ -13,8 +13,9 @@
 
 # define CRLF "\r\n"
 # define CRLFCRLF "\r\n\r\n"
-# define LEN_END_BUF 4
 # define LEN_CRLF 2
+# define LEN_CRLFCRLF 4
+
 # define DEFAULT -1
 
 # define BUFFER_SIZE 512
@@ -33,6 +34,25 @@ enum phaseMsg {
 	BODY_INCOMPLETE,
 	BODY_COMPLETE,
 	ERROR_OCR
+};
+
+enum RequestStatusCode {
+	ALL_OK = 200,
+	CREATED = 201,
+	ACCEPTED = 202,
+	NO_CONTENT = 204,
+	MOVED_PERMANENTLY = 301,
+	TEMPORARY_REDIRECT = 307,
+	PERMANENT_REDIRECT = 308,
+	BAD_REQUEST = 400,
+	UNAUTHORIZED = 401,
+	FORBIDDEN = 403,
+	NOT_FOUND = 404,
+	METHOD_NOT_ALLOWED = 405,
+	REQUEST_TIMEOUT = 408,
+	SERVER_ERROR = 500,
+	BAD_GATEWAY = 502,
+	HTTP_VERSION_NOT_SUPPORTED = 505
 };
 
 class Connection
@@ -71,5 +91,8 @@ class Connection
 
 		void    processRequest();
 		void    response();
+
+		//tmp
+		void	printRequestMsg(void);
 
 };
