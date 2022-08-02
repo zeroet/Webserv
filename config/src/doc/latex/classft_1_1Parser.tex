@@ -1,0 +1,63 @@
+\hypertarget{classft_1_1Parser}{}\section{ft\+:\+:Parser Class Reference}
+\label{classft_1_1Parser}\index{ft\+::\+Parser@{ft\+::\+Parser}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_af9c087eb8856a4b69c618089ecbe2ab0}\label{classft_1_1Parser_af9c087eb8856a4b69c618089ecbe2ab0}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1HttpBlock}{Http\+Block} $>$ {\bfseries parse} (std\+::vector$<$ \hyperlink{classft_1_1Token}{Token} $>$ \&tokens)
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a91f10286e635ea2d94b7f078637ee0d3}\label{classft_1_1Parser_a91f10286e635ea2d94b7f078637ee0d3}} 
+void {\bfseries modify\+Identifier\+Token} (std\+::vector$<$ \hyperlink{classft_1_1Token}{Token} $>$ \&tokens)
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a9a5c9684c424e68b6d3ce5616b898dc9}\label{classft_1_1Parser_a9a5c9684c424e68b6d3ce5616b898dc9}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1Token}{Token} $>$ {\bfseries expect\+Token} (enum Token\+Type type, const std\+::string \&name=std\+::string())
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a21c74059d21bc75efa2aa9173a0ceeff}\label{classft_1_1Parser_a21c74059d21bc75efa2aa9173a0ceeff}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ {\bfseries check\+Valid\+Directive} ()
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_ae5f56d01502ad6ea911112e5f2d68182}\label{classft_1_1Parser_ae5f56d01502ad6ea911112e5f2d68182}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ {\bfseries check\+Valid\+Parameter\+Number} (std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ \&valid\+Directive)
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a5795bc9f048d5f2ed8969e4c2bf92d76}\label{classft_1_1Parser_a5795bc9f048d5f2ed8969e4c2bf92d76}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ {\bfseries expect\+Http\+Context} ()
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a68dbbe7bce0f7c35c25511e31655cddc}\label{classft_1_1Parser_a68dbbe7bce0f7c35c25511e31655cddc}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ {\bfseries expect\+Server\+Context} ()
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a6a6e7f4d7ed21085cc78be7da4457b51}\label{classft_1_1Parser_a6a6e7f4d7ed21085cc78be7da4457b51}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ {\bfseries expect\+Location\+Context} ()
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_aaa390a0ed2901a4a15ee4d9fd6958211}\label{classft_1_1Parser_aaa390a0ed2901a4a15ee4d9fd6958211}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ {\bfseries expect\+Simple\+Directive} ()
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_aedfb84f8ee089723f0d50ed91a44f0ea}\label{classft_1_1Parser_aedfb84f8ee089723f0d50ed91a44f0ea}} 
+std\+::pair$<$ bool, std\+::vector$<$ \hyperlink{classft_1_1Directive}{Directive} $>$ $>$ {\bfseries parse\+Context\+Body} ()
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a2dc59f01862f66a93cb5d8385fc8a451}\label{classft_1_1Parser_a2dc59f01862f66a93cb5d8385fc8a451}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1HttpBlock}{Http\+Block} $>$ {\bfseries parse\+Http\+Context} (std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ valid\+Directive)
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_aca4dfdabb592d9e82355de4e669b5ea8}\label{classft_1_1Parser_aca4dfdabb592d9e82355de4e669b5ea8}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1ServerBlock}{Server\+Block} $>$ {\bfseries parse\+Server\+Context} (\hyperlink{classft_1_1HttpBlock}{Http\+Block} \&http\+Context, std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ valid\+Directive)
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a34a2c50ab4096cc4ed9edd4a4601719e}\label{classft_1_1Parser_a34a2c50ab4096cc4ed9edd4a4601719e}} 
+std\+::pair$<$ bool, \hyperlink{classft_1_1LocationBlock}{Location\+Block} $>$ {\bfseries parse\+Location\+Context} (\hyperlink{classft_1_1ServerBlock}{Server\+Block} \&server\+Context, std\+::pair$<$ bool, \hyperlink{classft_1_1Directive}{Directive} $>$ valid\+Directive)
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_acee75deb20ac867f931086d32229bbae}\label{classft_1_1Parser_acee75deb20ac867f931086d32229bbae}} 
+bool {\bfseries set\+Base\+Directive\+Parameter} (\hyperlink{classft_1_1BaseDirectives}{Base\+Directives} \&context, std\+::vector$<$ \hyperlink{classft_1_1Directive}{Directive} $>$\+::iterator \&current\+Directive)
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a22d4b8cbb9bcd4424327e096c40a5b73}\label{classft_1_1Parser_a22d4b8cbb9bcd4424327e096c40a5b73}} 
+bool {\bfseries set\+Http\+Directive\+Parameter} (\hyperlink{classft_1_1HttpBlock}{Http\+Block} \&context, std\+::vector$<$ \hyperlink{classft_1_1Directive}{Directive} $>$ directive\+List)
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_ac535ec09504beb39c0517a9d86b97f0c}\label{classft_1_1Parser_ac535ec09504beb39c0517a9d86b97f0c}} 
+bool {\bfseries set\+Server\+Directive\+Parameter} (\hyperlink{classft_1_1ServerBlock}{Server\+Block} \&context, std\+::vector$<$ \hyperlink{classft_1_1Directive}{Directive} $>$ directive\+List)
+\item 
+\mbox{\Hypertarget{classft_1_1Parser_a80ab45c380a456bedb05fb22e65ea180}\label{classft_1_1Parser_a80ab45c380a456bedb05fb22e65ea180}} 
+bool {\bfseries set\+Location\+Directive\+Parameter} (\hyperlink{classft_1_1LocationBlock}{Location\+Block} \&context, std\+::vector$<$ \hyperlink{classft_1_1Directive}{Directive} $>$ directive\+List)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Parser.\+hpp\item 
+dummy.\+cpp\item 
+Parser.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,476 @@
+\hypertarget{namespaceft}{}\section{ft Namespace Reference}
+\label{namespaceft}\index{ft@{ft}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classft_1_1_base_directives}{Base\+Directives}
+\item 
+class \hyperlink{classft_1_1_directive}{Directive}
+\item 
+class \hyperlink{classft_1_1_http_block}{Http\+Block}
+\item 
+class \hyperlink{classft_1_1_location_block}{Location\+Block}
+\item 
+class \hyperlink{classft_1_1_parser}{Parser}
+\item 
+class \hyperlink{classft_1_1_server_block}{Server\+Block}
+\item 
+class \hyperlink{classft_1_1_statement}{Statement}
+\item 
+class \hyperlink{classft_1_1_token}{Token}
+\item 
+class \hyperlink{classft_1_1_tokenizer}{Tokenizer}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75d}{Directive\+Kind} \{ \newline
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da67e044074f46e6cea22788527da5f02e}{H\+T\+TP} = 0, 
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da67c96b24b23bcb408bae7626730a04b7}{S\+E\+R\+V\+ER}, 
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da1e9e3944b93fde52c7c92e1e15dcaf4a}{L\+O\+C\+A\+T\+I\+ON}, 
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da026a7fa9f276b046081164564a62a6d6}{C\+L\+I\+E\+N\+T\+\_\+\+M\+A\+X\+\_\+\+B\+O\+D\+Y\+\_\+\+S\+I\+ZE}, 
+\newline
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75daaefe179bd74ff161beb62eb565186d89}{K\+E\+E\+P\+A\+L\+I\+V\+E\+\_\+\+T\+I\+M\+E\+O\+UT}, 
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da5f0c05bad71a7b0dd266aae7ce4b3579}{I\+N\+D\+EX}, 
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da8ce880864e00bec4865ba027e32a466c}{A\+U\+T\+O\+I\+N\+D\+EX}, 
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75dad41208b99e347d1726824779b11ea11b}{R\+O\+OT}, 
+\newline
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da69c9592b502329f43c77ad043a13e6d9}{E\+R\+R\+O\+R\+\_\+\+P\+A\+GE}, 
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da331ec9878c0ed22e62de969d4b96b5bb}{L\+I\+S\+T\+EN}, 
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da8e7adb687472b53e3ed632cbcb949d88}{S\+E\+R\+V\+E\+R\+\_\+\+N\+A\+ME}, 
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da520e09ffec033636dba711f3441cc600}{R\+E\+T\+U\+RN}, 
+\newline
+\hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da25b0e84438d71cc28e97f17a01cfde7a}{L\+I\+M\+I\+T\+\_\+\+E\+X\+C\+E\+PT}
+ \}
+\item 
+enum \hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4}{Statement\+Kind} \{ \hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4ad34404e6665ab6bd4f8cfecd1727c8a6}{O\+N\+E\+\_\+\+P\+A\+R\+A\+M\+E\+T\+ER}, 
+\hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4a34cc013aae663bd7702b05a4c9fa5b44}{M\+U\+L\+T\+I\+P\+U\+L\+\_\+\+P\+A\+R\+A\+M\+E\+T\+E\+RS}, 
+\hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4a7f06283f0d1a4d167be6c37a3d24fd11}{C\+O\+N\+T\+E\+XT}
+ \}
+\item 
+enum \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921}{Token\+Type} \{ \newline
+\hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921aba113c37f25d24aada154b75c7dd91ba}{W\+H\+I\+T\+E\+S\+P\+A\+CE}, 
+\hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921a84f8ae2490f9e4bd2321fd21f4b0e807}{I\+D\+E\+N\+T\+I\+F\+I\+ER}, 
+\hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921ae3852cb010d5e422026faf83b3c16f0e}{D\+I\+R\+E\+C\+T\+I\+VE}, 
+\hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921a194cde856bd2d79eac8adb9741c55940}{P\+A\+R\+A\+M\+E\+T\+ER}, 
+\newline
+\hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921a6411d9d6073252e4d316493506bbb979}{O\+P\+E\+R\+A\+T\+OR}, 
+\hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921aae696377c19e507b64e16be78ce3bbdb}{C\+O\+M\+M\+E\+NT}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{namespaceft_af12105e484dbac115fe1d6a4ff074f27}{print\+Base\+Directives\+Parameters} (\hyperlink{classft_1_1_base_directives}{ft\+::\+Base\+Directives} \&context)
+\item 
+void \hyperlink{namespaceft_a227dfbe1be478e0415b853df46dec985}{print\+Http\+Context\+Directive\+Parameters} (\hyperlink{classft_1_1_http_block}{ft\+::\+Http\+Block} \&context)
+\item 
+void \hyperlink{namespaceft_aba285440a3c3f0158982e0376d6a24f6}{print\+Server\+Context\+Directive\+Parameters} (\hyperlink{classft_1_1_server_block}{ft\+::\+Server\+Block} \&context)
+\item 
+void \hyperlink{namespaceft_a0036b0ebdedb1a1a1956f4ac3fafdbc4}{print\+Location\+Context\+Directive\+Parameters} (\hyperlink{classft_1_1_location_block}{ft\+::\+Location\+Block} \&context)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::string \hyperlink{namespaceft_a2896a632198d516af93e4aea2d125f59}{s\+Directive\+Kind\+Strings} \mbox{[}$\,$\mbox{]}
+\item 
+static const char $\ast$ \hyperlink{namespaceft_a1b9b00bc284da71346729142b8560e03}{s\+Token\+Type\+Strings} \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75d}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75d}} 
+\index{ft@{ft}!Directive\+Kind@{Directive\+Kind}}
+\index{Directive\+Kind@{Directive\+Kind}!ft@{ft}}
+\subsubsection{\texorpdfstring{Directive\+Kind}{DirectiveKind}}
+{\footnotesize\ttfamily enum \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75d}{Directive\+Kind}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{H\+T\+TP@{H\+T\+TP}!ft@{ft}}\index{ft@{ft}!H\+T\+TP@{H\+T\+TP}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da67e044074f46e6cea22788527da5f02e}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da67e044074f46e6cea22788527da5f02e}} 
+H\+T\+TP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+E\+R\+V\+ER@{S\+E\+R\+V\+ER}!ft@{ft}}\index{ft@{ft}!S\+E\+R\+V\+ER@{S\+E\+R\+V\+ER}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da67c96b24b23bcb408bae7626730a04b7}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da67c96b24b23bcb408bae7626730a04b7}} 
+S\+E\+R\+V\+ER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{L\+O\+C\+A\+T\+I\+ON@{L\+O\+C\+A\+T\+I\+ON}!ft@{ft}}\index{ft@{ft}!L\+O\+C\+A\+T\+I\+ON@{L\+O\+C\+A\+T\+I\+ON}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da1e9e3944b93fde52c7c92e1e15dcaf4a}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da1e9e3944b93fde52c7c92e1e15dcaf4a}} 
+L\+O\+C\+A\+T\+I\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{C\+L\+I\+E\+N\+T\+\_\+\+M\+A\+X\+\_\+\+B\+O\+D\+Y\+\_\+\+S\+I\+ZE@{C\+L\+I\+E\+N\+T\+\_\+\+M\+A\+X\+\_\+\+B\+O\+D\+Y\+\_\+\+S\+I\+ZE}!ft@{ft}}\index{ft@{ft}!C\+L\+I\+E\+N\+T\+\_\+\+M\+A\+X\+\_\+\+B\+O\+D\+Y\+\_\+\+S\+I\+ZE@{C\+L\+I\+E\+N\+T\+\_\+\+M\+A\+X\+\_\+\+B\+O\+D\+Y\+\_\+\+S\+I\+ZE}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da026a7fa9f276b046081164564a62a6d6}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da026a7fa9f276b046081164564a62a6d6}} 
+C\+L\+I\+E\+N\+T\+\_\+\+M\+A\+X\+\_\+\+B\+O\+D\+Y\+\_\+\+S\+I\+ZE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{K\+E\+E\+P\+A\+L\+I\+V\+E\+\_\+\+T\+I\+M\+E\+O\+UT@{K\+E\+E\+P\+A\+L\+I\+V\+E\+\_\+\+T\+I\+M\+E\+O\+UT}!ft@{ft}}\index{ft@{ft}!K\+E\+E\+P\+A\+L\+I\+V\+E\+\_\+\+T\+I\+M\+E\+O\+UT@{K\+E\+E\+P\+A\+L\+I\+V\+E\+\_\+\+T\+I\+M\+E\+O\+UT}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75daaefe179bd74ff161beb62eb565186d89}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75daaefe179bd74ff161beb62eb565186d89}} 
+K\+E\+E\+P\+A\+L\+I\+V\+E\+\_\+\+T\+I\+M\+E\+O\+UT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I\+N\+D\+EX@{I\+N\+D\+EX}!ft@{ft}}\index{ft@{ft}!I\+N\+D\+EX@{I\+N\+D\+EX}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da5f0c05bad71a7b0dd266aae7ce4b3579}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da5f0c05bad71a7b0dd266aae7ce4b3579}} 
+I\+N\+D\+EX&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+U\+T\+O\+I\+N\+D\+EX@{A\+U\+T\+O\+I\+N\+D\+EX}!ft@{ft}}\index{ft@{ft}!A\+U\+T\+O\+I\+N\+D\+EX@{A\+U\+T\+O\+I\+N\+D\+EX}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da8ce880864e00bec4865ba027e32a466c}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da8ce880864e00bec4865ba027e32a466c}} 
+A\+U\+T\+O\+I\+N\+D\+EX&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+O\+OT@{R\+O\+OT}!ft@{ft}}\index{ft@{ft}!R\+O\+OT@{R\+O\+OT}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75dad41208b99e347d1726824779b11ea11b}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75dad41208b99e347d1726824779b11ea11b}} 
+R\+O\+OT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{E\+R\+R\+O\+R\+\_\+\+P\+A\+GE@{E\+R\+R\+O\+R\+\_\+\+P\+A\+GE}!ft@{ft}}\index{ft@{ft}!E\+R\+R\+O\+R\+\_\+\+P\+A\+GE@{E\+R\+R\+O\+R\+\_\+\+P\+A\+GE}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da69c9592b502329f43c77ad043a13e6d9}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da69c9592b502329f43c77ad043a13e6d9}} 
+E\+R\+R\+O\+R\+\_\+\+P\+A\+GE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{L\+I\+S\+T\+EN@{L\+I\+S\+T\+EN}!ft@{ft}}\index{ft@{ft}!L\+I\+S\+T\+EN@{L\+I\+S\+T\+EN}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da331ec9878c0ed22e62de969d4b96b5bb}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da331ec9878c0ed22e62de969d4b96b5bb}} 
+L\+I\+S\+T\+EN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{S\+E\+R\+V\+E\+R\+\_\+\+N\+A\+ME@{S\+E\+R\+V\+E\+R\+\_\+\+N\+A\+ME}!ft@{ft}}\index{ft@{ft}!S\+E\+R\+V\+E\+R\+\_\+\+N\+A\+ME@{S\+E\+R\+V\+E\+R\+\_\+\+N\+A\+ME}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da8e7adb687472b53e3ed632cbcb949d88}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da8e7adb687472b53e3ed632cbcb949d88}} 
+S\+E\+R\+V\+E\+R\+\_\+\+N\+A\+ME&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+U\+RN@{R\+E\+T\+U\+RN}!ft@{ft}}\index{ft@{ft}!R\+E\+T\+U\+RN@{R\+E\+T\+U\+RN}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da520e09ffec033636dba711f3441cc600}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da520e09ffec033636dba711f3441cc600}} 
+R\+E\+T\+U\+RN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{L\+I\+M\+I\+T\+\_\+\+E\+X\+C\+E\+PT@{L\+I\+M\+I\+T\+\_\+\+E\+X\+C\+E\+PT}!ft@{ft}}\index{ft@{ft}!L\+I\+M\+I\+T\+\_\+\+E\+X\+C\+E\+PT@{L\+I\+M\+I\+T\+\_\+\+E\+X\+C\+E\+PT}}}\mbox{\Hypertarget{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da25b0e84438d71cc28e97f17a01cfde7a}\label{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da25b0e84438d71cc28e97f17a01cfde7a}} 
+L\+I\+M\+I\+T\+\_\+\+E\+X\+C\+E\+PT&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 12 of file Directive.\+hpp.
+
+
+\begin{DoxyCode}
+13     \{
+14         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da67e044074f46e6cea22788527da5f02e}{HTTP} = 0,
+15         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da67c96b24b23bcb408bae7626730a04b7}{SERVER},
+16         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da1e9e3944b93fde52c7c92e1e15dcaf4a}{LOCATION},
+17         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da026a7fa9f276b046081164564a62a6d6}{CLIENT\_MAX\_BODY\_SIZE},
+18         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75daaefe179bd74ff161beb62eb565186d89}{KEEPALIVE\_TIMEOUT},
+19         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da5f0c05bad71a7b0dd266aae7ce4b3579}{INDEX},
+20         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da8ce880864e00bec4865ba027e32a466c}{AUTOINDEX},
+21         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75dad41208b99e347d1726824779b11ea11b}{ROOT},
+22         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da69c9592b502329f43c77ad043a13e6d9}{ERROR\_PAGE},
+23         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da331ec9878c0ed22e62de969d4b96b5bb}{LISTEN},
+24         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da8e7adb687472b53e3ed632cbcb949d88}{SERVER\_NAME},
+25         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da520e09ffec033636dba711f3441cc600}{RETURN},
+26         \hyperlink{namespaceft_a5a5554dff10f0dc50bae4cc5825ad75da25b0e84438d71cc28e97f17a01cfde7a}{LIMIT\_EXCEPT}
+27     \};
+\end{DoxyCode}
+\mbox{\Hypertarget{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4}\label{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4}} 
+\index{ft@{ft}!Statement\+Kind@{Statement\+Kind}}
+\index{Statement\+Kind@{Statement\+Kind}!ft@{ft}}
+\subsubsection{\texorpdfstring{Statement\+Kind}{StatementKind}}
+{\footnotesize\ttfamily enum \hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4}{Statement\+Kind}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{O\+N\+E\+\_\+\+P\+A\+R\+A\+M\+E\+T\+ER@{O\+N\+E\+\_\+\+P\+A\+R\+A\+M\+E\+T\+ER}!ft@{ft}}\index{ft@{ft}!O\+N\+E\+\_\+\+P\+A\+R\+A\+M\+E\+T\+ER@{O\+N\+E\+\_\+\+P\+A\+R\+A\+M\+E\+T\+ER}}}\mbox{\Hypertarget{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4ad34404e6665ab6bd4f8cfecd1727c8a6}\label{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4ad34404e6665ab6bd4f8cfecd1727c8a6}} 
+O\+N\+E\+\_\+\+P\+A\+R\+A\+M\+E\+T\+ER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{M\+U\+L\+T\+I\+P\+U\+L\+\_\+\+P\+A\+R\+A\+M\+E\+T\+E\+RS@{M\+U\+L\+T\+I\+P\+U\+L\+\_\+\+P\+A\+R\+A\+M\+E\+T\+E\+RS}!ft@{ft}}\index{ft@{ft}!M\+U\+L\+T\+I\+P\+U\+L\+\_\+\+P\+A\+R\+A\+M\+E\+T\+E\+RS@{M\+U\+L\+T\+I\+P\+U\+L\+\_\+\+P\+A\+R\+A\+M\+E\+T\+E\+RS}}}\mbox{\Hypertarget{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4a34cc013aae663bd7702b05a4c9fa5b44}\label{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4a34cc013aae663bd7702b05a4c9fa5b44}} 
+M\+U\+L\+T\+I\+P\+U\+L\+\_\+\+P\+A\+R\+A\+M\+E\+T\+E\+RS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{C\+O\+N\+T\+E\+XT@{C\+O\+N\+T\+E\+XT}!ft@{ft}}\index{ft@{ft}!C\+O\+N\+T\+E\+XT@{C\+O\+N\+T\+E\+XT}}}\mbox{\Hypertarget{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4a7f06283f0d1a4d167be6c37a3d24fd11}\label{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4a7f06283f0d1a4d167be6c37a3d24fd11}} 
+C\+O\+N\+T\+E\+XT&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 11 of file Statement.\+hpp.
+
+
+\begin{DoxyCode}
+12     \{
+13         \hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4ad34404e6665ab6bd4f8cfecd1727c8a6}{ONE\_PARAMETER},
+14         \hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4a34cc013aae663bd7702b05a4c9fa5b44}{MULTIPUL\_PARAMETERS},
+15         \hyperlink{namespaceft_a1cc6ed80039d68c038ae5982fb6b2ca4a7f06283f0d1a4d167be6c37a3d24fd11}{CONTEXT}
+16         
+17     \};
+\end{DoxyCode}
+\mbox{\Hypertarget{namespaceft_aa520fbf142ba1e7e659590c07da31921}\label{namespaceft_aa520fbf142ba1e7e659590c07da31921}} 
+\index{ft@{ft}!Token\+Type@{Token\+Type}}
+\index{Token\+Type@{Token\+Type}!ft@{ft}}
+\subsubsection{\texorpdfstring{Token\+Type}{TokenType}}
+{\footnotesize\ttfamily enum \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921}{Token\+Type}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{W\+H\+I\+T\+E\+S\+P\+A\+CE@{W\+H\+I\+T\+E\+S\+P\+A\+CE}!ft@{ft}}\index{ft@{ft}!W\+H\+I\+T\+E\+S\+P\+A\+CE@{W\+H\+I\+T\+E\+S\+P\+A\+CE}}}\mbox{\Hypertarget{namespaceft_aa520fbf142ba1e7e659590c07da31921aba113c37f25d24aada154b75c7dd91ba}\label{namespaceft_aa520fbf142ba1e7e659590c07da31921aba113c37f25d24aada154b75c7dd91ba}} 
+W\+H\+I\+T\+E\+S\+P\+A\+CE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I\+D\+E\+N\+T\+I\+F\+I\+ER@{I\+D\+E\+N\+T\+I\+F\+I\+ER}!ft@{ft}}\index{ft@{ft}!I\+D\+E\+N\+T\+I\+F\+I\+ER@{I\+D\+E\+N\+T\+I\+F\+I\+ER}}}\mbox{\Hypertarget{namespaceft_aa520fbf142ba1e7e659590c07da31921a84f8ae2490f9e4bd2321fd21f4b0e807}\label{namespaceft_aa520fbf142ba1e7e659590c07da31921a84f8ae2490f9e4bd2321fd21f4b0e807}} 
+I\+D\+E\+N\+T\+I\+F\+I\+ER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{D\+I\+R\+E\+C\+T\+I\+VE@{D\+I\+R\+E\+C\+T\+I\+VE}!ft@{ft}}\index{ft@{ft}!D\+I\+R\+E\+C\+T\+I\+VE@{D\+I\+R\+E\+C\+T\+I\+VE}}}\mbox{\Hypertarget{namespaceft_aa520fbf142ba1e7e659590c07da31921ae3852cb010d5e422026faf83b3c16f0e}\label{namespaceft_aa520fbf142ba1e7e659590c07da31921ae3852cb010d5e422026faf83b3c16f0e}} 
+D\+I\+R\+E\+C\+T\+I\+VE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{P\+A\+R\+A\+M\+E\+T\+ER@{P\+A\+R\+A\+M\+E\+T\+ER}!ft@{ft}}\index{ft@{ft}!P\+A\+R\+A\+M\+E\+T\+ER@{P\+A\+R\+A\+M\+E\+T\+ER}}}\mbox{\Hypertarget{namespaceft_aa520fbf142ba1e7e659590c07da31921a194cde856bd2d79eac8adb9741c55940}\label{namespaceft_aa520fbf142ba1e7e659590c07da31921a194cde856bd2d79eac8adb9741c55940}} 
+P\+A\+R\+A\+M\+E\+T\+ER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{O\+P\+E\+R\+A\+T\+OR@{O\+P\+E\+R\+A\+T\+OR}!ft@{ft}}\index{ft@{ft}!O\+P\+E\+R\+A\+T\+OR@{O\+P\+E\+R\+A\+T\+OR}}}\mbox{\Hypertarget{namespaceft_aa520fbf142ba1e7e659590c07da31921a6411d9d6073252e4d316493506bbb979}\label{namespaceft_aa520fbf142ba1e7e659590c07da31921a6411d9d6073252e4d316493506bbb979}} 
+O\+P\+E\+R\+A\+T\+OR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{C\+O\+M\+M\+E\+NT@{C\+O\+M\+M\+E\+NT}!ft@{ft}}\index{ft@{ft}!C\+O\+M\+M\+E\+NT@{C\+O\+M\+M\+E\+NT}}}\mbox{\Hypertarget{namespaceft_aa520fbf142ba1e7e659590c07da31921aae696377c19e507b64e16be78ce3bbdb}\label{namespaceft_aa520fbf142ba1e7e659590c07da31921aae696377c19e507b64e16be78ce3bbdb}} 
+C\+O\+M\+M\+E\+NT&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 13 of file Tokenizer.\+hpp.
+
+
+\begin{DoxyCode}
+14     \{
+15         \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921aba113c37f25d24aada154b75c7dd91ba}{WHITESPACE},
+16         \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921a84f8ae2490f9e4bd2321fd21f4b0e807}{IDENTIFIER},
+17         \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921ae3852cb010d5e422026faf83b3c16f0e}{DIRECTIVE},
+18         \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921a194cde856bd2d79eac8adb9741c55940}{PARAMETER},
+19         \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921a6411d9d6073252e4d316493506bbb979}{OPERATOR},
+20         \textcolor{comment}{//STRING\_LITERAL,}
+21         \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921aae696377c19e507b64e16be78ce3bbdb}{COMMENT}
+22     \};
+\end{DoxyCode}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceft_af12105e484dbac115fe1d6a4ff074f27}\label{namespaceft_af12105e484dbac115fe1d6a4ff074f27}} 
+\index{ft@{ft}!print\+Base\+Directives\+Parameters@{print\+Base\+Directives\+Parameters}}
+\index{print\+Base\+Directives\+Parameters@{print\+Base\+Directives\+Parameters}!ft@{ft}}
+\subsubsection{\texorpdfstring{print\+Base\+Directives\+Parameters()}{printBaseDirectivesParameters()}}
+{\footnotesize\ttfamily void ft\+::print\+Base\+Directives\+Parameters (\begin{DoxyParamCaption}\item[{\hyperlink{classft_1_1_base_directives}{ft\+::\+Base\+Directives} \&}]{context }\end{DoxyParamCaption})}
+
+
+
+Definition at line 60 of file main.\+cpp.
+
+
+\begin{DoxyCode}
+61     \{
+62         std::vector<std::string>        vecString = context.\hyperlink{classft_1_1_base_directives_a018f34a5ffd66e891494b5c0ee69177b}{getIndex}();
+63         std::vector<std::string>::iterator  currentString = vecString.begin();
+64         std::vector<std::string>::iterator      endString = vecString.end();
+65 
+66         std::cout << \textcolor{stringliteral}{"Base root: "} << context.\hyperlink{classft_1_1_base_directives_aa5dbcb08bda0a0e7e502d2df7cf64287}{getRoot}() << std::endl;
+67         std::cout << \textcolor{stringliteral}{"Base client max body size: "} << context.
+      \hyperlink{classft_1_1_base_directives_a930398ba1e4b99b2ba01a60dcda0c923}{getClientMaxBodySize}() << std::endl;
+68         std::cout << \textcolor{stringliteral}{"Base keepalive timeout: "} << context.\hyperlink{classft_1_1_base_directives_ab8574338758f65325cab5d1c394826c8}{getKeepaliveTimeout}() << 
+      std::endl;
+69         std::cout << \textcolor{stringliteral}{"Base index: "};\textcolor{comment}{// << context.getIndex() << std::endl;}
+70         \textcolor{keywordflow}{for} (; currentString != endString; ++currentString)
+71             std::cout << \textcolor{stringliteral}{" "} << *currentString;
+72         std::cout << std::endl;
+73         std::cout << \textcolor{stringliteral}{"Base autoindex: "} << context.\hyperlink{classft_1_1_base_directives_a4c11ed7ad76aeac228b029a2444de568}{getAutoindex}() << std::endl;
+74         std::cout << \textcolor{stringliteral}{"Base error page: "} << context.\hyperlink{classft_1_1_base_directives_a3cb0c21f17781de392d5ee09d7190caf}{getErrorPage}() << std::endl;
+75     \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceft_af12105e484dbac115fe1d6a4ff074f27_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceft_af12105e484dbac115fe1d6a4ff074f27_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceft_a227dfbe1be478e0415b853df46dec985}\label{namespaceft_a227dfbe1be478e0415b853df46dec985}} 
+\index{ft@{ft}!print\+Http\+Context\+Directive\+Parameters@{print\+Http\+Context\+Directive\+Parameters}}
+\index{print\+Http\+Context\+Directive\+Parameters@{print\+Http\+Context\+Directive\+Parameters}!ft@{ft}}
+\subsubsection{\texorpdfstring{print\+Http\+Context\+Directive\+Parameters()}{printHttpContextDirectiveParameters()}}
+{\footnotesize\ttfamily void ft\+::print\+Http\+Context\+Directive\+Parameters (\begin{DoxyParamCaption}\item[{\hyperlink{classft_1_1_http_block}{ft\+::\+Http\+Block} \&}]{context }\end{DoxyParamCaption})}
+
+
+
+Definition at line 77 of file main.\+cpp.
+
+
+\begin{DoxyCode}
+78     \{
+79         std::cout << \textcolor{stringliteral}{"\(\backslash\)n[HttpBlock] directives parameters.\(\backslash\)n"};
+80         \hyperlink{namespaceft_af12105e484dbac115fe1d6a4ff074f27}{printBaseDirectivesParameters}(context);
+81     \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceft_a227dfbe1be478e0415b853df46dec985_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=282pt]{namespaceft_a227dfbe1be478e0415b853df46dec985_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceft_a0036b0ebdedb1a1a1956f4ac3fafdbc4}\label{namespaceft_a0036b0ebdedb1a1a1956f4ac3fafdbc4}} 
+\index{ft@{ft}!print\+Location\+Context\+Directive\+Parameters@{print\+Location\+Context\+Directive\+Parameters}}
+\index{print\+Location\+Context\+Directive\+Parameters@{print\+Location\+Context\+Directive\+Parameters}!ft@{ft}}
+\subsubsection{\texorpdfstring{print\+Location\+Context\+Directive\+Parameters()}{printLocationContextDirectiveParameters()}}
+{\footnotesize\ttfamily void ft\+::print\+Location\+Context\+Directive\+Parameters (\begin{DoxyParamCaption}\item[{\hyperlink{classft_1_1_location_block}{ft\+::\+Location\+Block} \&}]{context }\end{DoxyParamCaption})}
+
+
+
+Definition at line 105 of file main.\+cpp.
+
+
+\begin{DoxyCode}
+106     \{
+107         std::vector<std::string>        vecString = context.\hyperlink{classft_1_1_location_block_ad2dc75d3f9c9f06f31e3948823557d52}{getLimitExcept}();
+108         std::vector<std::string>::iterator  currentString = vecString.begin();
+109         std::vector<std::string>::iterator      endString = vecString.end();
+110 
+111         std::cout << \textcolor{stringliteral}{"\(\backslash\)n[LocationBlock] directives parameters.\(\backslash\)n"};
+112         \hyperlink{namespaceft_af12105e484dbac115fe1d6a4ff074f27}{printBaseDirectivesParameters}(context);
+113         std::cout << \textcolor{stringliteral}{"Base limit\_except: "};
+114         \textcolor{keywordflow}{for} (; currentString != endString; ++currentString)
+115             std::cout << \textcolor{stringliteral}{" "} << *currentString;
+116         std::cout << std::endl;
+117         std::cout << \textcolor{stringliteral}{"Base return: "};
+118         vecString = context.\hyperlink{classft_1_1_location_block_aeef5e4710c02406c46e54d4aa0c8f57c}{getReturn}();
+119         currentString = vecString.begin();
+120         endString = vecString.end();
+121         \textcolor{keywordflow}{for} (; currentString != endString; ++currentString)
+122             std::cout << \textcolor{stringliteral}{" "} << *currentString;
+123         std::cout << std::endl;
+124     \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceft_a0036b0ebdedb1a1a1956f4ac3fafdbc4_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=300pt]{namespaceft_a0036b0ebdedb1a1a1956f4ac3fafdbc4_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceft_aba285440a3c3f0158982e0376d6a24f6}\label{namespaceft_aba285440a3c3f0158982e0376d6a24f6}} 
+\index{ft@{ft}!print\+Server\+Context\+Directive\+Parameters@{print\+Server\+Context\+Directive\+Parameters}}
+\index{print\+Server\+Context\+Directive\+Parameters@{print\+Server\+Context\+Directive\+Parameters}!ft@{ft}}
+\subsubsection{\texorpdfstring{print\+Server\+Context\+Directive\+Parameters()}{printServerContextDirectiveParameters()}}
+{\footnotesize\ttfamily void ft\+::print\+Server\+Context\+Directive\+Parameters (\begin{DoxyParamCaption}\item[{\hyperlink{classft_1_1_server_block}{ft\+::\+Server\+Block} \&}]{context }\end{DoxyParamCaption})}
+
+
+
+Definition at line 83 of file main.\+cpp.
+
+
+\begin{DoxyCode}
+84     \{
+85         std::vector<std::string>        vecString = context.\hyperlink{classft_1_1_server_block_aa14d06f644ee8148fa9e2ee53d9625f9}{getServerName}();
+86         std::vector<std::string>::iterator  currentString = vecString.begin();
+87         std::vector<std::string>::iterator      endString = vecString.end();
+88 
+89         std::cout << \textcolor{stringliteral}{"\(\backslash\)n[ServerBlock] directives parameters.\(\backslash\)n"};
+90         \hyperlink{namespaceft_af12105e484dbac115fe1d6a4ff074f27}{printBaseDirectivesParameters}(context);
+91         std::cout << \textcolor{stringliteral}{"Base listen: "} << context.\hyperlink{classft_1_1_server_block_afc115b2997340935536bf8135e02b68c}{getListen}() << std::endl;
+92         std::cout << \textcolor{stringliteral}{"Base server\_name: "};
+93         \textcolor{keywordflow}{for} (; currentString != endString; ++currentString)
+94             std::cout << \textcolor{stringliteral}{" "} << *currentString;
+95         std::cout << std::endl;
+96         std::cout << \textcolor{stringliteral}{"Base return: "};
+97         vecString = context.\hyperlink{classft_1_1_server_block_aeef5e4710c02406c46e54d4aa0c8f57c}{getReturn}();
+98         currentString = vecString.begin();
+99         endString = vecString.end();
+100         \textcolor{keywordflow}{for} (; currentString != endString; ++currentString)
+101             std::cout << \textcolor{stringliteral}{" "} << *currentString;
+102         std::cout << std::endl;
+103     \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceft_aba285440a3c3f0158982e0376d6a24f6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=291pt]{namespaceft_aba285440a3c3f0158982e0376d6a24f6_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceft_a2896a632198d516af93e4aea2d125f59}\label{namespaceft_a2896a632198d516af93e4aea2d125f59}} 
+\index{ft@{ft}!s\+Directive\+Kind\+Strings@{s\+Directive\+Kind\+Strings}}
+\index{s\+Directive\+Kind\+Strings@{s\+Directive\+Kind\+Strings}!ft@{ft}}
+\subsubsection{\texorpdfstring{s\+Directive\+Kind\+Strings}{sDirectiveKindStrings}}
+{\footnotesize\ttfamily std\+::string s\+Directive\+Kind\+Strings\mbox{[}$\,$\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+        \textcolor{stringliteral}{"http"},
+        \textcolor{stringliteral}{"server"},
+        \textcolor{stringliteral}{"location"},
+        \textcolor{stringliteral}{"client\_max\_body\_size"},
+        \textcolor{stringliteral}{"keepalive\_timeout"},
+        \textcolor{stringliteral}{"index"},
+        \textcolor{stringliteral}{"autoindex"},
+        \textcolor{stringliteral}{"root"},
+        \textcolor{stringliteral}{"error\_page"},
+        \textcolor{stringliteral}{"listen"},
+        \textcolor{stringliteral}{"server\_name"},
+        \textcolor{stringliteral}{"return"},
+        \textcolor{stringliteral}{"limit\_except"}
+    \}
+\end{DoxyCode}
+
+
+Definition at line 29 of file Directive.\+hpp.
+
+\mbox{\Hypertarget{namespaceft_a1b9b00bc284da71346729142b8560e03}\label{namespaceft_a1b9b00bc284da71346729142b8560e03}} 
+\index{ft@{ft}!s\+Token\+Type\+Strings@{s\+Token\+Type\+Strings}}
+\index{s\+Token\+Type\+Strings@{s\+Token\+Type\+Strings}!ft@{ft}}
+\subsubsection{\texorpdfstring{s\+Token\+Type\+Strings}{sTokenTypeStrings}}
+{\footnotesize\ttfamily const char$\ast$ s\+Token\+Type\+Strings\mbox{[}$\,$\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+        \textcolor{stringliteral}{"WHITESPACE"},
+        \textcolor{stringliteral}{"IDENTIFIER"},
+        \textcolor{stringliteral}{"DIRECTIVE"},
+        \textcolor{stringliteral}{"PARAMETER"},
+        \textcolor{stringliteral}{"OPERATOR"},
+        
+        \textcolor{stringliteral}{"COMMENT"}
+    \}
+\end{DoxyCode}
+
+
+Definition at line 25 of file Tokenizer.\+hpp.
+
