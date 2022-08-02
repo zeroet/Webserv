@@ -4,6 +4,7 @@
 #include "request.hpp"
 #include "socket.hpp"
 #include "OperateRequest.hpp"
+
 #include <iostream>
 #include <cstdio>
 #include <map>
@@ -14,6 +15,7 @@
 # define CRLFCRLF "\r\n\r\n"
 # define LEN_END_BUF 4
 # define LEN_CRLF 2
+# define DEFAULT -1
 
 # define BUFFER_SIZE 512
 
@@ -49,7 +51,7 @@ class Connection
 		// response		response_;
 
 		int				phase_msg_;
-		// int				req_status_code;
+		int				req_status_code_;
 		// res
 		// exe
 
@@ -58,12 +60,14 @@ class Connection
 		~Connection();
 
 		//getter
-		Request	&getRequest(void);
-		int		&getPhaseMsg(void);
+		Request		&getRequest(void);
+		int			&getPhaseMsg(void);
 		std::string &getBuffer(void);
+		int			&getReqStatusCode(void);
 
 		//setter
 		void	setPhaseMsg(int new_msg);
+		void	setReqStatusCode(int status_code);
 
 		void    processRequest();
 		void    response();

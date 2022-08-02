@@ -37,6 +37,11 @@ class Request {
 		const	std::string	getHeaderValue(std::string key) const;
 		const	std::string	&getBody(void)	const;
 
+		//setter
+		void	setMethod(std::string method);
+		void	setPath(std::string path);
+		void	setVersion(std::string version);
+
 		//tmp
 		void	printRequestMsg(void);
 

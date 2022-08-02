@@ -3,7 +3,30 @@
 
 # include "connection.hpp"
 # include "request.hpp"
-# include "utile.cpp"
+
+# include <cctype>
+#include <string>
+#include <algorithm>
+
+/* Headers to manage
+Accept-Charsets
+Accept-Language
+Allow
+Authorization
+Content-Language
+Content-Length
+Content-Location
+Content-Type
+Date
+Host
+Last-Modified
+Location
+Referer
+Retry-After
+Server
+Transfer-Encoding
+User-Agent
+WWW-Authenticate */
 
 class Connection;
 class Request;
@@ -31,6 +54,7 @@ class OperateRequest {
 		void	checkRequestMessage(Connection *c);
 		void	parseStartLine(Connection *c);
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
+		int		checkMethod(const std::string &s);
 
 };
 
