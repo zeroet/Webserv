@@ -3,6 +3,7 @@
 
 # include "connection.hpp"
 # include "request.hpp"
+# include "utile.cpp"
 
 class Connection;
 class Request;
@@ -29,6 +30,7 @@ class OperateRequest {
 
 		void	checkRequestMessage(Connection *c);
 		void	parseStartLine(Connection *c);
+		std::vector<std::string> splitDelim(std::string s, std::string delim);
 
 };
 

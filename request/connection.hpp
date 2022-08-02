@@ -49,6 +49,7 @@ class Connection
 		// response		response_;
 
 		int				phase_msg_;
+		// int				req_status_code;
 		// res
 		// exe
 
