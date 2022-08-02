@@ -84,8 +84,23 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	//path check:
 	c->getRequest().setPath(split_start_line[1]);
 
-
-	//HTTP/1.1 check: 'HTTP/1.1' / if not Error 400
+	//HTTP/1.1 check: 'HTTP/' '1.*' / if not Error 400/505
+	// std::cout << "split start line 2: " << split_start_line[2] << std::endl;
+	std::string http = split_start_line[2].substr(0, 5);
+	std::string version = split_start_line[2].substr(5, split_start_line[2].length());
+	int cmp = http.compare("HTTP/");
+	if (!checkVersion(version) || version.length() != 3 || cmp)
+	{
+		c->setReqStatusCode(BAD_REQUEST);
+		return ;
+	}
+	cmp = version.compare(0, 2, "1.");
+	if (cmp)
+	{
+		c->setReqStatusCode(HTTP_VERSION_NOT_SUPPORTED);
+		return ;
+	}
+	c->getRequest().setVersion(http + version);
 }
 
 std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string delim) {
@@ -108,6 +123,18 @@ int		OperateRequest::checkMethod(const std::string &s) {
 	{
 		char c = s[i];
 		if (!isupper(c) || !isalpha(c))
+			return (false);
+	}
+	return (true);
+}
+
+int			OperateRequest::checkVersion(const std::string &s) {
+	for (size_t i = 0; i < s.length(); i++)
+	{
+		char c = s[i];
+		if (isdigit(c) || (c == '.'))
+			i++;
+		else
 			return (false);
 	}
 	return (true);
