@@ -63,6 +63,7 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	(void)c;
 	//method check : GET/POST/DELETE -> toupper / if not Error 400
 	std::vector<std::string> split_start_line = splitDelim(startLine_, " ");
+	if (split_start_line.size() != 3)
 	for (size_t i = 0; i < split_start_line.size(); i++)
 		std::cout << split_start_line[i] << std::endl;
 	// std::string method = startLine_.substr(0, startLine_.find_first_of(" "));
