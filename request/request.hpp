@@ -43,7 +43,7 @@ class Request {
 		void	setVersion(std::string version);
 
 		//tmp
-		void	printRequestMsg(void);
+		// void	printRequestMsg(void);
 
 		// void    addBuffer(void);
 		// void    parsingBuffer(void);

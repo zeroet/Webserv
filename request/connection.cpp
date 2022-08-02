@@ -38,6 +38,7 @@ void    Connection::processRequest()
 		// OperateRequest::checkRequestMessage(this);
 		operateRequest.checkRequestMessage(this);
 
+	printRequestMsg();
 	/*
 	size_t pos = 0;
 	if (getPhaseMsg() == START_LINE_INCOMPLETE)
@@ -110,4 +111,23 @@ void	Connection::setPhaseMsg(int new_msg) {
 
 void    Connection::response() {
     std::cout <<"Response execute" <<std::endl;
+}
+
+//tmp
+void	Connection::printRequestMsg(void) {
+	printf("====Request Parser====\n");
+	printf("Request_status_code: %d\n", getReqStatusCode());
+	printf("method_: %s\n", getRequest().getMethod().c_str());
+	printf("path_: %s\n", getRequest().getPath().c_str());
+	printf("version_: %s\n", getRequest().getVersion().c_str());
+	// for (mapHeader::iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++) {
+		// printf("%s: ", (*it).first.c_str());
+		// printf("\n");
+	// }
+	// printf("body:\n");
+	// 	// body_.push_back('\0');
+	// 	// printf("%s\n", reinterpret_cast<const char *>(body_.data()));
+	// 	// body_.pop_back();
+	// // }
+	printf("=====================\n");
 }

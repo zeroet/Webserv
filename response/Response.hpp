@@ -33,8 +33,6 @@ class Response
 		std::string StatusMessage_;
 		std::string Body_;
 		mapStatus mapStatus_;
-
-		
 	};
 
 #endif

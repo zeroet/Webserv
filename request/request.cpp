@@ -55,24 +55,12 @@ void	Request::setMethod(std::string method) {
 	method_ = method;
 }
 
-void	Request::setPath(std::string path);
-void	Request::setVersion(std::string version);
+void	Request::setPath(std::string path) {
+	path_ = path;
+}
 
-void	Request::printRequestMsg(void) {
-	printf("====Request Parser====\n");
-	printf("method_: %s\n", method_.c_str());
-	printf("path_: %s\n", path_.c_str());
-	printf("version_: %s\n", version_.c_str());
-	// for (mapHeader::iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++) {
-		// printf("%s: ", (*it).first.c_str());
-		// printf("\n");
-	// }
-	// printf("body:\n");
-	// 	// body_.push_back('\0');
-	// 	// printf("%s\n", reinterpret_cast<const char *>(body_.data()));
-	// 	// body_.pop_back();
-	// // }
-	printf("=====================\n");
+void	Request::setVersion(std::string version) {
+	version_ = version;
 }
 
 //setter

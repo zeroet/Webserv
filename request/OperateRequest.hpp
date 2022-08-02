@@ -34,7 +34,7 @@ class Request;
 class OperateRequest {
 
 	private:
-		Request		*request_;
+		// Request		*request_;
 		std::string	startLine_;
 		std::string	headers_;
 		size_t		tmp_;
@@ -49,12 +49,13 @@ class OperateRequest {
 		std::string	&getHeaders(void);
 
 		//setter
-		void	setRequest(Request *request);
+		// void	setRequest(Request *request);
 
 		void	checkRequestMessage(Connection *c);
 		void	parseStartLine(Connection *c);
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
 		int		checkMethod(const std::string &s);
+		int		checkVersion(const std::string &s);
 
 };
 
