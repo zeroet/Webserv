@@ -16,6 +16,8 @@ namespace ft
 		directives_["listen"] = Directive(LISTEN, "listen");
 		directives_["server_name"] = Directive(SERVER_NAME, "server_name");
 		directives_["return"] = Directive(RETURN, "return");
+		directives_["cgi"] = Directive(CGI, "cgi");
+		directives_["cgi_path"] = Directive(CGI_PATH, "cgi_path");
 		directives_["limit_except"] = Directive(LIMIT_EXCEPT, "limit_except");
 	}
 
@@ -185,6 +187,17 @@ namespace ft
 				std::vector<std::string>::iterator	    endParameter = currentDirective->parameters.end();
 				for (; currentParameter != endParameter; ++currentParameter)
 					context.setLimitExcept(*currentParameter);
+			}
+			else if (currentDirective->directive == CGI)
+			{
+				std::vector<std::string>::iterator	currentParameter = currentDirective->parameters.begin();
+				std::vector<std::string>::iterator	    endParameter = currentDirective->parameters.end();
+				for (; currentParameter != endParameter; ++currentParameter)
+					context.setCgi(*currentParameter);
+			}
+			else if (currentDirective->directive == CGI_PATH)
+			{
+				context.setCgiPath((*currentDirective->parameters.begin()));
 			}
 		}
 		return (true);
@@ -397,7 +410,8 @@ namespace ft
 				directives = parseContextBody(SERVER);
 				if (directives.first == false)
 				{
-					if (expectToken(OPERATOR, "}").first == false)
+					//if (expectToken(DIRECTIVE).first == false)
+					if (currentToken_ == endToken_ && expectToken(OPERATOR, "}").first == false)
 					{
 						std::cout << "Error: Server context has not successfuly been enclosed with a closing curly bracket.\n";
 						return (std::make_pair(false, serverContext));
@@ -479,7 +493,8 @@ namespace ft
 			directives = parseContextBody(LOCATION);
 			if (directives.first == false)
 			{
-				if (currentToken_->text != "location" && expectToken(OPERATOR, "}").first == false)
+				if (currentToken_ == endToken_ && expectToken(OPERATOR, "}").first == false)
+				//if (currentToken_->text != "location" && expectToken(OPERATOR, "}").first == false)
 				{
 					std::cout << "Error: Location context has not successfuly been enclosed with a closing curly bracket.\n";
 					return (std::make_pair(false, locationContext));
@@ -513,7 +528,13 @@ namespace ft
 			}
 			if (kind == SERVER && (simpleDirective.second.directive == LOCATION))
 				return (std::make_pair(true, directives));
-			if (kind == SERVER && ((simpleDirective.second.directive == SERVER)))
+			if (kind == HTTP && (simpleDirective.second.directive == HTTP || simpleDirective.second.directive == LOCATION))
+			{
+				std::cout << "Error: There can't be any other block than server in http block.\n";
+				return (std::make_pair(false, directives));
+			}
+			
+			if (kind == SERVER && ((simpleDirective.second.directive == SERVER) || (simpleDirective.second.directive == HTTP)))
 			{
 				std::cout << "Error: There can't be any other block than location in server block.\n";
 				return (std::make_pair(false, directives));
@@ -538,7 +559,6 @@ namespace ft
 		std::vector<Token>::iterator startToken = currentToken_;
 		std::pair<bool, Directive> possibleValidDirective = checkValidDirective();
 
-		(void)kind;
 		if (possibleValidDirective.first == true)
 		{
 			if ((possibleValidDirective.second.directive == HTTP) ||
@@ -548,6 +568,36 @@ namespace ft
 				currentToken_ = startToken;
 				return (std::make_pair(false, possibleValidDirective.second));
 			}
+			if (kind == HTTP && 
+				(possibleValidDirective.second.directive == LIMIT_EXCEPT || 
+				possibleValidDirective.second.directive == LISTEN || 
+				possibleValidDirective.second.directive == SERVER_NAME || 
+				possibleValidDirective.second.directive == RETURN || 
+				possibleValidDirective.second.directive == CGI || 
+				possibleValidDirective.second.directive == CGI_PATH))
+			{
+				std::cout << "Error: There can't be " << sDirectiveKindStrings[possibleValidDirective.second.directive] << " directive in http block.\n";
+				currentToken_ = startToken;
+				return (std::make_pair(false, possibleValidDirective.second));
+			}
+			if (kind == SERVER && 
+				(possibleValidDirective.second.directive == LIMIT_EXCEPT || 
+				possibleValidDirective.second.directive == CGI || 
+				possibleValidDirective.second.directive == CGI_PATH))
+			{
+				std::cout << "Error: There can't be " << sDirectiveKindStrings[possibleValidDirective.second.directive] << " directive in server block.\n";
+				currentToken_ = startToken;
+				return (std::make_pair(false, possibleValidDirective.second));
+			}
+			if (kind == LOCATION && 
+				(possibleValidDirective.second.directive == LISTEN || 
+				possibleValidDirective.second.directive == SERVER_NAME))
+			{
+				std::cout << "Error: There can't be " << sDirectiveKindStrings[possibleValidDirective.second.directive] << " directive in location block.\n";
+				currentToken_ = startToken;
+				return (std::make_pair(false, possibleValidDirective.second));
+			}
+		
 		}
 		else if (possibleValidDirective.first == false)
 		{

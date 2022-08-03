@@ -66,6 +66,14 @@ namespace ft
 		for (; currentString != endString; ++currentString)
 			std::cout << " " << *currentString;
 		std::cout << std::endl;
+		vecString = context.getCgi();
+		std::cout << "Base cgi: ";
+		currentString = vecString.begin();
+		endString = vecString.end();
+		for (; currentString != endString; ++currentString)
+			std::cout << " " << *currentString;
+		std::cout << std::endl;
+		std::cout << "Base cgi_path: " << context.getCgiPath() << std::endl;
 	}
 
 	void	PrintConfig::printConfig(std::pair<bool, HttpBlock>& validHttpContext, int flags)

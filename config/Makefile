@@ -1,4 +1,4 @@
-NAME = config
+NAME = http
 
 SRCS_DIR = src/
 

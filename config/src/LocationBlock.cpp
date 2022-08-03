@@ -23,6 +23,15 @@ namespace ft
 	{
 		return (this->return_);
 	}
+	const std::vector<std::string>	LocationBlock::getCgi(void) const
+	{
+		return (this->cgi_);
+	}
+
+	const std::string		LocationBlock::getCgiPath(void) const
+	{
+		return (this->cgiPath_);
+	}
 
 	// Setter
 	void				LocationBlock::setLimitExcept(const std::string x)
@@ -33,6 +42,15 @@ namespace ft
 	void				LocationBlock::setReturn(const std::string x)
 	{
 		this->return_.push_back(x);
+	}
+	void				LocationBlock::setCgi(const std::string x)
+	{
+		this->cgi_.push_back(x);
+	}
+
+	void				LocationBlock::setCgiPath(const std::string x)
+	{
+		this->cgiPath_ = x;
 	}
 
 }

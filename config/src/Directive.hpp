@@ -23,6 +23,8 @@ namespace ft
 		LISTEN,
 		SERVER_NAME,
 		RETURN,
+		CGI,
+		CGI_PATH,
 		LIMIT_EXCEPT
 	};
 
@@ -39,6 +41,8 @@ namespace ft
 		"listen",
 		"server_name",
 		"return",
+		"cgi",
+		"cgi_path",
 		"limit_except"
 	};
 
