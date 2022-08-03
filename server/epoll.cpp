@@ -10,7 +10,7 @@ Epoll::Epoll() {}
 Epoll::Epoll(std::vector<ServerBlock> block) : vecBloc_(block)
 {
 	init_server_socket();
-	std::cout << "Webserver Run" << std::endl;
+	std::cout << BLUE << "Webserver Run" << FIN << std::endl;
 	epoll_server_manager();
 	std::cout << "Webserver Close" << std::endl;
 }

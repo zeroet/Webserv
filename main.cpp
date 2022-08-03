@@ -3,7 +3,6 @@
 #include <vector>
 #include "config/src/HttpBlock.hpp"
 #include "config/src/PrintConfig.hpp"
-
 #include "server/epoll.hpp"
 
 int main(int argc, char** argv)
