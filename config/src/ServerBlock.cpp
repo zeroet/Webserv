@@ -12,7 +12,7 @@ namespace ft
 		this->errorPage_ = context.getErrorPage();
 		this->listen_ = "80";
 		this->serverName_.push_back("");
-
+		this->socketFd_ = -1;
 	}
 
 	// Getter
@@ -23,9 +23,12 @@ namespace ft
 	}
 */
 
-	const std::string		ServerBlock::getListen(void) const
+	int		ServerBlock::getListen(void) const
 	{
-		return (this->listen_);
+		int i;
+		
+    	std::istringstream(this->listen_) >> i;
+		return (i);
 	}
 
 	const std::vector<std::string>	ServerBlock::getServerName(void) const
@@ -36,6 +39,11 @@ namespace ft
 	const std::vector<std::string>	ServerBlock::getReturn(void) const
 	{
 		return (this->return_);
+	}
+
+	const int	ServerBlock::getSocketFd(void) const
+	{
+		return (this->socketFd_);
 	}
 
 	// Setter
@@ -52,6 +60,11 @@ namespace ft
 	void				ServerBlock::setReturn(const std::string x)
 	{
 		this->return_.push_back(x);
+	}
+
+	void				ServerBlock::setSocketFd(const int i)
+	{
+		this->socketFd_ = i;
 	}
 
 	void				ServerBlock::clearServerName(void)

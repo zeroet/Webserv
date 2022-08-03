@@ -8,7 +8,7 @@
 Socket::Socket(void) { }
 
 //Construct for excute
-Socket::Socket(std::vector<Block> block) : vecBloc_(block), error_(0)
+Socket::Socket(std::vector<ServerBlock> block) : vecBloc_(block), error_(0)
 {
     this->error_ = create_socket();
     if (error_ == ERROR)
@@ -49,15 +49,14 @@ int     Socket::create_socket()
         // socket struct
         memset(&sockAddr, 0, sizeof(sockAddr));
         sockAddr.sin_family = AF_INET;
-        sockAddr.sin_port = htons(vecBloc_[i].getter_portNumber());
+        sockAddr.sin_port = htons(vecBloc_[i].getListen());
         sockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-        vecBloc_[i].setter_socketaddr(sockAddr);
 
         // socket bind && listen
         this->error_ = bind(socketFd, (struct sockaddr*)&sockAddr, sizeof(sockAddr));
         if (this->error_ < 0)
 		{
-			std::cout << RED << "Bind error ! PortNumber [" << vecBloc_[i].getter_portNumber() <<  "]"<< FIN << std::endl;
+			std::cout << RED << "Bind error ! PortNumber [" << vecBloc_[i].getListen() <<  "]"<< FIN << std::endl;
 			continue;
 		}
         this->error_ = listen(socketFd, LISTEN_BACKLOG);
@@ -66,7 +65,7 @@ int     Socket::create_socket()
         if (socketFd < 0)
             return (ERROR);
         else
-            vecBloc_[i].setter_socketFd(socketFd);
+            vecBloc_[i].setsocketFd(socketFd);
     }
     return (OK);
 }

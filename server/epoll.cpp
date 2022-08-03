@@ -7,7 +7,7 @@
 Epoll::Epoll() {}
 
 //Construct for excute
-Epoll::Epoll(std::vector<Block> block) : vecBloc_(block)
+Epoll::Epoll(std::vector<ServerBlock> block) : vecBloc_(block)
 {
 	init_server_socket();
 	std::cout << "Webserver Run" << std::endl;
@@ -36,12 +36,12 @@ void    Epoll::init_server_socket()
 	create_epoll_fd();
 	for (int i = 0; i < numServerFd; i++)
 	{
-		if (OK != (epoll_add(vecBloc_[i].getter_socketFd())))
-			std::cout << RED << "PortNumber [" << vecBloc_[i].getter_portNumber() <<
+		if (OK != (epoll_add(vecBloc_[i].getsocketFd())))
+			std::cout << RED << "PortNumber [" << vecBloc_[i].getListen() <<
             "] Epoll_Ctl_Add failed" << FIN <<std::endl;
         else
         {
-            std::cout << GREEN << "PortNumber [" << vecBloc_[i].getter_portNumber() <<
+            std::cout << GREEN << "PortNumber [" << vecBloc_[i].getListen() <<
             "] Epoll_Ctl_Add Success" << FIN << std::endl;
         }   
 	}
@@ -85,9 +85,9 @@ int   Epoll::create_clnt_socket(int fd)
 
 	for (int i = 0; i < size; i++)
 	{
-		if (fd == this->vecBloc_[i].getter_socketFd())
+		if (fd == this->vecBloc_[i].getsocketFd())
 		{
-			clntFd = accept(this->vecBloc_[i].getter_socketFd(),
+			clntFd = accept(this->vecBloc_[i].getsocketFd(),
 			(struct sockaddr*)&clnt_addr, (socklen_t *)&clntLen);
 			if (0 > (clntFd = sock.socket_nonBlock_setting(clntFd)))
 				std::cout << "accept() error" << std::endl;
@@ -131,7 +131,7 @@ void    Epoll::epoll_server_manager()
                 if (clntFd != ERROR)
                 { 
                     epoll_add(clntFd);
-                    Block serverBlock = get_location_block(epEvent[i].data.fd);
+                    ServerBlock serverBlock = get_location_block(epEvent[i].data.fd);
                     this->c_.insert(std::make_pair (clntFd, Connection(clntFd, serverBlock, this)));
                 }
                 else
@@ -187,7 +187,7 @@ int     Epoll::find_server_fd(int fd)
 
 	for (int i = 0; i < size; i++)
 	{
-		if (fd == vecBloc_[i].getter_socketFd())
+		if (fd == vecBloc_[i].getsocketFd())
 			return (OK);
 	}
 	return (ERROR);
@@ -199,20 +199,20 @@ void    Epoll::close_all_serv_socket()
 	int count = this->vecBloc_.size();
 
 	for(int i = 0; i < count; i++)
-		close(this->vecBloc_[i].getter_socketFd());
+		close(this->vecBloc_[i].getsocketFd());
 	close(this->epollFd_);
 	std::cout << "all socket closed" << std::endl;
 }
 
 // Block class or utile  ????
-Block   Epoll::get_location_block(int fd)
+ServerBlock   Epoll::get_location_block(int fd)
 {
-	Block tmp;
+	ServerBlock tmp;
 	int   size = this->vecBloc_.size();
 
 	for (int i = 0; i < size; i++)
 	{
-		if (fd == vecBloc_[i].getter_socketFd())
+		if (fd == vecBloc_[i].getsocketFd())
 			return(tmp = vecBloc_[i]);
 	}
 	return (0);
