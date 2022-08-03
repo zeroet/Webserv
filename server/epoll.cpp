@@ -43,7 +43,7 @@ void    Epoll::init_server_socket()
         {
             std::cout << GREEN << "PortNumber [" << vecBloc_[i].getListen() <<
             "] Epoll_Ctl_Add Success" << FIN << std::endl;
-        }   
+        }
 	}
 }
 
@@ -107,20 +107,20 @@ void    Epoll::epoll_server_manager()
     int                 evCount;
     int                 clntFd;
     event               epEvent[MAX_EVENT];
-    
+
     while (1)
     {
         evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
         std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
         if (evCount < 0)
-        {           
+        {
             std::cout << "Epoll event count error" << std::endl;
             break ;
         }
         for (int i = 0; i < evCount; i++)
         {
             if ((epEvent[i].events & EPOLLERR) || (epEvent[i].events & EPOLLHUP))
-            {    
+            {
                 std::cout << "Epoll event error" << std::endl;
                 close(epEvent[i].data.fd);
                 continue ;
@@ -129,7 +129,7 @@ void    Epoll::epoll_server_manager()
             {
                 clntFd = create_clnt_socket(epEvent[i].data.fd);
                 if (clntFd != ERROR)
-                { 
+                {
                     epoll_add(clntFd);
                     ServerBlock serverBlock = get_location_block(epEvent[i].data.fd);
                     this->c_.insert(std::make_pair (clntFd, Connection(clntFd, serverBlock, this)));
@@ -142,10 +142,10 @@ void    Epoll::epoll_server_manager()
                 }
             }
             else if(epEvent[i].events & EPOLLIN)
-            { 
+            {
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
-                it->second.requestRecv();
+                it->second.processRequest(); //treat_request()
             }
             else if(epEvent[i].events & EPOLLOUT)
             {

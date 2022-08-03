@@ -18,6 +18,7 @@
 namespace ft{
 
 class Connection;
+class Request;
 
 class Epoll
 {
@@ -31,9 +32,9 @@ public:
     Socket                              sock;
 
 private:
-    vecBloc         vecBloc_; // vector type location block 
-    mapConnection   c_; // map type connection poll 
-    int             epollFd_; 
+    vecBloc         vecBloc_; // vector type location block
+    mapConnection   c_; // map type connection poll
+    int             epollFd_;
 
 public:
     Epoll();

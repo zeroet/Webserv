@@ -10,7 +10,6 @@
 #include <cstdio>
 #include <map>
 #include <vector>
-#include <deque>
 
 # define CRLF "\r\n"
 # define CRLFCRLF "\r\n\r\n"
@@ -34,6 +33,7 @@ enum phaseMsg {
 	HEADER_COMPLETE,
 	BODY_INCOMPLETE,
 	BODY_COMPLETE,
+	BODY_CHUNKED,
 	ERROR_OCR
 };
 

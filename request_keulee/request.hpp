@@ -2,17 +2,17 @@
 
 #include <iostream>
 #include <cstdio>
+#include "socket.hpp"
+// #include "connection.hpp"
 #include <sys/epoll.h>
 #include <map>
 #include <vector>
 #include <algorithm>
 #include <cctype>
-
-using namespace ft;
-
-namespace ft {
+// #include <cstdlib>
 
 typedef std::map<std::string, std::string> 	mapHeader;
+
 /*
  * Class to stock every filterd elements of http request message
  */
@@ -48,5 +48,3 @@ class Request {
 		//tmp
 		void	printHeaders(void);
 };
-
-}

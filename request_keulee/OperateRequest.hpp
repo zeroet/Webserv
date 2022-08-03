@@ -1,16 +1,14 @@
 #pragma once
 
-# include "../server/connection.hpp"
+# include "connection.hpp"
 # include "request.hpp"
 
 # include <cctype>
 #include <string>
 #include <algorithm>
 
-namespace ft {
-
-// class Request;
 class Connection;
+class Request;
 
 /*
  * Class to operate the validation and the parsing of http request message
@@ -47,6 +45,3 @@ class OperateRequest {
 		std::string	trimWhiteSpace(std::string &s);
 
 };
-
-}
-
