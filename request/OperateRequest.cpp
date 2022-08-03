@@ -4,9 +4,6 @@ OperateRequest::OperateRequest(void) {}
 
 OperateRequest::~OperateRequest(void) {}
 
-// OperateRequest::OperateRequest(Connection *c) : request_(&c->getRequest()) {}
-
-
 //getter
 std::string	&OperateRequest::getStartLine(void) {
 	return (startLine_);
@@ -16,27 +13,21 @@ std::string	&OperateRequest::getHeaders(void) {
 }
 
 //setter
-// void	OperateRequest::setRequest(Request *req) {
-// 	request_ = req;
-// }
 
 void	OperateRequest::checkRequestMessage(Connection *c) {
 
-	// setRequest(c->getRequest());
 	size_t pos = 0;
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
 	{
 		if ((pos = c->getBuffer().find(CRLF))!= std::string::npos)
-		{
 			c->setPhaseMsg(START_LINE_COMPLETE);
-			startLine_ = c->getBuffer().substr(0, pos);
-			tmp_ = pos + 1;
-		}
 	}
 	if (c->getPhaseMsg() == START_LINE_COMPLETE)
 	{
 		//parse start line
 		std::cout << "Parse Start Line" << std::endl;
+		startLine_ = c->getBuffer().substr(0, pos);
+		tmp_ = pos + LEN_CRLF;
 		parseStartLine(c);
 		// if ((pos = c->getBuffer().find(CRLFCRLF)) == std::string::npos)
 		// 	c->setPhaseMsg(HEADER_INCOMPLETE);
@@ -44,18 +35,18 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	if (c->getPhaseMsg() == HEADER_INCOMPLETE)
 	{
 		if ((pos = c->getBuffer().find(CRLFCRLF)) != std::string::npos)
-		{
 			c->setPhaseMsg(HEADER_COMPLETE);
-			headers_ = c->getBuffer().substr(tmp_, c->getBuffer().length());
-			tmp_ = pos + 1;
-			std::cout << "header: " << headers_ << std::endl;
-			std::cout << "tmp_: " << tmp_ << std::endl;
-		}
 	}
 	if (c->getPhaseMsg() == HEADER_COMPLETE)
 	{
-		//parse header
 		std::cout << "Parse Header" << std::endl;
+		// headers_ = c->getBuffer().substr(tmp_, c->getBuffer().length());
+		headers_ = c->getBuffer().substr(tmp_, pos + LEN_CRLFCRLF);
+		tmp_ = pos + LEN_CRLFCRLF;
+		// std::cout << "header: " << headers_ << std::endl;
+		// std::cout << "tmp_: " << tmp_ << std::endl;
+		//parse header
+		parseHeaders(c);
 	}
 }
 
@@ -108,6 +99,49 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	c->setPhaseMsg(HEADER_INCOMPLETE);
 }
 
+void	OperateRequest::parseHeaders(Connection *c) {
+	(void)c;
+	std::cout << "headers" << std::endl;
+	std::cout << headers_ << std::endl;
+	size_t pos = 0;
+	int code = 0;
+	while ((pos = headers_.find(CRLF)) != std::string::npos)
+	{
+		std::string headerline = "";
+		// std::cout << "pos: " << pos << std::endl;
+		headerline = headers_.substr(0, pos);
+		// std::cout << "Header line " << i++ << " : " << headerline << std::endl;
+		// }
+
+		//headerline parse - argument is < 2 => 400 // if field name is not alpha => 400
+													// if there's sth between fild name and colon => 400
+		if ((code = parseHeaderLine(c, headerline)) != DEFAULT)
+		{
+			c->setReqStatusCode(code);
+			return ;
+		}
+		headers_ = headers_.substr(pos + LEN_CRLF, headers_.length());
+		// std::cout << "headers to parse line : " << std::endl;
+		std::cout << headers_ << std::endl;
+		if (headers_.length() == LEN_CRLF)
+			break ;
+	}
+	// std::cout <<
+}
+
+int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
+	std::vector<std::string> header_line_parse = splitDelim(headerline, ":");
+	if (!checkHeaderValue(header_line_parse[0]) || header_line_parse.size() != 2)
+		return (BAD_REQUEST);
+	std::string str = trimWhiteSpace(header_line_parse[1]);
+
+	std::string key = header_line_parse[0];
+	std::string value = str;
+	c->getRequest().setHeader(key, value);
+	return (DEFAULT);
+}
+
+//utiles
 std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string delim) {
     size_t pos_start = 0, pos_end, delim_len = delim.length();
     std::string 		token;
@@ -145,7 +179,26 @@ int			OperateRequest::checkVersion(const std::string &s) {
 	return (true);
 }
 
-// int		OperateRequest::checkVersion(const std::string &s) {
-// 	int res = s.compare("HTTP/1.1");
+int			OperateRequest::checkHeaderValue(const std::string &s) {
+	for (size_t i = 0; i < s.length(); i++)
+	{
+		char c = s[i];
+		if (!isalpha(c))
+			return (false);
+	}
+	return (true);
+}
 
-// }
+std::string	OperateRequest::trimWhiteSpace(std::string &s) {
+
+	std::string str;
+	std::string whitespace(" \n\r\t\f\v");
+	size_t found1 = s.find_first_not_of(whitespace);
+	size_t found2 = s.find_last_not_of(whitespace);
+	// std::cout << "string length: " << s.length() << std::endl;
+	// std::cout << "find first not of whitespace : " << found1 << std::endl;
+	// std::cout << "find last not of whitespace : " << found2 << std::endl;
+	str = s.substr(found1, found2 - found1 + 1);
+	// std::cout << "length after this: " << str.length() << std::endl;
+	return (str);
+}

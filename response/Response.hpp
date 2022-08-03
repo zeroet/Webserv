@@ -5,6 +5,26 @@
 #include <iostream>
 #include <map>
 
+/* Headers to manage
+Accept-Charsets
+Accept-Language
+Allow
+Authorization
+Content-Language
+Content-Length
+Content-Location
+Content-Type
+Date
+Host
+Last-Modified
+Location
+Referer
+Retry-After
+Server
+Transfer-Encoding
+User-Agent
+WWW-Authenticate */
+
 class Response
 {
 	public:
@@ -13,9 +33,9 @@ class Response
 		Response(Response const & copy);
 		Response & operator =(Response const & copy);
 		~Response();
-	
-		typedef std::map<std::string, std::string> mapStatus;	
-		
+
+		typedef std::map<std::string, std::string> mapStatus;
+
 		std::string 	makeHeader();
 		void			appendHeader(std::string first, std::string second);
 		void			setBody(std::string & str);
@@ -26,7 +46,7 @@ class Response
 		void			response_manager();
 		std::string		getStatusCode();
 		void			setStatusCode(std::string code);
-	
+
 	private:
 		std::map<std::string, std::string> Headers_;
 		std::string StatusCode_;
