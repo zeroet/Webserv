@@ -66,3 +66,10 @@ void	Request::setVersion(std::string version) {
 void	Request::setHeader(std::string key, std::string value) {
 	requestHeaders_[key] = value;
 }
+
+//tmp
+void	Request::printHeaders(void) {
+	std::cout << "Request message headers:" << std::endl;
+	for(mapHeader::iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++)
+		std::cout << (*it).first << ": " << (*it).second << std::endl;
+}

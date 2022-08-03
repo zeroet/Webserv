@@ -44,4 +44,7 @@ class Request {
 		void	setPath(std::string path);
 		void	setVersion(std::string version);
 		void	setHeader(std::string key, std::string value);		//Set one of header value
+
+		//tmp
+		void	printHeaders(void);
 };

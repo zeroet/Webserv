@@ -104,6 +104,7 @@ void	OperateRequest::parseHeaders(Connection *c) {
 	std::cout << "headers" << std::endl;
 	std::cout << headers_ << std::endl;
 	size_t pos = 0;
+	int code = 0;
 	while ((pos = headers_.find(CRLF)) != std::string::npos)
 	{
 		std::string headerline = "";
@@ -112,8 +113,13 @@ void	OperateRequest::parseHeaders(Connection *c) {
 		// std::cout << "Header line " << i++ << " : " << headerline << std::endl;
 		// }
 
-		//headerline parse
-
+		//headerline parse - argument is < 2 => 400 // if field name is not alpha => 400
+													// if there's sth between fild name and colon => 400
+		if ((code = parseHeaderLine(c, headerline)) != DEFAULT)
+		{
+			c->setReqStatusCode(code);
+			return ;
+		}
 		headers_ = headers_.substr(pos + LEN_CRLF, headers_.length());
 		// std::cout << "headers to parse line : " << std::endl;
 		std::cout << headers_ << std::endl;
@@ -121,6 +127,18 @@ void	OperateRequest::parseHeaders(Connection *c) {
 			break ;
 	}
 	// std::cout <<
+}
+
+int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
+	std::vector<std::string> header_line_parse = splitDelim(headerline, ":");
+	if (!checkHeaderValue(header_line_parse[0]) || header_line_parse.size() != 2)
+		return (BAD_REQUEST);
+	std::string str = trimWhiteSpace(header_line_parse[1]);
+
+	std::string key = header_line_parse[0];
+	std::string value = str;
+	c->getRequest().setHeader(key, value);
+	return (DEFAULT);
 }
 
 //utiles
@@ -159,4 +177,28 @@ int			OperateRequest::checkVersion(const std::string &s) {
 			return (false);
 	}
 	return (true);
+}
+
+int			OperateRequest::checkHeaderValue(const std::string &s) {
+	for (size_t i = 0; i < s.length(); i++)
+	{
+		char c = s[i];
+		if (!isalpha(c))
+			return (false);
+	}
+	return (true);
+}
+
+std::string	OperateRequest::trimWhiteSpace(std::string &s) {
+
+	std::string str;
+	std::string whitespace(" \n\r\t\f\v");
+	size_t found1 = s.find_first_not_of(whitespace);
+	size_t found2 = s.find_last_not_of(whitespace);
+	// std::cout << "string length: " << s.length() << std::endl;
+	// std::cout << "find first not of whitespace : " << found1 << std::endl;
+	// std::cout << "find last not of whitespace : " << found2 << std::endl;
+	str = s.substr(found1, found2 - found1 + 1);
+	// std::cout << "length after this: " << str.length() << std::endl;
+	return (str);
 }

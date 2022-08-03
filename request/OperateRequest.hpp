@@ -35,11 +35,14 @@ class OperateRequest {
 		void	checkRequestMessage(Connection *c);
 		void	parseStartLine(Connection *c);
 		void	parseHeaders(Connection *c);
+		int		parseHeaderLine(Connection *c, std::string headerline);
 
 		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
+		int		checkHeaderValue(const std::string &s);
+		std::string	trimWhiteSpace(std::string &s);
 
 };
 
