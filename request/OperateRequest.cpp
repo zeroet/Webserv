@@ -20,16 +20,14 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
 	{
 		if ((pos = c->getBuffer().find(CRLF))!= std::string::npos)
-		{
 			c->setPhaseMsg(START_LINE_COMPLETE);
-			startLine_ = c->getBuffer().substr(0, pos);
-			tmp_ = pos + 1;
-		}
 	}
 	if (c->getPhaseMsg() == START_LINE_COMPLETE)
 	{
 		//parse start line
 		std::cout << "Parse Start Line" << std::endl;
+		startLine_ = c->getBuffer().substr(0, pos);
+		tmp_ = pos + LEN_CRLF;
 		parseStartLine(c);
 		// if ((pos = c->getBuffer().find(CRLFCRLF)) == std::string::npos)
 		// 	c->setPhaseMsg(HEADER_INCOMPLETE);
@@ -37,18 +35,18 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	if (c->getPhaseMsg() == HEADER_INCOMPLETE)
 	{
 		if ((pos = c->getBuffer().find(CRLFCRLF)) != std::string::npos)
-		{
 			c->setPhaseMsg(HEADER_COMPLETE);
-			headers_ = c->getBuffer().substr(tmp_, c->getBuffer().length());
-			tmp_ = pos + 1;
-			std::cout << "header: " << headers_ << std::endl;
-			std::cout << "tmp_: " << tmp_ << std::endl;
-		}
 	}
 	if (c->getPhaseMsg() == HEADER_COMPLETE)
 	{
-		//parse header
 		std::cout << "Parse Header" << std::endl;
+		// headers_ = c->getBuffer().substr(tmp_, c->getBuffer().length());
+		headers_ = c->getBuffer().substr(tmp_, pos + LEN_CRLFCRLF);
+		tmp_ = pos + LEN_CRLFCRLF;
+		// std::cout << "header: " << headers_ << std::endl;
+		// std::cout << "tmp_: " << tmp_ << std::endl;
+		//parse header
+		parseHeaders(c);
 	}
 }
 
@@ -99,6 +97,30 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	}
 	c->getRequest().setVersion(http + version);
 	c->setPhaseMsg(HEADER_INCOMPLETE);
+}
+
+void	OperateRequest::parseHeaders(Connection *c) {
+	(void)c;
+	std::cout << "headers" << std::endl;
+	std::cout << headers_ << std::endl;
+	size_t pos = 0;
+	while ((pos = headers_.find(CRLF)) != std::string::npos)
+	{
+		std::string headerline = "";
+		// std::cout << "pos: " << pos << std::endl;
+		headerline = headers_.substr(0, pos);
+		// std::cout << "Header line " << i++ << " : " << headerline << std::endl;
+		// }
+
+		//headerline parse
+
+		headers_ = headers_.substr(pos + LEN_CRLF, headers_.length());
+		// std::cout << "headers to parse line : " << std::endl;
+		std::cout << headers_ << std::endl;
+		if (headers_.length() == LEN_CRLF)
+			break ;
+	}
+	// std::cout <<
 }
 
 //utiles

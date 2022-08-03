@@ -84,8 +84,16 @@ void    Connection::processRequest()
 }
 
 //getter
+Block		&Connection::getBlock(void) {
+	return (block_);
+}
+
 Request	&Connection::getRequest(void) {
 	return (request_);
+}
+
+Response	&Connection::getResponse(void) {
+	return (response_);
 }
 
 int			&Connection::getReqStatusCode(void) {

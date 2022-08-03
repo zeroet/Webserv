@@ -36,7 +36,7 @@ const	mapHeader	&Request::getRequestHeaders(void)	const {
 	return (requestHeaders_);
 }
 
-const	std::string	&Request::getHeaderValue(std::string key) const {
+const	std::string	Request::getHeaderValue(std::string key) const {
 	std::transform(key.begin(), key.end(), key.begin(), toupper);
 	for (mapHeader::const_iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++)
 	{

@@ -12,8 +12,10 @@
 // #include <cstdlib>
 
 typedef std::map<std::string, std::string> 	mapHeader;
-// typedef std::vector<unsigned int>			vecByte;
 
+/*
+ * Class to stock every filterd elements of http request message
+ */
 class Request {
 	private:
 		std::string 	method_;
@@ -33,13 +35,13 @@ class Request {
 		const	std::string	&getMethod(void) const;
 		const	std::string &getPath(void)	const;
 		const	std::string	&getVersion(void)	const;
-		const	mapHeader	&getRequestHeaders(void)	const;
-		const	std::string	&getHeaderValue(std::string key) const;
+		const	mapHeader	&getRequestHeaders(void)	const;		//Get all headers in the shape of Map Container
+		const	std::string	getHeaderValue(std::string key) const;	//Get one of header value
 		const	std::string	&getBody(void)	const;
 
 		//setter
 		void	setMethod(std::string method);
 		void	setPath(std::string path);
 		void	setVersion(std::string version);
-		void	setHeader(std::string key, std::string value);
+		void	setHeader(std::string key, std::string value);		//Set one of header value
 };
