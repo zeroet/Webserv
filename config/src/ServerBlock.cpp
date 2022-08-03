@@ -25,10 +25,6 @@ namespace ft
 
 	unsigned int		ServerBlock::getListen(void) const
 	{
-		//int i;
-		
-    	//std::istringstream(this->listen_) >> i;
-		//return (i);
 		return (this->listen_);
 	}
 

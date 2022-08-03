@@ -1,12 +1,8 @@
 #ifndef HTTPBLOCK_HPP
 #define HTTPBLOCK_HPP
 
-#include <vector>
-#include <string>
 #include "BaseDirectives.hpp"
-//#include "Directive.hpp"
 #include "ServerBlock.hpp"
-#include <bits/stdc++.h>
 
 namespace ft
 {

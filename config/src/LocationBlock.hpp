@@ -1,8 +1,6 @@
 #ifndef LOCATIONBLOCK_HPP
 #define LOCATIONBLOCK_HPP
 
-#include <vector>
-#include <string>
 #include "BaseDirectives.hpp"
 
 namespace ft

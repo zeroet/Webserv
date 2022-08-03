@@ -1,16 +1,13 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 #include <iostream>
-#include <vector>
+#include <sstream>
 #include <utility>
-#include <string>
 #include <map>
 #include <cstdlib>
 #include "Tokenizer.hpp"
 #include "Directive.hpp"
 #include "HttpBlock.hpp"
-#include "ServerBlock.hpp"
-#include "LocationBlock.hpp"
 
 namespace ft
 {

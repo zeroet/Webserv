@@ -1,12 +1,8 @@
 #ifndef PRINTCONFIG_HPP
 #define PRINTCONFIG_HPP
-#include <iostream>
-#include <string>
-#include <vector>
-#include "Tokenizer.hpp"
 #include "Parser.hpp"
-#include "BaseDirectives.hpp"
-#include "HttpBlock.hpp"
+#include <bits/stdc++.h>
+
 #define CONFIG_PATH "./conf/"
 #define DEFALUT_CONF "sample.conf"
 #ifndef P_SERVER
@@ -32,7 +28,7 @@ namespace ft
 			static void				printHttpContextDirectiveParameters(HttpBlock& context);
 			static void				printServerContextDirectiveParameters(ServerBlock& context);
 			static void				printLocationContextDirectiveParameters(LocationBlock& context);
-			static void				printConfig(std::pair<bool, HttpBlock>& validHttpContext, int printLocationFlag);
+			static void				printConfig(std::pair<bool, HttpBlock>& validHttpContext, int flags);
 			static void				printTokens(std::vector<Token>& tokens);
 			static std::pair<bool, HttpBlock>	parseConfig(char* configPath, int flags = 0);
 	};

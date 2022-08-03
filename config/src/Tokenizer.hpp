@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stdexcept>
 
 namespace ft
 {
@@ -17,7 +16,6 @@ namespace ft
 		COMMENT
 	};
 
-	//static const char* sTokenTypeStrings[] = {
 	static const char* sTokenTypeStrings[] = {
 		"WHITESPACE",
 		"IDENTIFIER",

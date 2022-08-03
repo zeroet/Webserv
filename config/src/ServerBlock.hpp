@@ -1,12 +1,9 @@
 #ifndef SERVERBLOCK_HPP
 #define SERVERBLOCK_HPP
 
-#include <vector>
-#include <string>
 #include "BaseDirectives.hpp"
 #include "HttpBlock.hpp"
 #include "LocationBlock.hpp"
-#include <sstream>
 
 namespace ft
 {
