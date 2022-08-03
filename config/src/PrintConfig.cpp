@@ -1,6 +1,5 @@
 #include "PrintConfig.hpp"
 
-
 namespace ft
 {
 	void	PrintConfig::printBaseDirectivesParameters(ft::BaseDirectives& context)
@@ -22,9 +21,8 @@ namespace ft
 
 	void	PrintConfig::printHttpContextDirectiveParameters(ft::HttpBlock& context)
 	{
-		std::cout << ORANGE << "\n[HttpBlock] directives parameters.\n";
+		std::cout << "\n[HttpBlock] directives parameters.\n";
 		printBaseDirectivesParameters(context);
-		std::cout << FIN;
 	}
 
 	void	PrintConfig::printServerContextDirectiveParameters(ft::ServerBlock& context)
@@ -33,7 +31,7 @@ namespace ft
 		std::vector<std::string>::iterator	currentString = vecString.begin();
 		std::vector<std::string>::iterator	    endString = vecString.end();
 
-		std::cout << YELLOW << "\n=======================[ServerBlock] directives parameters=====================\n";
+		std::cout << "\n=======================[ServerBlock] directives parameters=====================\n";
 		printBaseDirectivesParameters(context);
 		std::cout << "Base listen: " << context.getListen() << std::endl;
 		std::cout << "Base server_name: ";
@@ -47,7 +45,6 @@ namespace ft
 		for (; currentString != endString; ++currentString)
 			std::cout << " " << *currentString;
 		std::cout << std::endl;
-		std::cout << FIN;
 	}
 
 	void	PrintConfig::printLocationContextDirectiveParameters(ft::LocationBlock& context)
