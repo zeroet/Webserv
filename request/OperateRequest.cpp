@@ -38,8 +38,8 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 		//parse start line
 		std::cout << "Parse Start Line" << std::endl;
 		parseStartLine(c);
-		if ((pos = c->getBuffer().find(CRLFCRLF)) == std::string::npos)
-			c->setPhaseMsg(HEADER_INCOMPLETE);
+		// if ((pos = c->getBuffer().find(CRLFCRLF)) == std::string::npos)
+		// 	c->setPhaseMsg(HEADER_INCOMPLETE);
 	}
 	if (c->getPhaseMsg() == HEADER_INCOMPLETE)
 	{
@@ -66,6 +66,7 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (split_start_line.size() != 3)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
+		c->setPhaseMsg(HEADER_COMPLETE);
 		std::cout << "start line argument wrong request code : " <<  c->getReqStatusCode() <<  std::endl;
 		return ;
 	}
@@ -76,31 +77,35 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (!checkMethod(split_start_line[0]))
 	{
 		c->setReqStatusCode(BAD_REQUEST);
+		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
 	else
 		c->getRequest().setMethod(split_start_line[0]);
-	
+
 	//path check:
 	c->getRequest().setPath(split_start_line[1]);
 
 	//HTTP/1.1 check: 'HTTP/' '1.*' / if not Error 400/505
-	// std::cout << "split start line 2: " << split_start_line[2] << std::endl;
 	std::string http = split_start_line[2].substr(0, 5);
 	std::string version = split_start_line[2].substr(5, split_start_line[2].length());
 	int cmp = http.compare("HTTP/");
 	if (!checkVersion(version) || version.length() != 3 || cmp)
 	{
+		std::cout << "HERE" << std::endl;
 		c->setReqStatusCode(BAD_REQUEST);
+		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
 	cmp = version.compare(0, 2, "1.");
 	if (cmp)
 	{
 		c->setReqStatusCode(HTTP_VERSION_NOT_SUPPORTED);
+		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
 	c->getRequest().setVersion(http + version);
+	c->setPhaseMsg(HEADER_INCOMPLETE);
 }
 
 std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string delim) {
