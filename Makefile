@@ -1,36 +1,44 @@
-CXX := c++
-NAME := webserv
+NAME = webserv
 
-SRCS_DIR := srcs
-SRCS := $(shell find srcs -type f -name '*.cpp')
-OBJS_DIR := objs
-OBJS := $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
-DEPENDENCIES := $(OBJS:.o=.d)
+CONFIG = BaseDirectives.cpp \
+		 HttpBlock.cpp \
+		 LocationBlock.cpp \
+		 Parser.cpp \
+		 PrintConfig.cpp \
+		 ServerBlock.cpp \
+		 Tokenizer.cpp
 
-CXXFLAGS := -I$(SRCS_DIR) --std=c++98 -Wall -Wextra -Werror -g3 -fsanitize=address
+SERVER = connection.cpp \
+		 epoll.cpp \
+		 socket.cpp
 
-.PHONY: all
+SRCS = main.cpp \
+	   $(addprefix config/src/, $(CONFIG)) \
+	   $(addprefix server/, $(SERVER))
+	
+CXX = c++
+
+OBJS = $(SRCS:.cpp=.o)
+
+DEBUGFLAG = #-g3
+
+DEBUG = #-fsanitize=address
+
+CXXFLAGS = #-Wall -Wextra -Werror -std=c++98
+
+RM = rm -f
+
 all: $(NAME)
 
-$(OBJS_DIR)/%.o: %.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -MMD -MP -o $@
-
--include $(DEPENDENCIES)
-
-
 $(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(NAME) $^
+		$(CXX) $(CXXFLAGS) $(DEBUGFLAG) $(DEBUG) -o $(NAME) $(OBJS)
 
-.PHONY: clean
 clean:
-	$(RM) $(OBJS) $(DEPENDENCIES)
-	$(RM) -r $(OBJS_DIR)
+		$(RM) $(OBJS)
 
-.PHONY: fclean
 fclean: clean
-	$(RM) $(NAME)
+		$(RM) $(NAME)
 
-.PHONY: re
 re: fclean all
 
+.PHONY: all clean fclean re

@@ -1,6 +1,6 @@
 #include "connection.hpp"
 
-Connection::Connection(int fd, Block block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep)
+Connection::Connection(int fd, ServerBlock block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep)
 {
 }
 
@@ -12,7 +12,14 @@ void    Connection::requestRecv()
 
     std::cout << "Recv" << std::endl;
     if (0 < recv(clntFd_, &str, 1024, 0))
+    {
+        std::cout << block_.getRoot() << std::endl;
+        std::cout << block_.getSocketFd() << std::endl;
+        std::cout << block_.getKeepaliveTimeout() << std::endl;
+        std::cout << this->clntFd_ << std::endl;
+        
         ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+    }
 }
 
 void    Connection::response()

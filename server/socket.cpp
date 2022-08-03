@@ -65,7 +65,7 @@ int     Socket::create_socket()
         if (socketFd < 0)
             return (ERROR);
         else
-            vecBloc_[i].setsocketFd(socketFd);
+            vecBloc_[i].setSocketFd(socketFd);
     }
     return (OK);
 }
