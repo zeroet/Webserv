@@ -7,9 +7,6 @@
 #include "Parser.hpp"
 #include "BaseDirectives.hpp"
 #include "HttpBlock.hpp"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #define CONFIG_PATH "./conf/"
 #define DEFALUT_CONF "sample.conf"
 #ifndef P_SERVER

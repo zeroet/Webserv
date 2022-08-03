@@ -120,7 +120,25 @@ namespace ft
 			setBaseDirectiveParameter(context, currentDirective);
 			if (currentDirective->directive == LISTEN)
 			{
-				context.setListen(*currentDirective->parameters.begin());
+				unsigned int		value;
+				std::string		inputString = (*currentDirective->parameters.begin());
+				std::string::size_type	n;
+
+				if (inputString.length() != 0)
+				{
+					n = inputString.find_first_not_of("0123456789");
+					if (n == std::string::npos)
+					{	
+						std::istringstream(*currentDirective->parameters.begin()) >> value; // string to unsigned int
+						context.setListen(value);
+					}
+					else
+					{
+						std::cout << "Error: listen parameter should be an integer literal.\n";
+						return (false);
+					}
+
+				}
 			}
 			else if (currentDirective->directive == SERVER_NAME)
 			{

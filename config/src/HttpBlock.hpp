@@ -17,7 +17,7 @@ namespace ft
 			std::vector<ServerBlock>	serverList;
 		public:
 			//HttpBlock();
-			const std::vector<ServerBlock>	getServerBlock() const;
+			std::vector<ServerBlock>	getServerBlock() const;
 	};
 
 }

@@ -16,10 +16,10 @@ namespace ft
 	class ServerBlock : public BaseDirectives
 	{
 		private:
-			std::string			listen_;
+			unsigned int			listen_;
 			std::vector<std::string>	serverName_;
 			std::vector<std::string>	return_;
-			int 						socketFd_;
+			int 				socketFd_;
 
 		public:
 			std::vector<LocationBlock>	locationList;
@@ -27,14 +27,14 @@ namespace ft
 			ServerBlock(const BaseDirectives& context);
 			// Getter
 			//const std::vector<LocationBlock>	getLocationBlock();
-			int						getListen(void) const;
+			unsigned int			getListen(void) const;
 			const std::vector<std::string>	getServerName(void) const;
 			const std::vector<std::string>	getReturn(void) const;
-			const int						getSocketFd(void) const;
+			int				getSocketFd(void) const;
 
 
 			// Setter
-			void				setListen(const std::string x);
+			void				setListen(const unsigned int x);
 			void				setServerName(const std::string x);
 			void				setReturn(const std::string x);
 			void				setSocketFd(const int i);
