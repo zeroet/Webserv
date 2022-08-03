@@ -63,56 +63,13 @@ void	Request::setVersion(std::string version) {
 	version_ = version;
 }
 
-//setter
+void	Request::setHeader(std::string key, std::string value) {
+	requestHeaders_[key] = value;
+}
 
-// void    Request::addBuffer(void)
-// {
-//     // memset(&buf, 0, sizeof(buf));
-//     int n = recv(this->fd_, &buffer, sizeof(buffer), 0);
-// 	// std::cout << "i from recv :" << n << std::endl;
-// 	if (n == -1)
-// 	{
-// 		printf("Error recv\n");
-// 		//need function to quit
-// 		//return (Error); or return (-1);
-// 	}
-// 	std::cout << "n: " << n << std::endl;
-//     buf_.insert(buf_.end(), buffer, buffer + n);
-// 	std::cout << "buf_: " << std::endl;
-// 	for (unsigned int i = 0; i < buf_.size(); i++)
-// 	{
-// 		std::cout << buf_[i];
-// 	}
-// 	// while(1) {
-
-// 	// }
-
-// }
-
-// void    Request::parsingBuffer(void)
-// {
-//     std::string tmp;
-    // std::string::size_type posEndBuff(-1);
-    // std::string::size_type posCRLF(-1);
-
-    // std::cout << posEndBuff << " est pos End Buff" <<  std::endl;
-    /*
-    posEndBuff = this->buf_.find(END_BUF);
-    posCRLF = this->buf_.find(CRLF);
-    // buf_ : "abc/r/n/r/ndef"
-    // n = 3
-    std::cout << posEndBuff << " est pos End Buff" <<  std::endl;
-    if (posEndBuff != -1)
-    {
-        tmp.assign(this->buf_, 0, posEndBuff);
-        this->buf_.erase(0, posEndBuff + LEN_END_BUF);
-    }
-    std::cout << tmp << " est tmp\n";
-    std::cout << buf_ << " est buf\n";
-    */
-// }
-
-// std::string const &Request::getBuffer(void) const
-// std::vector<unsigned char> &Request::getBuffer(void) {
-//     return (this->buf_);
-// }
+//tmp
+void	Request::printHeaders(void) {
+	std::cout << "Request message headers:" << std::endl;
+	for(mapHeader::iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++)
+		std::cout << (*it).first << ": " << (*it).second << std::endl;
+}

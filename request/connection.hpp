@@ -2,6 +2,7 @@
 
 #include "epoll.hpp"
 #include "request.hpp"
+#include "../response/Response.hpp"
 #include "socket.hpp"
 #include "OperateRequest.hpp"
 
@@ -50,6 +51,7 @@ enum RequestStatusCode {
 	NOT_FOUND = 404,
 	METHOD_NOT_ALLOWED = 405,
 	REQUEST_TIMEOUT = 408,
+	PAYLOAD_TOO_LARGE = 413,
 	SERVER_ERROR = 500,
 	BAD_GATEWAY = 502,
 	HTTP_VERSION_NOT_SUPPORTED = 505
@@ -68,7 +70,7 @@ class Connection
 
 		Request     			request_;
 		// std::vector<Request>	multi_request;
-		// response		response_;
+		Response		response_;
 
 		int				phase_msg_;
 		int				req_status_code_;
@@ -80,7 +82,9 @@ class Connection
 		~Connection();
 
 		//getter
+		Block		&getBlock(void);
 		Request		&getRequest(void);
+		Response	&getResponse(void);
 		int			&getPhaseMsg(void);
 		std::string &getBuffer(void);
 		int			&getReqStatusCode(void);

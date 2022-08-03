@@ -8,40 +8,22 @@
 #include <string>
 #include <algorithm>
 
-/* Headers to manage
-Accept-Charsets
-Accept-Language
-Allow
-Authorization
-Content-Language
-Content-Length
-Content-Location
-Content-Type
-Date
-Host
-Last-Modified
-Location
-Referer
-Retry-After
-Server
-Transfer-Encoding
-User-Agent
-WWW-Authenticate */
-
 class Connection;
 class Request;
 
+/*
+ * Class to operate the validation and the parsing of http request message
+ * After this process, the result will be transfered and stocked into Request class which located in Connection class
+ */
 class OperateRequest {
 
 	private:
-		// Request		*request_;
-		std::string	startLine_;
-		std::string	headers_;
-		size_t		tmp_;
+		std::string	startLine_;	//extract of start line from buffer
+		std::string	headers_;	//extract of headers from buffer
+		size_t		tmp_;		//for stock end pos of buffer(from connection)
 
 	public:
 		OperateRequest(void);
-		// OperateRequest(Connection *c);
 		~OperateRequest(void);
 
 		//getter
@@ -49,14 +31,18 @@ class OperateRequest {
 		std::string	&getHeaders(void);
 
 		//setter
-		// void	setRequest(Request *request);
 
 		void	checkRequestMessage(Connection *c);
 		void	parseStartLine(Connection *c);
+		void	parseHeaders(Connection *c);
+		int		parseHeaderLine(Connection *c, std::string headerline);
+
+		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
-		// int		checkhttp(const std::string &s);
+		int		checkHeaderValue(const std::string &s);
+		std::string	trimWhiteSpace(std::string &s);
 
 };
 

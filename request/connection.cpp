@@ -84,8 +84,16 @@ void    Connection::processRequest()
 }
 
 //getter
+Block		&Connection::getBlock(void) {
+	return (block_);
+}
+
 Request	&Connection::getRequest(void) {
 	return (request_);
+}
+
+Response	&Connection::getResponse(void) {
+	return (response_);
 }
 
 int			&Connection::getReqStatusCode(void) {
@@ -121,10 +129,7 @@ void	Connection::printRequestMsg(void) {
 	printf("method_: %s\n", getRequest().getMethod().c_str());
 	printf("path_: %s\n", getRequest().getPath().c_str());
 	printf("version_: %s\n", getRequest().getVersion().c_str());
-	// for (mapHeader::iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++) {
-		// printf("%s: ", (*it).first.c_str());
-		// printf("\n");
-	// }
+	getRequest().printHeaders();
 	// printf("body:\n");
 	// 	// body_.push_back('\0');
 	// 	// printf("%s\n", reinterpret_cast<const char *>(body_.data()));
