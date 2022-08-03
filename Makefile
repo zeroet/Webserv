@@ -12,10 +12,15 @@ SERVER = connection.cpp \
 		 epoll.cpp \
 		 socket.cpp
 
+REQUEST = request.cpp \
+		  OperateRequest.cpp
+
+
 SRCS = main.cpp \
 	   $(addprefix config/src/, $(CONFIG)) \
-	   $(addprefix server/, $(SERVER))
-	
+	   $(addprefix server/, $(SERVER)) \
+	   $(addprefix request/, $(REQUEST))
+
 CXX = c++
 
 OBJS = $(SRCS:.cpp=.o)

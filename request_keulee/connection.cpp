@@ -38,45 +38,17 @@ void    Connection::processRequest()
 		// OperateRequest::checkRequestMessage(this);
 		operateRequest.checkRequestMessage(this);
 
+	//tmp
 	printRequestMsg();
-	/*
-	size_t pos = 0;
-	if (getPhaseMsg() == START_LINE_INCOMPLETE)
-	{
-		if ((pos = buffer_.find(CRLF) )!= std::string::npos)
-		{
-			// std::cout << "pos: " << pos << std::endl;
-			// std::cout << buffer_.substr(pos, ) << std::endl;
-			setPhaseMsg(START_LINE_COMPLETE);
-		}
-	}
-	// if (pos2 != 0)
-	if (getPhaseMsg() == START_LINE_COMPLETE)
-	{
-		//parse start line
-		std::cout << "Parse Start Line" << std::endl;
-	// 	// if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
-	// 	// std::cout << pos2 << std::endl;
-	// 	// std::cout << buffer_.substr(pos2, buffer_.length()) << std::endl;
-		if ((pos = buffer_.find(CRLFCRLF)) == std::string::npos)
-			setPhaseMsg(HEADER_INCOMPLETE);
-	}
-	if (getPhaseMsg() == HEADER_INCOMPLETE)
-	{
-	// 	size_t pos = 0;
-		if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
-		{
-			// std::cout << "pos: " << pos << std::endl;
-	// 	std::cout << buffer_.substr(pos2, buffer_.length()) << std::endl;
-			setPhaseMsg(HEADER_COMPLETE);
-		}
-	}
-	if (getPhaseMsg() == HEADER_COMPLETE)
-	{
-		//parse header
-		std::cout << "Parse Header" << std::endl;
-	}
-	*/
+
+
+
+
+	////////////
+	if (phase_msg_ == BODY_COMPLETE)
+		std::cout << "CGI / EXECUTE / RESPONSE NEED TO BE DEAL" << std::endl;
+	////////////
+
 	//to change Ctl Mode when message is done with CRLFCRLF
 	size_t pos = 0;
 	if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
