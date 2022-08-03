@@ -12,7 +12,7 @@ Socket::Socket(std::vector<ServerBlock> block) : vecBloc_(block), error_(0)
 {
     this->error_ = create_socket();
     if (error_ == ERROR)
-        std::cout << "Message : socket create error" << std::endl;
+       exit(1);
 }
 
 //Copy Construct
@@ -33,6 +33,8 @@ int     Socket::create_socket()
     int     blockCount = vecBloc_.size();
     struct  sockaddr_in sockAddr;
 
+    if (blockCount < 1)
+        return (ERROR);
     for (int i = 0; i < blockCount; i++)
     {
         int socketFd = DEFAULT;
