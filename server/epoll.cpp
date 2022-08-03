@@ -32,6 +32,7 @@ Epoll::~Epoll() { close_all_serv_socket(); }
 void    Epoll::init_server_socket()
 {
 	int numServerFd = vecBloc_.size();
+    int count = 0;
 
 	create_epoll_fd();
 	for (int i = 0; i < numServerFd; i++)
@@ -41,10 +42,16 @@ void    Epoll::init_server_socket()
             "] Epoll_Ctl_Add failed" << FIN <<std::endl;
         else
         {
+            count++;
             std::cout << GREEN << "PortNumber [" << vecBloc_[i].getListen() <<
             "] Epoll_Ctl_Add Success" << FIN << std::endl;
         }   
 	}
+    if (count == 0)
+    { 
+        close_all_serv_socket();
+        exit(1);
+    }
 }
 
 //Create Epoll Fd
@@ -201,7 +208,15 @@ void    Epoll::close_all_serv_socket()
 	for(int i = 0; i < count; i++)
 		close(this->vecBloc_[i].getSocketFd());
 	close(this->epollFd_);
-	std::cout << "all socket closed" << std::endl;
+    if (c_.size() != 0)
+    {
+        mapConnection::iterator it = c_.begin();
+        mapConnection::iterator it1 = c_.end();
+        for (; it != it1; it++)
+            c_.erase(it);
+        c_.clear();
+    }
+	std::cout << GREEN << "All Socket Closed" << FIN << std::endl;
 }
 
 // Block class or utile  ????
