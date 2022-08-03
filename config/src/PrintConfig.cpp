@@ -21,7 +21,7 @@ namespace ft
 
 	void	PrintConfig::printHttpContextDirectiveParameters(ft::HttpBlock& context)
 	{
-		std::cout << "\n[HttpBlock] directives parameters.\n";
+		std::cout << ORANGE << "\n[HttpBlock] directives parameters.\n";
 		printBaseDirectivesParameters(context);
 	}
 
@@ -31,7 +31,7 @@ namespace ft
 		std::vector<std::string>::iterator	currentString = vecString.begin();
 		std::vector<std::string>::iterator	    endString = vecString.end();
 
-		std::cout << "\n=======================[ServerBlock] directives parameters=====================\n";
+		std::cout << YELLOW << "\n=======================[ServerBlock] directives parameters=====================\n";
 		printBaseDirectivesParameters(context);
 		std::cout << "Base listen: " << context.getListen() << std::endl;
 		std::cout << "Base server_name: ";
