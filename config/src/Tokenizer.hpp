@@ -4,9 +4,6 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-//#include "Parser.hpp" 
-//#include "Directive.hpp"
-
 
 namespace ft
 {
@@ -17,7 +14,6 @@ namespace ft
 		DIRECTIVE,
 		PARAMETER,
 		OPERATOR,
-		//STRING_LITERAL,
 		COMMENT
 	};
 
@@ -28,7 +24,6 @@ namespace ft
 		"DIRECTIVE",
 		"PARAMETER",
 		"OPERATOR",
-		//"STRING_LITERAL",
 		"COMMENT"
 	};
 
@@ -42,7 +37,6 @@ namespace ft
 		public:
 			//Token();
 			void	debugPrint() const;
-		//private:
 	};
 
 	class Tokenizer
@@ -54,7 +48,6 @@ namespace ft
 			std::vector<Token>	 	parse(const std::string& texts);
 		private:
 			void 				endToken(Token& token, std::vector<Token>& tokens);
-			//void				checkIdentifierToken(std::vector<Token>& tokens);
 	};
 }
 #endif

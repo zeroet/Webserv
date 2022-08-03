@@ -5,6 +5,7 @@ SRCS_DIR = src/
 INCLUDES = includes/
 
 SRCS = main.cpp \
+	PrintConfig.cpp \
        Tokenizer.cpp \
        Parser.cpp \
 	BaseDirectives.cpp \

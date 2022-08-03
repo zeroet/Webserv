@@ -516,7 +516,7 @@ namespace ft
 
 	std::pair<bool, Directive>	Parser::expectSimpleDirective(enum DirectiveKind kind)
 	{
-		//(void)ft::sTokenTypeStrings[currentToken_->type]; // for debuging
+		(void)ft::sTokenTypeStrings[currentToken_->type]; // for debuging
 		std::vector<Token>::iterator startToken = currentToken_;
 		std::pair<bool, Directive> possibleValidDirective = checkValidDirective();
 
