@@ -10,7 +10,7 @@ Epoll::Epoll() {}
 Epoll::Epoll(std::vector<ServerBlock> block) : vecBloc_(block)
 {
 	init_server_socket();
-	std::cout << "Webserver Run" << std::endl;
+	std::cout << BLUE << "Webserver Run" << FIN << std::endl;
 	epoll_server_manager();
 	std::cout << "Webserver Close" << std::endl;
 }
@@ -36,7 +36,7 @@ void    Epoll::init_server_socket()
 	create_epoll_fd();
 	for (int i = 0; i < numServerFd; i++)
 	{
-		if (OK != (epoll_add(vecBloc_[i].getsocketFd())))
+		if (OK != (epoll_add(vecBloc_[i].getSocketFd())))
 			std::cout << RED << "PortNumber [" << vecBloc_[i].getListen() <<
             "] Epoll_Ctl_Add failed" << FIN <<std::endl;
         else
@@ -85,9 +85,9 @@ int   Epoll::create_clnt_socket(int fd)
 
 	for (int i = 0; i < size; i++)
 	{
-		if (fd == this->vecBloc_[i].getsocketFd())
+		if (fd == this->vecBloc_[i].getSocketFd())
 		{
-			clntFd = accept(this->vecBloc_[i].getsocketFd(),
+			clntFd = accept(this->vecBloc_[i].getSocketFd(),
 			(struct sockaddr*)&clnt_addr, (socklen_t *)&clntLen);
 			if (0 > (clntFd = sock.socket_nonBlock_setting(clntFd)))
 				std::cout << "accept() error" << std::endl;
@@ -187,7 +187,7 @@ int     Epoll::find_server_fd(int fd)
 
 	for (int i = 0; i < size; i++)
 	{
-		if (fd == vecBloc_[i].getsocketFd())
+		if (fd == vecBloc_[i].getSocketFd())
 			return (OK);
 	}
 	return (ERROR);
@@ -199,7 +199,7 @@ void    Epoll::close_all_serv_socket()
 	int count = this->vecBloc_.size();
 
 	for(int i = 0; i < count; i++)
-		close(this->vecBloc_[i].getsocketFd());
+		close(this->vecBloc_[i].getSocketFd());
 	close(this->epollFd_);
 	std::cout << "all socket closed" << std::endl;
 }
@@ -207,13 +207,12 @@ void    Epoll::close_all_serv_socket()
 // Block class or utile  ????
 ServerBlock   Epoll::get_location_block(int fd)
 {
-	ServerBlock tmp;
 	int   size = this->vecBloc_.size();
 
 	for (int i = 0; i < size; i++)
 	{
-		if (fd == vecBloc_[i].getsocketFd())
-			return(tmp = vecBloc_[i]);
+		if (fd == vecBloc_[i].getSocketFd())
+			return(vecBloc_[i]);
 	}
-	return (0);
+    return 0;
 }

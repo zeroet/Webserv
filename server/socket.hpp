@@ -13,7 +13,7 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 
-#include "../../config/src/ServerBlock.hpp"
+#include "../config/src/ServerBlock.hpp"
 
 #define LISTEN_BACKLOG 15
 #define DEFAULT -1
@@ -29,9 +29,9 @@
 # define ORANGE "\033[38;5;202m"
 # define FIN "\033[0m"
 
-class HttpBlcok;
-class ServerBlock;
-class BaseDirectives;
+using namespace ft;
+
+namespace ft{
 
 class Socket
 {
@@ -55,3 +55,5 @@ public:
 	// Block class or utile
 	vecBloc	getter_vecBloc() const;
 };
+
+}

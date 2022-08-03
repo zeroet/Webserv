@@ -4,6 +4,7 @@
 #include "BaseDirectives.hpp"
 #include "HttpBlock.hpp"
 #include "LocationBlock.hpp"
+#include <iostream>
 
 namespace ft
 {
@@ -21,6 +22,7 @@ namespace ft
 		public:
 			std::vector<LocationBlock>	locationList;
 		public:
+			ServerBlock(int i) { std::cout << "server block not found" << std::endl; };
 			ServerBlock(const BaseDirectives& context);
 			// Getter
 			//const std::vector<LocationBlock>	getLocationBlock();
