@@ -34,20 +34,12 @@ class Request {
 		const	std::string &getPath(void)	const;
 		const	std::string	&getVersion(void)	const;
 		const	mapHeader	&getRequestHeaders(void)	const;
-		const	std::string	getHeaderValue(std::string key) const;
+		const	std::string	&getHeaderValue(std::string key) const;
 		const	std::string	&getBody(void)	const;
 
 		//setter
 		void	setMethod(std::string method);
 		void	setPath(std::string path);
 		void	setVersion(std::string version);
-
-		//tmp
-		// void	printRequestMsg(void);
-
-		// void    addBuffer(void);
-		// void    parsingBuffer(void);
-		//getter
-		// std::string const &getBuffer(void) const;
-		// std::vector<unsigned char> &getBuffer(void);
+		void	setHeader(std::string key, std::string value);
 };

@@ -4,9 +4,6 @@ OperateRequest::OperateRequest(void) {}
 
 OperateRequest::~OperateRequest(void) {}
 
-// OperateRequest::OperateRequest(Connection *c) : request_(&c->getRequest()) {}
-
-
 //getter
 std::string	&OperateRequest::getStartLine(void) {
 	return (startLine_);
@@ -16,13 +13,9 @@ std::string	&OperateRequest::getHeaders(void) {
 }
 
 //setter
-// void	OperateRequest::setRequest(Request *req) {
-// 	request_ = req;
-// }
 
 void	OperateRequest::checkRequestMessage(Connection *c) {
 
-	// setRequest(c->getRequest());
 	size_t pos = 0;
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
 	{
@@ -108,6 +101,7 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	c->setPhaseMsg(HEADER_INCOMPLETE);
 }
 
+//utiles
 std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string delim) {
     size_t pos_start = 0, pos_end, delim_len = delim.length();
     std::string 		token;
@@ -144,8 +138,3 @@ int			OperateRequest::checkVersion(const std::string &s) {
 	}
 	return (true);
 }
-
-// int		OperateRequest::checkVersion(const std::string &s) {
-// 	int res = s.compare("HTTP/1.1");
-
-// }

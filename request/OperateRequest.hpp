@@ -34,14 +34,12 @@ class Request;
 class OperateRequest {
 
 	private:
-		// Request		*request_;
 		std::string	startLine_;
 		std::string	headers_;
 		size_t		tmp_;
 
 	public:
 		OperateRequest(void);
-		// OperateRequest(Connection *c);
 		~OperateRequest(void);
 
 		//getter
@@ -49,14 +47,14 @@ class OperateRequest {
 		std::string	&getHeaders(void);
 
 		//setter
-		// void	setRequest(Request *request);
 
 		void	checkRequestMessage(Connection *c);
 		void	parseStartLine(Connection *c);
+
+		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
-		// int		checkhttp(const std::string &s);
 
 };
 
