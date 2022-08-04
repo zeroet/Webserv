@@ -2,9 +2,12 @@
 
 OperateRequest operateRequest = OperateRequest();
 
-Connection::Connection(int fd, ServerBlock block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
+Connection::Connection(int fd, ft::ServerBlock block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
     std::cout << ep_->getepollfd() << std::endl;
 	// Ctl_mode_flag_ = false;
+	
+	//this->operateRequest = OperateRequest(); // = OperateRequest();
+
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = DEFAULT;
 }
@@ -56,7 +59,7 @@ void    Connection::processRequest()
 }
 
 //getter
-ServerBlock		&Connection::getBlock(void) {
+ft::ServerBlock		&Connection::getBlock(void) {
 	return (block_);
 }
 

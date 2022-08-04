@@ -55,7 +55,7 @@ class Connection
 {
 	private:
 		int clntFd_;
-		ServerBlock   block_;
+		ft::ServerBlock   block_;
 		std::string status_;
 		Epoll *ep_;
 
@@ -66,17 +66,19 @@ class Connection
 		// std::vector<Request>	multi_request;
 		Response		response_;
 
+		//OperateRequest		operateRequest;
+
 		int				phase_msg_;
 		int				req_status_code_;
 		// res
 		// exe
 
 	public:
-		Connection(int fd, ServerBlock block, Epoll *ep);
+		Connection(int fd, ft::ServerBlock block, Epoll *ep);
 		~Connection();
 
 		//getter
-		ServerBlock	&getBlock(void);
+		ft::ServerBlock	&getBlock(void);
 		Request		&getRequest(void);
 		Response	&getResponse(void);
 		int			&getPhaseMsg(void);

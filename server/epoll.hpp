@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EPOLL_HPP
+# define EPOLL_HPP
 
 #include "socket.hpp"
 #include "connection.hpp"
@@ -9,7 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-
+//#include "../config/src/serverBlock.hpp"
 
 
 # define MAX_EVENT 1024
@@ -23,7 +24,7 @@ class Epoll
 {
 public:
     typedef int                             clntFd;
-    typedef std::vector<ServerBlock>        vecBloc;
+    typedef std::vector<ft::ServerBlock>        vecBloc;
     typedef std::map< clntFd, Connection >    mapConnection;
     typedef struct epoll_event              event;
     typedef event*                          pEvent;;
@@ -37,7 +38,7 @@ private:
 
 public:
     Epoll();
-    Epoll(std::vector<ServerBlock> block); // epoll fd create
+    Epoll(std::vector<ft::ServerBlock> block); // epoll fd create
     Epoll(const Epoll &other);
     ~Epoll();
 
@@ -58,10 +59,11 @@ public:
 
     //Block class or utile ????
 //et nu
-     	ServerBlock           get_location_block(int fd);
+    ft::ServerBlock           get_location_block(int fd);
     int             getepollfd()
     {
         return (epollFd_);
     }
 };
 
+#endif

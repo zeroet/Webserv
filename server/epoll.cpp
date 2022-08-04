@@ -7,7 +7,7 @@
 Epoll::Epoll() {}
 
 //Construct for excute
-Epoll::Epoll(std::vector<ServerBlock> block) : vecBloc_(block)
+Epoll::Epoll(std::vector<ft::ServerBlock> block) : vecBloc_(block)
 {
 	init_server_socket();
 	std::cout << BLUE << "Webserver Run" << FIN << std::endl;
@@ -138,7 +138,7 @@ void    Epoll::epoll_server_manager()
                 if (clntFd != ERROR)
                 {
                     epoll_add(clntFd);
-                    ServerBlock serverBlock = get_location_block(epEvent[i].data.fd);
+		    ft::ServerBlock serverBlock = get_location_block(epEvent[i].data.fd);
                     this->c_.insert(std::make_pair (clntFd, Connection(clntFd, serverBlock, this)));
                 }
                 else
@@ -220,7 +220,7 @@ void    Epoll::close_all_serv_socket()
 }
 
 // Block class or utile  ????
-ServerBlock   Epoll::get_location_block(int fd)
+ft::ServerBlock   Epoll::get_location_block(int fd)
 {
 	int   size = this->vecBloc_.size();
 

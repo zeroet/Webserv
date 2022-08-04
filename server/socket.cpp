@@ -8,7 +8,7 @@
 Socket::Socket(void) { }
 
 //Construct for excute
-Socket::Socket(std::vector<ServerBlock> block) : vecBloc_(block), error_(0)
+Socket::Socket(std::vector<ft::ServerBlock> block) : vecBloc_(block), error_(0)
 {
     this->error_ = create_socket();
     if (error_ == ERROR)
