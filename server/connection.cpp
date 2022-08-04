@@ -16,7 +16,7 @@ void    Connection::processRequest()
 
 	memset(&buffer_char, 0, BUFFER_SIZE);
     int n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0); //except \r
-	if (n <= 0 || strchr(buffer_char, 0xff))
+	if (n < 0 || strchr(buffer_char, 0xff))
 	{
 		//close connection
 		printf("recv Error\n");
@@ -42,13 +42,17 @@ void    Connection::processRequest()
 
 	////////////
 	if (phase_msg_ == BODY_COMPLETE)
+	{
 		std::cout << "CGI / EXECUTE / RESPONSE NEED TO BE DEAL" << std::endl;
+		ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+	}
 	////////////
 
 	//to change Ctl Mode when message is done with CRLFCRLF
-	size_t pos = 0;
-	if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
-		ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+	// size_t pos = 0;
+	// if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
+	// if (n == 0 && buffer_.empty() && phase_msg_ == BODY_COMPLETE)
+		// ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 }
 
 //getter
@@ -98,7 +102,9 @@ void	Connection::printRequestMsg(void) {
 	printf("path_: %s\n", getRequest().getPath().c_str());
 	printf("version_: %s\n", getRequest().getVersion().c_str());
 	getRequest().printHeaders();
+	std::cout << std::endl;
 	printf("body:\n");
 	printf("%s", getRequest().getBody().c_str());
+	std::cout << "content_length: " << content_length << std::endl;
 	printf("=====================\n");
 }

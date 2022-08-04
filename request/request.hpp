@@ -47,6 +47,8 @@ class Request {
 		void	setHeader(std::string key, std::string value);		//Set one of header value
 		void	setBody(std::string body);
 
+		void	clear(void);
+
 		//tmp
 		void	printHeaders(void);
 };

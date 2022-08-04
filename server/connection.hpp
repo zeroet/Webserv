@@ -18,7 +18,6 @@ namespace ft{
 
 class Epoll;
 class Request;
-// class OperateRequest;
 
 enum phaseMsg {
 	START_LINE_INCOMPLETE,
@@ -55,10 +54,10 @@ enum RequestStatusCode {
 class Connection
 {
 	private:
-		int clntFd_;
-		ServerBlock   block_;
-		std::string status_;
-		Epoll *ep_;
+		int				clntFd_;
+		ServerBlock  	block_;
+		std::string 	status_;
+		Epoll			*ep_;
 
 		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
 		std::string		buffer_;					//append buffer
@@ -69,6 +68,10 @@ class Connection
 
 		int				phase_msg_;
 		int				req_status_code_;
+
+	public:
+		size_t			client_max_body_size;
+		int				content_length;
 		// res
 		// exe
 
