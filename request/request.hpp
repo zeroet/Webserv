@@ -8,7 +8,8 @@
 #include <algorithm>
 #include <cctype>
 
-using namespace ft;
+#include "../server/connection.hpp"
+#include "../server/epoll.hpp"
 
 namespace ft {
 

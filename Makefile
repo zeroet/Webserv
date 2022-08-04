@@ -15,10 +15,12 @@ SERVER = connection.cpp \
 REQUEST = request.cpp \
 		  OperateRequest.cpp
 
+RESPONSE = Response.cpp
 
 SRCS = main.cpp \
 	   $(addprefix config/src/, $(CONFIG)) \
 	   $(addprefix server/, $(SERVER)) \
+	   $(addprefix response/, $(RESPONSE)) \
 	   $(addprefix request/, $(REQUEST))
 
 CXX = c++
