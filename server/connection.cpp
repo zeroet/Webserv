@@ -39,7 +39,7 @@ void    Connection::processRequest()
 		operateRequest.checkRequestMessage(this);
 
 	//tmp
-	printRequestMsg();
+	// printRequestMsg();
 
 
 
@@ -61,7 +61,7 @@ ServerBlock		&Connection::getBlock(void) {
 }
 
 Request	&Connection::getRequest(void) {
-	return (request_);
+	return (*request_);
 }
 
 Response	&Connection::getResponse(void) {

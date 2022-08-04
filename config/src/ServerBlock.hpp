@@ -22,7 +22,8 @@ namespace ft
 		public:
 			std::vector<LocationBlock>	locationList;
 		public:
-			ServerBlock(int i) { std::cout << "server block not found" << std::endl; };
+			ServerBlock(int i) { (void)i;
+			std::cout << "server block not found" << std::endl; };
 			ServerBlock(const BaseDirectives& context);
 			// Getter
 			//const std::vector<LocationBlock>	getLocationBlock();
