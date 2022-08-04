@@ -6,7 +6,7 @@ Connection::Connection(int fd, ServerBlock block, Epoll *ep) : clntFd_(fd), bloc
     std::cout << ep_->getepollfd() << std::endl;
 	// Ctl_mode_flag_ = false;
 	phase_msg_ = START_LINE_INCOMPLETE;
-	req_status_code_ = DEFAULT;
+	req_status_code_ = NOT_DEFINE;
 }
 
 Connection::~Connection() { }
@@ -35,11 +35,7 @@ void    Connection::processRequest()
 		|| phase_msg_ == START_LINE_COMPLETE
 		|| phase_msg_ == HEADER_INCOMPLETE
 		|| phase_msg_ == HEADER_COMPLETE)
-		// OperateRequest::checkRequestMessage(this);
 		operateRequest.checkRequestMessage(this);
-
-	//tmp
-	// printRequestMsg();
 
 
 
@@ -102,10 +98,7 @@ void	Connection::printRequestMsg(void) {
 	printf("path_: %s\n", getRequest().getPath().c_str());
 	printf("version_: %s\n", getRequest().getVersion().c_str());
 	getRequest().printHeaders();
-	// printf("body:\n");
-	// 	// body_.push_back('\0');
-	// 	// printf("%s\n", reinterpret_cast<const char *>(body_.data()));
-	// 	// body_.pop_back();
-	// // }
+	printf("body:\n");
+	printf("%s", getRequest().getBody().c_str());
 	printf("=====================\n");
 }

@@ -36,15 +36,19 @@ const	mapHeader	&Request::getRequestHeaders(void)	const {
 	return (requestHeaders_);
 }
 
-const	std::string	Request::getHeaderValue(std::string key) const {
-	std::transform(key.begin(), key.end(), key.begin(), toupper);
-	for (mapHeader::const_iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++)
-	{
-		if (it->first == key)
-			return (it->second);
-	}
-	return (NULL);
+
+const std::string &Request::getHeaderValue(const std::string &key) {
+	return (requestHeaders_[key]);
 }
+// const	std::string	Request::getHeaderValue(std::string key) const {
+// 	std::transform(key.begin(), key.end(), key.begin(), toupper);
+// 	for (mapHeader::const_iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++)
+// 	{
+// 		if (it->first == key)
+// 			return (it->second);
+// 	}
+// 	return ("");
+// }
 
 const	std::string		&Request::getBody(void)	const {
 	return (body_);
@@ -66,6 +70,11 @@ void	Request::setVersion(std::string version) {
 void	Request::setHeader(std::string key, std::string value) {
 	requestHeaders_[key] = value;
 }
+
+void	Request::setBody(std::string body) {
+	body_ = body;
+}
+
 
 //tmp
 void	Request::printHeaders(void) {

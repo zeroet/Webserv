@@ -12,8 +12,6 @@
 # define LEN_CRLF 2
 # define LEN_CRLFCRLF 4
 
-# define DEFAULT -1
-
 # define BUFFER_SIZE 512
 
 namespace ft{
@@ -34,6 +32,7 @@ enum phaseMsg {
 };
 
 enum RequestStatusCode {
+	NOT_DEFINE = -1,
 	ALL_OK = 200,
 	CREATED = 201,
 	ACCEPTED = 202,
@@ -76,7 +75,7 @@ class Connection
 	public:
 		Connection(int fd, ServerBlock block, Epoll *ep);
 		~Connection();
-		
+
 		//getter
 		ServerBlock	&getBlock(void);
 		Request		&getRequest(void);

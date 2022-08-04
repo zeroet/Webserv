@@ -37,7 +37,7 @@ class Request {
 		const	std::string &getPath(void)	const;
 		const	std::string	&getVersion(void)	const;
 		const	mapHeader	&getRequestHeaders(void)	const;		//Get all headers in the shape of Map Container
-		const	std::string	getHeaderValue(std::string key) const;	//Get one of header value
+		const	std::string &getHeaderValue(const std::string &key);	//Get one of header value
 		const	std::string	&getBody(void)	const;
 
 		//setter
@@ -45,6 +45,7 @@ class Request {
 		void	setPath(std::string path);
 		void	setVersion(std::string version);
 		void	setHeader(std::string key, std::string value);		//Set one of header value
+		void	setBody(std::string body);
 
 		//tmp
 		void	printHeaders(void);
