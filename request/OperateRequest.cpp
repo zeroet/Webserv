@@ -27,7 +27,7 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 		//parse start line
 		std::cout << "Parse Start Line" << std::endl;
 		startLine_ = c->getBuffer().substr(0, pos);
-		tmp_ = pos + LEN_CRLF;
+		c->getBuffer().erase(0, pos + LEN_CRLF);
 		parseStartLine(c);
 		// if ((pos = c->getBuffer().find(CRLFCRLF)) == std::string::npos)
 		// 	c->setPhaseMsg(HEADER_INCOMPLETE);
@@ -41,14 +41,15 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	{
 		std::cout << "Parse Header" << std::endl;
 		// headers_ = c->getBuffer().substr(tmp_, c->getBuffer().length());
-		headers_ = c->getBuffer().substr(tmp_, pos + LEN_CRLFCRLF);
+		headers_ = c->getBuffer().substr(0, pos + LEN_CRLFCRLF);
+		c->getBuffer().erase(0, pos + LEN_CRLFCRLF);
 		tmp_ = pos + LEN_CRLFCRLF;
 		// std::cout << "header: " << headers_ << std::endl;
 		// std::cout << "tmp_: " << tmp_ << std::endl;
 		//parse header
 		parseHeaders(c);
+		checkHeader(c);
 	}
-	checkRequestHeader(c);
 }
 
 void	OperateRequest::parseStartLine(Connection *c) {
@@ -116,7 +117,7 @@ void	OperateRequest::parseHeaders(Connection *c) {
 
 		//headerline parse - argument is < 2 => 400 // if field name is not alpha => 400
 													// if there's sth between fild name and colon => 400
-		if ((code = parseHeaderLine(c, headerline)) != DEFAULT)
+		if ((code = parseHeaderLine(c, headerline)) != NOT_DEFINE)
 		{
 			c->setReqStatusCode(code);
 			return ;
@@ -139,13 +140,30 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 	std::string str = trimWhiteSpace(header_line_parse[1]);
 	std::string value = str;
 	c->getRequest().setHeader(key, value);
-	return (DEFAULT);
+	return (NOT_DEFINE);
 }
 
 /* Set and check details along with header key and method of request message */
-void	OperateRequest::checkRequestHeader(Connection *c) {
-	if (c->getReqStatusCode() == DEFAULT)
+void	OperateRequest::checkHeader(Connection *c) {
+	if (c->getReqStatusCode() != NOT_DEFINE)
+	{
 		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
+	if (!(c->getBuffer().empty()))
+	{
+		body_ = c->getBuffer().substr(0, c->getBuffer().length());
+		c->getRequest().setBody(body_);
+	}
+
+	if (c->getRequest().getHeaderValue("Host").empty())
+	{
+		c->setReqStatusCode(BAD_REQUEST);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
 
 	//GET
 

@@ -21,6 +21,7 @@ class OperateRequest {
 	private:
 		std::string	startLine_;	//extract of start line from buffer
 		std::string	headers_;	//extract of headers from buffer
+		std::string body_;
 		size_t		tmp_;		//for stock end pos of buffer(from connection)
 
 	public:
@@ -37,7 +38,7 @@ class OperateRequest {
 		void	parseStartLine(Connection *c);
 		void	parseHeaders(Connection *c);
 		int		parseHeaderLine(Connection *c, std::string headerline);
-		void	checkRequestHeader(Connection *c);
+		void	checkHeader(Connection *c);
 
 		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
