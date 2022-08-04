@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	//bool error if ()
 	if (httpContext.first == 1)
 	{
-		// try 
+		// try
 		// {
 			Socket socket(httpContext.second.getServerBlock());
 			Epoll epoll(socket.getter_vecBloc());
