@@ -6,6 +6,8 @@
 # include <cctype>
 #include <string>
 #include <algorithm>
+#include <sstream>
+#include <limits>
 
 namespace ft {
 
@@ -44,8 +46,25 @@ class OperateRequest {
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
-		int		checkHeaderValue(const std::string &s);
+		int		checkHeaderKey(const std::string &s);
 		std::string	trimWhiteSpace(std::string &s);
+		
+		template<typename T>
+		std::string toString(const T& v)
+		{
+			std::ostringstream ss;
+			ss << v;
+			return (ss.str());
+		}
+
+		template<typename T>
+		T fromString(const std::string& str)
+		{
+			std::istringstream ss(str);
+			T ret;
+			ss >> ret;
+			return (ret);
+		}
 
 };
 

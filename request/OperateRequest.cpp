@@ -105,14 +105,16 @@ void	OperateRequest::parseHeaders(Connection *c) {
 	(void)c;
 	std::cout << "headers" << std::endl;
 	std::cout << headers_ << std::endl;
+	// size_t header_len = header.length();
 	size_t pos = 0;
 	int code = 0;
+	int i = 0;
 	while ((pos = headers_.find(CRLF)) != std::string::npos)
 	{
 		std::string headerline = "";
 		// std::cout << "pos: " << pos << std::endl;
 		headerline = headers_.substr(0, pos);
-		// std::cout << "Header line " << i++ << " : " << headerline << std::endl;
+		std::cout << "Header line " << i++ << " : " << headerline << std::endl;
 		// }
 
 		//headerline parse - argument is < 2 => 400 // if field name is not alpha => 400
@@ -123,8 +125,9 @@ void	OperateRequest::parseHeaders(Connection *c) {
 			return ;
 		}
 		headers_ = headers_.substr(pos + LEN_CRLF, headers_.length());
-		// std::cout << "headers to parse line : " << std::endl;
+		std::cout << "headers to parse line : " << std::endl;
 		std::cout << headers_ << std::endl;
+		std::cout << "header 길이: " << headers_.length() << std::endl;
 		if (headers_.length() == LEN_CRLF)
 			break ;
 	}
@@ -133,12 +136,14 @@ void	OperateRequest::parseHeaders(Connection *c) {
 
 int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 	std::vector<std::string> header_line_parse = splitDelim(headerline, ":");
-	if (!checkHeaderValue(header_line_parse[0]) || header_line_parse.size() != 2)
-		return (BAD_REQUEST);
+	// if (header_line_parse.size() != 2)
+		// return (BAD_REQUEST);
 
 	std::string key = header_line_parse[0];
-	std::string str = trimWhiteSpace(header_line_parse[1]);
-	std::string value = str;
+	// std::string str = trimWhiteSpace(header_line_parse[1]);
+	std::string value = header_line_parse[1];
+	std::cout << "header key: " << key << std::endl;
+	std::cout << "header value: " << value << std::endl;
 	c->getRequest().setHeader(key, value);
 	return (NOT_DEFINE);
 }
@@ -151,13 +156,23 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
+	//put the rest of buffer into request body member
 	if (!(c->getBuffer().empty()))
 	{
 		body_ = c->getBuffer().substr(0, c->getBuffer().length());
+		c->getBuffer().erase(0, c->getBuffer().length());
 		c->getRequest().setBody(body_);
 	}
 
-	if (c->getRequest().getHeaderValue("Host").empty())
+	//get Client_Max_Body_Size
+	c->client_max_body_size = c->getBlock().getClientMaxBodySize();
+
+	if (!(c->getRequest().getHeaderValue("Content-Length").empty()))
+	{
+		c->content_length = fromString<int>((c->getRequest().getHeaderValue("Content-Length")));
+	}
+
+	if (c->getRequest().getHeaderValue("Host").empty() || c->getRequest().getHeaderValue("host").empty())
 	{
 		c->setReqStatusCode(BAD_REQUEST);
 		c->setPhaseMsg(BODY_COMPLETE);
@@ -213,11 +228,13 @@ int			OperateRequest::checkVersion(const std::string &s) {
 	return (true);
 }
 
-int			OperateRequest::checkHeaderValue(const std::string &s) {
+int			OperateRequest::checkHeaderKey(const std::string &s) {
 	for (size_t i = 0; i < s.length(); i++)
 	{
 		char c = s[i];
-		if (!isalpha(c))
+		if (isalpha(c) || (c == '_'))
+			i++;
+		else
 			return (false);
 	}
 	return (true);
@@ -231,4 +248,21 @@ std::string	OperateRequest::trimWhiteSpace(std::string &s) {
 	size_t found2 = s.find_last_not_of(whitespace);
 	str = s.substr(found1, found2 - found1 + 1);
 	return (str);
+}
+
+int Stoi(const std::string &str, size_t *idx, int base) {
+  char *end;
+  const char *p = str.c_str();
+  long num = std::strtol(p, &end, base);
+  if (p == end) {
+    throw std::invalid_argument("Stoi");
+  }
+  if (num < std::numeric_limits<int>::min() ||
+      num > std::numeric_limits<int>::max() || errno == ERANGE) {
+    throw std::out_of_range("Stoi");
+  }
+  if (idx != NULL) {
+    *idx = static_cast<size_t>(end - p);
+  }
+  return static_cast<int>(num);
 }

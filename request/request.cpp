@@ -17,7 +17,17 @@ const	Request	&Request::operator=(const Request &x) {
   return (*this);
 }
 
-Request::~Request(void) {}
+Request::~Request(void) {
+	this->clear();
+}
+
+void	Request::clear(void) {
+  	method_.clear();
+  	path_.clear();
+  	version_.clear();
+	requestHeaders_.clear();
+  	body_.clear();
+}
 
 //getter
 const	std::string	&Request::getMethod(void) const {
