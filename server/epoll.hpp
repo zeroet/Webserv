@@ -11,14 +11,13 @@
 #include <fstream>
 
 
-
 # define MAX_EVENT 1024
 # define TIMEOUT -1
 
 namespace ft{
 
 class Connection;
-class Request;
+// class Request;
 
 class Epoll
 {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "epoll.hpp"
+#include "socket.hpp"
 #include "../request/request.hpp"
 #include "../request/OperateRequest.hpp"
 #include "../response/Response.hpp"
@@ -19,7 +20,7 @@ namespace ft{
 
 class Epoll;
 class Request;
-class OperateRequest;
+// class OperateRequest;
 
 enum phaseMsg {
 	START_LINE_INCOMPLETE,
@@ -63,7 +64,7 @@ class Connection
 		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
 		std::string		buffer_;					//append buffer
 
-		Request     	request_;
+		Request     	*request_;
 		// std::vector<Request>	multi_request;
 		Response		response_;
 
@@ -75,7 +76,7 @@ class Connection
 	public:
 		Connection(int fd, ServerBlock block, Epoll *ep);
 		~Connection();
-
+		
 		//getter
 		ServerBlock	&getBlock(void);
 		Request		&getRequest(void);

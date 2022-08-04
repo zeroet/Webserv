@@ -15,21 +15,23 @@ SERVER = connection.cpp \
 REQUEST = request.cpp \
 		  OperateRequest.cpp
 
+RESPONSE = Response.cpp
 
 SRCS = main.cpp \
 	   $(addprefix config/src/, $(CONFIG)) \
 	   $(addprefix server/, $(SERVER)) \
+	   $(addprefix response/, $(RESPONSE)) \
 	   $(addprefix request/, $(REQUEST))
 
 CXX = c++
 
 OBJS = $(SRCS:.cpp=.o)
 
-DEBUGFLAG = #-g3
+DEBUGFLAG = -g3
 
-DEBUG = #-fsanitize=address
+DEBUG = -fsanitize=address
 
-CXXFLAGS = #-Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
 RM = rm -f
 
