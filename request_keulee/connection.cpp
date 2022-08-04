@@ -6,7 +6,7 @@ Connection::Connection(int fd, Block block, Epoll *ep) : clntFd_(fd), block_(blo
     std::cout << ep_->getepollfd() << std::endl;
 	// Ctl_mode_flag_ = false;
 	phase_msg_ = START_LINE_INCOMPLETE;
-	req_status_code_ = DEFAULT;
+	req_status_code_ = NOT_DEFINE;
 }
 
 Connection::~Connection() { }
@@ -56,7 +56,7 @@ void    Connection::processRequest()
 }
 
 //getter
-Block		&Connection::getBlock(void) {
+ServerBlock		&Connection::getBlock(void) {
 	return (block_);
 }
 

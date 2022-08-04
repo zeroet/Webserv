@@ -1,6 +1,6 @@
 #include "OperateRequest.hpp"
 
-OperateRequest::OperateRequest(void) {}
+OperateRequest::OperateRequest(void) : startLine_(""), headers_(""), body_(""), tmp_(0) {}
 
 OperateRequest::~OperateRequest(void) {}
 
@@ -27,6 +27,7 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 		//parse start line
 		std::cout << "Parse Start Line" << std::endl;
 		startLine_ = c->getBuffer().substr(0, pos);
+		c->getBuffer().erase(0, pos);
 		tmp_ = pos + LEN_CRLF;
 		parseStartLine(c);
 		// if ((pos = c->getBuffer().find(CRLFCRLF)) == std::string::npos)
@@ -41,8 +42,10 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	{
 		std::cout << "Parse Header" << std::endl;
 		// headers_ = c->getBuffer().substr(tmp_, c->getBuffer().length());
-		headers_ = c->getBuffer().substr(tmp_, pos + LEN_CRLFCRLF);
-		tmp_ = pos + LEN_CRLFCRLF;
+		headers_ = c->getBuffer().substr(0, pos + LEN_CRLFCRLF);
+		c->getBuffer().erase(0, pos + LEN_CRLFCRLF);
+		tmp_ = pos + LEN_CRLFCRLF + 1;
+		// tmp_ = c->getBuffer().substr(pos + LEN_CRLFCRLF, c->getBuffer().length()); //the rest of buffer
 		// std::cout << "header: " << headers_ << std::endl;
 		// std::cout << "tmp_: " << tmp_ << std::endl;
 		//parse header
@@ -116,7 +119,7 @@ void	OperateRequest::parseHeaders(Connection *c) {
 
 		//headerline parse - argument is < 2 => 400 // if field name is not alpha => 400
 													// if there's sth between fild name and colon => 400
-		if ((code = parseHeaderLine(c, headerline)) != DEFAULT)
+		if ((code = parseHeaderLine(c, headerline)) != NOT_DEFINE)
 		{
 			c->setReqStatusCode(code);
 			return ;
@@ -139,13 +142,30 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 	std::string str = trimWhiteSpace(header_line_parse[1]);
 	std::string value = str;
 	c->getRequest().setHeader(key, value);
-	return (DEFAULT);
+	return (NOT_DEFINE);
 }
 
 /* Set and check details along with header key and method of request message */
 void	OperateRequest::checkRequestHeader(Connection *c) {
-	if (c->getReqStatusCode() == DEFAULT)
+	if (c->getReqStatusCode() != NOT_DEFINE) //if error code exist.
+	{
 		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
+	//if there's buffer (it would be body buffer) but the buffer on body member
+	if (!c->getBuffer())
+		body_ = c->getBuffer();
+	else
+	{
+
+	}
+
+	//client_max_body_size setup
+
+	//Content-Length Header exist / content-length > client_max_body_size => 413 error
+
+
 
 	//GET
 

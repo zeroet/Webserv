@@ -67,6 +67,10 @@ void	Request::setHeader(std::string key, std::string value) {
 	requestHeaders_[key] = value;
 }
 
+void	Request::setBody(std::string body) {
+	body_ = body;
+}
+
 //tmp
 void	Request::printHeaders(void) {
 	std::cout << "Request message headers:" << std::endl;
