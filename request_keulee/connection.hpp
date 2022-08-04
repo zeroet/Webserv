@@ -5,6 +5,7 @@
 #include "../response/Response.hpp"
 #include "socket.hpp"
 #include "OperateRequest.hpp"
+#include "../config/src/ServerBlock.hpp"
 
 #include <iostream>
 #include <cstdio>
@@ -15,8 +16,6 @@
 # define CRLFCRLF "\r\n\r\n"
 # define LEN_CRLF 2
 # define LEN_CRLFCRLF 4
-
-# define DEFAULT -1
 
 # define BUFFER_SIZE 512
 
@@ -38,6 +37,7 @@ enum phaseMsg {
 };
 
 enum RequestStatusCode {
+	NOT_DEFINE = -1,
 	ALL_OK = 200,
 	CREATED = 201,
 	ACCEPTED = 202,
@@ -61,7 +61,7 @@ class Connection
 {
 	private:
 		int         clntFd_;
-		Block       block_;
+		ServerBlock   block_;
 		std::string status_;
 		Epoll       *ep_; //Epoll stokage
 
@@ -78,11 +78,11 @@ class Connection
 		// exe
 
 	public:
-		Connection(int fd, Block block, Epoll *ep);
+		Connection(int fd, ServerBlock block, Epoll *ep);
 		~Connection();
 
 		//getter
-		Block		&getBlock(void);
+		ServerBlock	&getBlock(void);
 		Request		&getRequest(void);
 		Response	&getResponse(void);
 		int			&getPhaseMsg(void);

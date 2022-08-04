@@ -19,6 +19,7 @@ class OperateRequest {
 	private:
 		std::string	startLine_;	//extract of start line from buffer
 		std::string	headers_;	//extract of headers from buffer
+		std::string	body_;
 		size_t		tmp_;		//for stock end pos of buffer(from connection)
 
 	public:
