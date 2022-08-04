@@ -15,27 +15,29 @@
 # define MAX_EVENT 1024
 # define TIMEOUT -1
 
+
 class Connection;
+class Request;
 
 class Epoll
 {
 public:
     typedef int                             clntFd;
-    typedef std::vector<Block>              vecBloc;
-    typedef std::map<clntFd, Connection>    mapConnection;
+    typedef std::vector<ServerBlock>        vecBloc;
+    typedef std::map< clntFd, Connection >    mapConnection;
     typedef struct epoll_event              event;
     typedef event*                          pEvent;;
-    typedef std::pair<int, Connection>      mapPair;
+    typedef std::pair< int, Connection >      mapPair;
     Socket                              sock;
 
 private:
-    vecBloc         vecBloc_; // vector type location block 
-    mapConnection   c_; // map type connection poll 
-    int             epollFd_; 
+    vecBloc         vecBloc_; // vector type location block
+    mapConnection   c_; // map type connection poll
+    int             epollFd_;
 
 public:
     Epoll();
-    Epoll(std::vector<Block> block); // epoll fd create
+    Epoll(std::vector<ServerBlock> block); // epoll fd create
     Epoll(const Epoll &other);
     ~Epoll();
 
@@ -55,7 +57,8 @@ public:
     int             create_clnt_socket(int fd);
 
     //Block class or utile ????
-    Block           get_location_block(int fd);
+//et nu
+     	ServerBlock           get_location_block(int fd);
     int             getepollfd()
     {
         return (epollFd_);
