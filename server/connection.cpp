@@ -7,6 +7,8 @@ Connection::Connection(int fd, ServerBlock block, Epoll *ep) : clntFd_(fd), bloc
 	// Ctl_mode_flag_ = false;
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
+	content_length = 0;
+	client_max_body_size = 0;
 }
 
 Connection::~Connection() { }
@@ -16,6 +18,8 @@ void    Connection::processRequest()
 
 	memset(&buffer_char, 0, BUFFER_SIZE);
     int n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0); //except \r
+
+	/* protection to disconnect
 	if (n < 0 || strchr(buffer_char, 0xff))
 	{
 		//close connection
@@ -23,7 +27,7 @@ void    Connection::processRequest()
 		return ;
 		//need function to close connection
 		//return (Error); or return (-1);
-	}
+	}*/
 	// std::cout << "n: " << n << std::endl;
 	// std::cout << "buffer_char: " << buffer_char << std::endl;
 	// std::cout << "buffer_char + n: " << buffer_char + n << std::endl;
@@ -44,15 +48,15 @@ void    Connection::processRequest()
 	if (phase_msg_ == BODY_COMPLETE)
 	{
 		std::cout << "CGI / EXECUTE / RESPONSE NEED TO BE DEAL" << std::endl;
-		ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+		// ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 	}
 	////////////
 
 	//to change Ctl Mode when message is done with CRLFCRLF
-	// size_t pos = 0;
-	// if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
+	size_t pos = 0;
+	if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
 	// if (n == 0 && buffer_.empty() && phase_msg_ == BODY_COMPLETE)
-		// ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+		ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 }
 
 //getter
