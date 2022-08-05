@@ -1,5 +1,0 @@
-<map id="BaseDirectives" name="BaseDirectives">
-<area shape="rect" id="node2" href="$classft_1_1_http_block.html" title="{HttpBlock\n|+ serverList\l|+ HttpBlock()\l+ getServerBlock()\l}" alt="" coords="5,453,136,545"/>
-<area shape="rect" id="node3" href="$classft_1_1_location_block.html" title="{LocationBlock\n|&#45; limitExcept_\l&#45; return_\l|+ LocationBlock()\l+ getLimitExcept()\l+ getReturn()\l+ setLimitExcept()\l+ setReturn()\l}" alt="" coords="161,424,290,575"/>
-<area shape="rect" id="node4" href="$classft_1_1_server_block.html" title="{ServerBlock\n|+ locationList\l&#45; listen_\l&#45; serverName_\l&#45; return_\l|+ ServerBlock()\l+ getLocationBlock()\l+ getListen()\l+ getServerName()\l+ getReturn()\l+ setListen()\l+ setServerName()\l+ setReturn()\l+ clearServerName()\l}" alt="" coords="314,380,457,619"/>
-</map>

@@ -1,0 +1,95 @@
+\hypertarget{classft_1_1_token}{}\section{Token Class Reference}
+\label{classft_1_1_token}\index{Token@{Token}}
+
+
+{\ttfamily \#include $<$Tokenizer.\+hpp$>$}
+
+
+
+Collaboration diagram for Token\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=158pt]{classft_1_1_token__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classft_1_1_token_ad5cb0ada03653eb2e1c8947f05c07ad6}{debug\+Print} () const
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921}{Token\+Type} \hyperlink{classft_1_1_token_a9ba17ef6e6c544012e04da10a6d461e5}{type}
+\item 
+std\+::string \hyperlink{classft_1_1_token_a23c058547fbc73b5659191844a9f258c}{text}
+\item 
+size\+\_\+t \hyperlink{classft_1_1_token_a996a051ecda6b841e4b58246536a7006}{line\+Number}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 28 of file Tokenizer.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classft_1_1_token_ad5cb0ada03653eb2e1c8947f05c07ad6}\label{classft_1_1_token_ad5cb0ada03653eb2e1c8947f05c07ad6}} 
+\index{ft\+::\+Token@{ft\+::\+Token}!debug\+Print@{debug\+Print}}
+\index{debug\+Print@{debug\+Print}!ft\+::\+Token@{ft\+::\+Token}}
+\subsubsection{\texorpdfstring{debug\+Print()}{debugPrint()}}
+{\footnotesize\ttfamily void debug\+Print (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Definition at line 91 of file Tokenizer.\+cpp.
+
+
+\begin{DoxyCode}
+92     \{
+93         std::cout << \textcolor{stringliteral}{"Token("} << \hyperlink{namespaceft_a1b9b00bc284da71346729142b8560e03}{sTokenTypeStrings}[\hyperlink{classft_1_1_token_a9ba17ef6e6c544012e04da10a6d461e5}{type}] << \textcolor{stringliteral}{", \(\backslash\)""} << 
+      \hyperlink{classft_1_1_token_a23c058547fbc73b5659191844a9f258c}{text} << \textcolor{stringliteral}{"\(\backslash\)", "} << \hyperlink{classft_1_1_token_a996a051ecda6b841e4b58246536a7006}{lineNumber} << \textcolor{stringliteral}{")"} << std::endl;
+94     \}
+\end{DoxyCode}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classft_1_1_token_a996a051ecda6b841e4b58246536a7006}\label{classft_1_1_token_a996a051ecda6b841e4b58246536a7006}} 
+\index{ft\+::\+Token@{ft\+::\+Token}!line\+Number@{line\+Number}}
+\index{line\+Number@{line\+Number}!ft\+::\+Token@{ft\+::\+Token}}
+\subsubsection{\texorpdfstring{line\+Number}{lineNumber}}
+{\footnotesize\ttfamily size\+\_\+t line\+Number}
+
+
+
+Definition at line 33 of file Tokenizer.\+hpp.
+
+\mbox{\Hypertarget{classft_1_1_token_a23c058547fbc73b5659191844a9f258c}\label{classft_1_1_token_a23c058547fbc73b5659191844a9f258c}} 
+\index{ft\+::\+Token@{ft\+::\+Token}!text@{text}}
+\index{text@{text}!ft\+::\+Token@{ft\+::\+Token}}
+\subsubsection{\texorpdfstring{text}{text}}
+{\footnotesize\ttfamily std\+::string text}
+
+
+
+Definition at line 32 of file Tokenizer.\+hpp.
+
+\mbox{\Hypertarget{classft_1_1_token_a9ba17ef6e6c544012e04da10a6d461e5}\label{classft_1_1_token_a9ba17ef6e6c544012e04da10a6d461e5}} 
+\index{ft\+::\+Token@{ft\+::\+Token}!type@{type}}
+\index{type@{type}!ft\+::\+Token@{ft\+::\+Token}}
+\subsubsection{\texorpdfstring{type}{type}}
+{\footnotesize\ttfamily enum \hyperlink{namespaceft_aa520fbf142ba1e7e659590c07da31921}{Token\+Type} type}
+
+
+
+Definition at line 31 of file Tokenizer.\+hpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/cjung-\/mo/\+Documents/42/\+Webserv/config/src/\hyperlink{_tokenizer_8hpp}{Tokenizer.\+hpp}\item 
+/home/cjung-\/mo/\+Documents/42/\+Webserv/config/src/\hyperlink{_tokenizer_8cpp}{Tokenizer.\+cpp}\end{DoxyCompactItemize}

@@ -1,8 +1,0 @@
-<map id="Parser.hpp" name="Parser.hpp">
-<area shape="rect" id="node8" href="$_tokenizer_8hpp.html" title="Tokenizer.hpp" alt="" coords="453,80,557,107"/>
-<area shape="rect" id="node10" href="$_directive_8hpp.html" title="Directive.hpp" alt="" coords="188,80,287,107"/>
-<area shape="rect" id="node11" href="$_http_block_8hpp.html" title="HttpBlock.hpp" alt="" coords="657,80,762,107"/>
-<area shape="rect" id="node13" href="$_server_block_8hpp.html" title="ServerBlock.hpp" alt="" coords="870,155,989,181"/>
-<area shape="rect" id="node14" href="$_location_block_8hpp.html" title="LocationBlock.hpp" alt="" coords="938,229,1067,256"/>
-<area shape="rect" id="node12" href="$_base_directives_8hpp.html" title="BaseDirectives.hpp" alt="" coords="696,304,832,331"/>
-</map>
