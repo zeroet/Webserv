@@ -33,18 +33,18 @@ namespace ft
 
 		std::cout << YELLOW << "\n=======================[ServerBlock] directives parameters=====================\n";
 		printBaseDirectivesParameters(context);
-		std::cout << "Base listen: " << context.getListen() << std::endl;
-		std::cout << "Base server_name: ";
+		std::cout << "listen: " << context.getListen() << std::endl;
+		std::cout << "server_name: ";
 		for (; currentString != endString; ++currentString)
 			std::cout << " " << *currentString;
 		std::cout << std::endl;
-		std::cout << "Base return: ";
+		std::cout << "return: ";
 		vecString = context.getReturn();
 		currentString = vecString.begin();
 		endString = vecString.end();
 		for (; currentString != endString; ++currentString)
 			std::cout << " " << *currentString;
-		std::cout << std::endl;
+		std::cout << FIN << std::endl;
 	}
 
 	void	PrintConfig::printLocationContextDirectiveParameters(ft::LocationBlock& context)
@@ -55,11 +55,11 @@ namespace ft
 
 		std::cout << "\n---------------------[LocationBlock] directives parameters--------------------\n";
 		printBaseDirectivesParameters(context);
-		std::cout << "Base limit_except: ";
+		std::cout << "limit_except: ";
 		for (; currentString != endString; ++currentString)
 			std::cout << " " << *currentString;
 		std::cout << std::endl;
-		std::cout << "Base return: ";
+		std::cout << "return: ";
 		vecString = context.getReturn();
 		currentString = vecString.begin();
 		endString = vecString.end();
@@ -67,13 +67,13 @@ namespace ft
 			std::cout << " " << *currentString;
 		std::cout << std::endl;
 		vecString = context.getCgi();
-		std::cout << "Base cgi: ";
+		std::cout << "cgi: ";
 		currentString = vecString.begin();
 		endString = vecString.end();
 		for (; currentString != endString; ++currentString)
 			std::cout << " " << *currentString;
 		std::cout << std::endl;
-		std::cout << "Base cgi_path: " << context.getCgiPath() << std::endl;
+		std::cout << "cgi_path: " << context.getCgiPath() << std::endl;
 	}
 
 	void	PrintConfig::printConfig(std::pair<bool, HttpBlock>& validHttpContext, int flags)
@@ -112,21 +112,21 @@ namespace ft
 	std::pair<bool, HttpBlock>	PrintConfig::parseConfig(char* configPath, int flags)
 	{
 		std::pair<bool, ft::HttpBlock>	validHttpContext;
-		FILE* fh;
+		FILE* fp;
 
 		if (configPath == NULL)
-			fh = fopen(CONFIG_PATH DEFALUT_CONF, "r");
+			fp = fopen(CONFIG_PATH DEFALUT_CONF, "r");
 		else
-			fh = fopen(configPath, "r");
-		if (!fh)
+			fp = fopen(configPath, "r");
+		if (!fp)
 			std::cerr << "Error: Can not open file.\n";
 		else
 		{
-			fseek(fh, 0, SEEK_END);
-			size_t fileSize = ftell(fh);
-			fseek(fh, 0, SEEK_SET);
+			fseek(fp, 0, SEEK_END);
+			size_t fileSize = ftell(fp);
+			fseek(fp, 0, SEEK_SET);
 			std::string fileContents(fileSize, ' ');
-			fread((void*)fileContents.data(), 1, fileSize, fh);
+			fread((void*)fileContents.data(), 1, fileSize, fp);
 
 			if ((flags & P_CONTENT) == P_CONTENT)
 			{
@@ -146,7 +146,7 @@ namespace ft
 				printConfig(validHttpContext, P_SERVER); // to print server directives
 			else if ((flags & P_LOCATION) == P_LOCATION)
 				printConfig(validHttpContext, P_LOCATION); // to print location directives
-			fclose(fh);
+			fclose(fp);
 		}
 		return (validHttpContext);
 	}

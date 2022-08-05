@@ -119,7 +119,8 @@ namespace ft
 
 		for (; currentDirective != endDirective; ++currentDirective)
 		{
-			setBaseDirectiveParameter(context, currentDirective);
+			if (setBaseDirectiveParameter(context, currentDirective) == false)
+				return (false);
 			if (currentDirective->directive == LISTEN)
 			{
 				unsigned int		value;
@@ -172,7 +173,8 @@ namespace ft
 
 		for (; currentDirective != endDirective; ++currentDirective)
 		{
-			setBaseDirectiveParameter(context, currentDirective);
+			if (setBaseDirectiveParameter(context, currentDirective) == false)
+				return (false);
 			if (currentDirective->directive == RETURN)
 			{
 				std::vector<std::string>::iterator	currentParameter = currentDirective->parameters.begin();
@@ -284,7 +286,8 @@ namespace ft
 		std::vector<Directive>::iterator	endDirective = directiveList.end();
 
 		for (; currentDirective != endDirective; ++currentDirective)
-			setBaseDirectiveParameter(context, currentDirective);
+			if (setBaseDirectiveParameter(context, currentDirective) == false)
+				return (false);
 		return (true);
 	}
 
@@ -304,8 +307,6 @@ namespace ft
 		if (possibleValidDirective.first == false) 
 		{
 			currentToken_ = parseStart;
-			//std::cout << "(current token, line) = " << currentToken_->text << ", " << currentToken_->lineNumber << "\n";
-			//std::cout << "Error: first directive should be http block.\n";
 			return (std::make_pair(false, possibleValidDirective.second));
 		}
 		if (possibleValidDirective.second.directive != HTTP)
@@ -398,7 +399,7 @@ namespace ft
 		{
 			validDirective = expectLocationContext();
 			if (validDirective.first == false &&
-				 (validDirective.second.directive == SERVER || validDirective.second.directive == HTTP))
+				 (validDirective.second.directive == SERVER || validDirective.second.directive == HTTP || validDirective.second.directive == LOCATION))
 			{
 				currentToken_ = parseStart;
 				return (std::make_pair(false, serverContext));
@@ -460,8 +461,7 @@ namespace ft
 		{
 			currentToken_ = parseStart;
 			std::cout << "Error: There can't be any " << sDirectiveKindStrings[possibleValidDirective.second.directive] 
-				<< " block inside a server block" << ", ";
-			std::cout << "currentToken is :" << currentToken_->text << "\n";
+				<< " block inside a server block, currentToken is :" << currentToken_->text << "\n";
 			return (std::make_pair(false, possibleValidDirective.second));
 		}
 		if (possibleValidDirective.second.directive != LOCATION)
