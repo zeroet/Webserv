@@ -32,6 +32,10 @@ namespace ft
 	{
 		return (this->serverName_);
 	}
+	const std::string		ServerBlock::getServerName(size_t index) const
+	{
+		return (this->serverName_.at(index));
+	}
 
 	const std::vector<std::string>	ServerBlock::getReturn(void) const
 	{

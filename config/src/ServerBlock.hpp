@@ -29,6 +29,7 @@ namespace ft
 			//const std::vector<LocationBlock>	getLocationBlock();
 			unsigned int			getListen(void) const;
 			const std::vector<std::string>	getServerName(void) const;
+			const std::string		getServerName(size_t index) const;
 			const std::vector<std::string>	getReturn(void) const;
 			int				getSocketFd(void) const;
 
