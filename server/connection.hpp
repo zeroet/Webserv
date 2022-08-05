@@ -71,7 +71,7 @@ class Connection
 
 	public:
 		size_t			client_max_body_size;
-		int				content_length;
+		size_t			content_length;
 		// res
 		// exe
 

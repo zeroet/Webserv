@@ -41,13 +41,14 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	{
 		std::cout << "Parse Header" << std::endl;
 		// headers_ = c->getBuffer().substr(tmp_, c->getBuffer().length());
-		headers_ = c->getBuffer().substr(0, pos + LEN_CRLFCRLF);
-		c->getBuffer().erase(0, pos + LEN_CRLFCRLF);
+		headers_ = c->getBuffer().substr(0, pos + LEN_CRLF);
+		c->getBuffer().erase(0, pos);
 		tmp_ = pos + LEN_CRLFCRLF;
 		// std::cout << "header: " << headers_ << std::endl;
 		// std::cout << "tmp_: " << tmp_ << std::endl;
 		//parse header
 		parseHeaders(c);
+		std::cout << "Header parse done" << std::endl;
 		checkHeader(c);
 	}
 }
@@ -125,22 +126,22 @@ void	OperateRequest::parseHeaders(Connection *c) {
 			return ;
 		}
 		headers_ = headers_.substr(pos + LEN_CRLF, headers_.length());
-		std::cout << "headers to parse line : " << std::endl;
+		// std::cout << "headers to parse line : " << std::endl;
 		std::cout << headers_ << std::endl;
-		std::cout << "header 길이: " << headers_.length() << std::endl;
-		if (headers_.length() == LEN_CRLF)
+		// std::cout << "header 길이: " << headers_.length() << std::endl;
+		if (headers_.length() == 0)
 			break ;
 	}
 	// std::cout <<
 }
 
 int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
-	std::vector<std::string> header_line_parse = splitDelim(headerline, ":");
-	// if (header_line_parse.size() != 2)
-		// return (BAD_REQUEST);
+	std::vector<std::string> header_line_parse = splitDelim(headerline, " ");
+	if (header_line_parse.size() != 2)
+		return (BAD_REQUEST);
+	std::vector<std::string> key_parse = splitDelim(header_line_parse[0], ":");
 
-	std::string key = header_line_parse[0];
-	// std::string str = trimWhiteSpace(header_line_parse[1]);
+	std::string key = key_parse[0];
 	std::string value = header_line_parse[1];
 	std::cout << "header key: " << key << std::endl;
 	std::cout << "header value: " << value << std::endl;
@@ -152,28 +153,34 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 void	OperateRequest::checkHeader(Connection *c) {
 	if (c->getReqStatusCode() != NOT_DEFINE)
 	{
+		// std::cout << "/////////////////////////////////////////" << std::endl;
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
-	}
-
-	//put the rest of buffer into request body member
-	if (!(c->getBuffer().empty()))
-	{
-		body_ = c->getBuffer().substr(0, c->getBuffer().length());
-		c->getBuffer().erase(0, c->getBuffer().length());
-		c->getRequest().setBody(body_);
 	}
 
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getBlock().getClientMaxBodySize();
 
-	if (!(c->getRequest().getHeaderValue("Content-Length").empty()))
+	if ((c->getRequest().getRequestHeaders().count("Content-Length")))
 	{
 		c->content_length = fromString<int>((c->getRequest().getHeaderValue("Content-Length")));
+		if (c->content_length > (c->client_max_body_size))
+		{
+			c->setReqStatusCode(PAYLOAD_TOO_LARGE);
+			c->setPhaseMsg(BODY_COMPLETE);
+			return ;
+		}
+		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
+		{
+			body_ = c->getBuffer().substr(0, c->getBuffer().length());
+			c->getBuffer().erase(0, c->getBuffer().length());
+			c->getRequest().setBody(body_);
+		}
 	}
 
-	if (c->getRequest().getHeaderValue("Host").empty() || c->getRequest().getHeaderValue("host").empty())
+	if (!c->getRequest().getRequestHeaders().count("Host"))
 	{
+		// std::cout << "/////////////////////////////////////////" << std::endl;
 		c->setReqStatusCode(BAD_REQUEST);
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;

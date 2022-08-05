@@ -48,7 +48,7 @@ class OperateRequest {
 		int		checkVersion(const std::string &s);
 		int		checkHeaderKey(const std::string &s);
 		std::string	trimWhiteSpace(std::string &s);
-		
+
 		template<typename T>
 		std::string toString(const T& v)
 		{

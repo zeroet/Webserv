@@ -50,6 +50,7 @@ const	mapHeader	&Request::getRequestHeaders(void)	const {
 const std::string &Request::getHeaderValue(const std::string &key) {
 	return (requestHeaders_[key]);
 }
+
 // const	std::string	Request::getHeaderValue(std::string key) const {
 // 	std::transform(key.begin(), key.end(), key.begin(), toupper);
 // 	for (mapHeader::const_iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++)
@@ -90,5 +91,5 @@ void	Request::setBody(std::string body) {
 void	Request::printHeaders(void) {
 	std::cout << "Request message headers:" << std::endl;
 	for(mapHeader::iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++)
-		std::cout << (*it).first << ": " << (*it).second << std::endl;
+		std::cout << "(key)" << (*it).first << ": (value)" << (*it).second << std::endl;
 }
