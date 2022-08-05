@@ -12,7 +12,10 @@ namespace ft
 		public:
 			std::vector<ServerBlock>	serverList;
 		public:
-			//HttpBlock();
+			HttpBlock();
+			HttpBlock(const HttpBlock& other);
+			~HttpBlock();
+			HttpBlock& operator= (const HttpBlock& other);
 			std::vector<ServerBlock>	getServerBlock() const;
 	};
 
