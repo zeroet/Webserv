@@ -72,6 +72,7 @@ class Connection
 	public:
 		size_t			client_max_body_size;
 		size_t			content_length;
+		int				is_chunk;
 		// res
 		// exe
 

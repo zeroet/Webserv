@@ -9,6 +9,7 @@ Connection::Connection(int fd, ServerBlock block, Epoll *ep) : clntFd_(fd), bloc
 	req_status_code_ = NOT_DEFINE;
 	content_length = 0;
 	client_max_body_size = 0;
+	is_chunk = false;
 }
 
 Connection::~Connection() { }
@@ -41,22 +42,30 @@ void    Connection::processRequest()
 		|| phase_msg_ == HEADER_COMPLETE)
 		operateRequest.checkRequestMessage(this);
 
+	if (phase_msg_ == BODY_COMPLETE)
+		std::cout << "************ Message body process **********" << std::endl;
 
 
+	// std::vector<std::string> ret = getBlock().locationList[0].getReturn();
+
+	// for (size_t i = 0; i < ret.size(); i++)
+	// 	std::cout << "///////////////////////////////////////////vector value: " << ret[i] << std::endl;
 
 	////////////
-	if (phase_msg_ == BODY_COMPLETE)
-	{
-		std::cout << "CGI / EXECUTE / RESPONSE NEED TO BE DEAL" << std::endl;
-		// ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
-	}
+	// if (phase_msg_ == BODY_COMPLETE)
+	// {
+	// 	std::cout << "CGI / EXECUTE / RESPONSE NEED TO BE DEAL" << std::endl;
+	// 	// ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+	// }
 	////////////
 
 	//to change Ctl Mode when message is done with CRLFCRLF
 	size_t pos = 0;
-	if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
+	if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos) {
+		if (buffer_.empty())
+			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+	}
 	// if (n == 0 && buffer_.empty() && phase_msg_ == BODY_COMPLETE)
-		ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 }
 
 //getter
@@ -107,8 +116,11 @@ void	Connection::printRequestMsg(void) {
 	printf("version_: %s\n", getRequest().getVersion().c_str());
 	getRequest().printHeaders();
 	std::cout << std::endl;
+	printf("=====================\n");
 	printf("body:\n");
 	printf("%s", getRequest().getBody().c_str());
+	printf("=====================\n");
 	std::cout << "content_length: " << content_length << std::endl;
+	std::cout << "client_max_body_size: " << client_max_body_size << std::endl;
 	printf("=====================\n");
 }

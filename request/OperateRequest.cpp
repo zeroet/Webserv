@@ -16,9 +16,9 @@ std::string	&OperateRequest::getHeaders(void) {
 
 void	OperateRequest::checkRequestMessage(Connection *c) {
 
-	size_t pos = 0;
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
 	{
+		size_t pos;
 		if ((pos = c->getBuffer().find(CRLF))!= std::string::npos)
 			c->setPhaseMsg(START_LINE_COMPLETE);
 	}
@@ -26,35 +26,29 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	{
 		//parse start line
 		std::cout << "Parse Start Line" << std::endl;
-		startLine_ = c->getBuffer().substr(0, pos);
-		c->getBuffer().erase(0, pos + LEN_CRLF);
 		parseStartLine(c);
-		// if ((pos = c->getBuffer().find(CRLFCRLF)) == std::string::npos)
-		// 	c->setPhaseMsg(HEADER_INCOMPLETE);
 	}
 	if (c->getPhaseMsg() == HEADER_INCOMPLETE)
 	{
-		if ((pos = c->getBuffer().find(CRLFCRLF)) != std::string::npos)
+		size_t pos1;
+		if ((pos1 = c->getBuffer().find(CRLFCRLF)) != std::string::npos)
 			c->setPhaseMsg(HEADER_COMPLETE);
 	}
 	if (c->getPhaseMsg() == HEADER_COMPLETE)
 	{
 		std::cout << "Parse Header" << std::endl;
-		// headers_ = c->getBuffer().substr(tmp_, c->getBuffer().length());
-		headers_ = c->getBuffer().substr(0, pos + LEN_CRLF);
-		c->getBuffer().erase(0, pos);
-		tmp_ = pos + LEN_CRLFCRLF;
-		// std::cout << "header: " << headers_ << std::endl;
-		// std::cout << "tmp_: " << tmp_ << std::endl;
-		//parse header
 		parseHeaders(c);
-		std::cout << "Header parse done" << std::endl;
+	// 	std::cout << "Header parse done" << std::endl;
+	// 	std::cout << "buffer check: " << c->getBuffer() << std::endl;
 		checkHeader(c);
 	}
 }
 
 void	OperateRequest::parseStartLine(Connection *c) {
 
+	size_t pos = c->getBuffer().find(CRLF);
+	startLine_ = c->getBuffer().substr(0, pos);
+	c->getBuffer().erase(0, pos + LEN_CRLF);
 	//method check : GET/POST/DELETE -> toupper / if not Error 400
 	std::vector<std::string> split_start_line = splitDelim(startLine_, " ");
 	if (split_start_line.size() != 3)
@@ -86,7 +80,6 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	int cmp = http.compare("HTTP/");
 	if (!checkVersion(version) || version.length() != 3 || cmp)
 	{
-		std::cout << "HERE" << std::endl;
 		c->setReqStatusCode(BAD_REQUEST);
 		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
@@ -103,45 +96,55 @@ void	OperateRequest::parseStartLine(Connection *c) {
 }
 
 void	OperateRequest::parseHeaders(Connection *c) {
-	(void)c;
+
+	size_t pos = c->getBuffer().find(CRLFCRLF);
+	headers_ = c->getBuffer().substr(0, pos + LEN_CRLF);
+	c->getBuffer().erase(0, pos + LEN_CRLFCRLF);
 	std::cout << "headers" << std::endl;
 	std::cout << headers_ << std::endl;
 	// size_t header_len = header.length();
-	size_t pos = 0;
+	size_t pos1 = 0;
 	int code = 0;
 	int i = 0;
-	while ((pos = headers_.find(CRLF)) != std::string::npos)
+	while ((pos1 = headers_.find(CRLF)) != std::string::npos)
 	{
 		std::string headerline = "";
-		// std::cout << "pos: " << pos << std::endl;
-		headerline = headers_.substr(0, pos);
+		headerline = headers_.substr(0, pos1);
 		std::cout << "Header line " << i++ << " : " << headerline << std::endl;
 		// }
 
 		//headerline parse - argument is < 2 => 400 // if field name is not alpha => 400
 													// if there's sth between fild name and colon => 400
+		if (headers_.length() == 2)
+			break ;
 		if ((code = parseHeaderLine(c, headerline)) != NOT_DEFINE)
 		{
 			c->setReqStatusCode(code);
+			c->setPhaseMsg(HEADER_COMPLETE);
 			return ;
 		}
-		headers_ = headers_.substr(pos + LEN_CRLF, headers_.length());
+		headers_ = headers_.substr(pos1 + LEN_CRLF, headers_.length());
 		// std::cout << "headers to parse line : " << std::endl;
 		std::cout << headers_ << std::endl;
 		// std::cout << "header 길이: " << headers_.length() << std::endl;
-		if (headers_.length() == 0)
-			break ;
 	}
 	// std::cout <<
 }
 
 int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
-	std::vector<std::string> header_line_parse = splitDelim(headerline, " ");
+	std::vector<std::string> header_line_parse = splitDelim(headerline, ": ");
 	if (header_line_parse.size() != 2)
-		return (BAD_REQUEST);
-	std::vector<std::string> key_parse = splitDelim(header_line_parse[0], ":");
+	{
+		// header_line_parse = splitDelim(headerline, ":");
+		// if (header_line_parse.size() != 2)
+		std::cout << header_line_parse.size() << std::endl;
+		std::cout<< "/////////////////////////////////////////////" << std::endl;
+			return (BAD_REQUEST);
+	}
+	// std::vector<std::string> key_parse = splitDelim(header_line_parse[0], ":");
 
-	std::string key = key_parse[0];
+	// std::string key = key_parse[0];
+	std::string key = header_line_parse[0];
 	std::string value = header_line_parse[1];
 	std::cout << "header key: " << key << std::endl;
 	std::cout << "header value: " << value << std::endl;
@@ -153,10 +156,11 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 void	OperateRequest::checkHeader(Connection *c) {
 	if (c->getReqStatusCode() != NOT_DEFINE)
 	{
-		// std::cout << "/////////////////////////////////////////" << std::endl;
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
+
+	getUriFromLocation(c);
 
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getBlock().getClientMaxBodySize();
@@ -164,6 +168,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 	if ((c->getRequest().getRequestHeaders().count("Content-Length")))
 	{
 		c->content_length = fromString<int>((c->getRequest().getHeaderValue("Content-Length")));
+		// std::cout << "content-length in function:" << c->content_length << std::endl;
 		if (c->content_length > (c->client_max_body_size))
 		{
 			c->setReqStatusCode(PAYLOAD_TOO_LARGE);
@@ -172,20 +177,40 @@ void	OperateRequest::checkHeader(Connection *c) {
 		}
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
 		{
-			body_ = c->getBuffer().substr(0, c->getBuffer().length());
-			c->getBuffer().erase(0, c->getBuffer().length());
+			// body_ = c->getBuffer().substr(0, c->getBuffer().length());
+			std::cout << "body check: " << body_ << std::endl;
+			// c->getBuffer().erase(0, c->getBuffer().length());
 			c->getRequest().setBody(body_);
 		}
 	}
-
-	if (!c->getRequest().getRequestHeaders().count("Host"))
+	
+	if (c->getRequest().getRequestHeaders().count("Transfer-Encoding") && (c->getRequest().getHeaderValue("Transfer-Encoding") == "chunked"))
 	{
-		// std::cout << "/////////////////////////////////////////" << std::endl;
+		c->setPhaseMsg(BODY_CHUNKED);
+		c->is_chunk = true;
+	}
+	else if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
+	{
+		c->is_chunk = false;
+		c->body_.clear();
+		c->setPhaseMsg(BODY_COMPLETE);
+	}
+	else if (c->is_chunk == true)
+		c->setPhaseMsg(BODY_COMPLETE);
+	else
+		c->setPhaseMsg(BODY_INCOMPLETE);
+
+	if (checkHostHeader(c) == false)
+	{
 		c->setReqStatusCode(BAD_REQUEST);
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 
+		// std::vector<std::string> ret = c->getBlock().locationList[0].getReturn();
+
+		// for (size_t i = 0; i < ret.size(); i++)
+		// 	std::cout << "vector value: " << ret[i] << std::endl;
 
 	//GET
 
@@ -247,15 +272,15 @@ int			OperateRequest::checkHeaderKey(const std::string &s) {
 	return (true);
 }
 
-std::string	OperateRequest::trimWhiteSpace(std::string &s) {
+// std::string	OperateRequest::trimWhiteSpace(std::string &s) {
 
-	std::string str;
-	std::string whitespace(" \n\r\t\f\v");
-	size_t found1 = s.find_first_not_of(whitespace);
-	size_t found2 = s.find_last_not_of(whitespace);
-	str = s.substr(found1, found2 - found1 + 1);
-	return (str);
-}
+// 	std::string str;
+// 	std::string whitespace(" \n\r\t\f\v");
+// 	size_t found1 = s.find_first_not_of(whitespace);
+// 	size_t found2 = s.find_last_not_of(whitespace);
+// 	str = s.substr(found1, found2 - found1 + 1);
+// 	return (str);
+// }
 
 int Stoi(const std::string &str, size_t *idx, int base) {
   char *end;
@@ -272,4 +297,21 @@ int Stoi(const std::string &str, size_t *idx, int base) {
     *idx = static_cast<size_t>(end - p);
   }
   return static_cast<int>(num);
+}
+
+bool	OperateRequest::checkHostHeader(Connection *c) {
+	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 7, "HTTP/1.") == 0))
+		return (true);
+	else if (c->getRequest().getVersion().compare("HTTP/1.0") == 0)
+		return (true);
+	return (false);
+}
+
+void	OperateRequest::getUriFromLocation(Connection *c) {
+	std::vector<LocationBlock> locationlist = c->getBlock().locationList;
+
+	std::cout << "Location list size: " << locationlist.size() << std::endl;
+	std::cout << c->getBlock().getRoot() << std::endl;
+	locationlist[0].getRoot();
+	
 }
