@@ -27,8 +27,6 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 		//parse start line
 		std::cout << "Parse Start Line" << std::endl;
 		parseStartLine(c);
-		// if ((pos = c->getBuffer().find(CRLFCRLF)) == std::string::npos)
-		// 	c->setPhaseMsg(HEADER_INCOMPLETE);
 	}
 	if (c->getPhaseMsg() == HEADER_INCOMPLETE)
 	{
@@ -39,13 +37,6 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	if (c->getPhaseMsg() == HEADER_COMPLETE)
 	{
 		std::cout << "Parse Header" << std::endl;
-		// headers_ = c->getBuffer().substr(tmp_, c->getBuffer().length());
-		// headers_ = c->getBuffer().substr(0, pos + LEN_CRLFCRLF);
-		// c->getBuffer().erase(0, pos + LEN_CRLFCRLF);
-		// tmp_ = pos + LEN_CRLFCRLF;
-	// 	// std::cout << "header: " << headers_ << std::endl;
-	// 	// std::cout << "tmp_: " << tmp_ << std::endl;
-		//parse header
 		parseHeaders(c);
 	// 	std::cout << "Header parse done" << std::endl;
 	// 	std::cout << "buffer check: " << c->getBuffer() << std::endl;
@@ -169,6 +160,8 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
+	getUriFromLocation(c);
+
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getBlock().getClientMaxBodySize();
 
@@ -184,20 +177,40 @@ void	OperateRequest::checkHeader(Connection *c) {
 		}
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
 		{
-			body_ = c->getBuffer().substr(0, c->getBuffer().length());
+			// body_ = c->getBuffer().substr(0, c->getBuffer().length());
 			std::cout << "body check: " << body_ << std::endl;
-			c->getBuffer().erase(0, c->getBuffer().length());
+			// c->getBuffer().erase(0, c->getBuffer().length());
 			c->getRequest().setBody(body_);
 		}
 	}
+	
+	if (c->getRequest().getRequestHeaders().count("Transfer-Encoding") && (c->getRequest().getHeaderValue("Transfer-Encoding") == "chunked"))
+	{
+		c->setPhaseMsg(BODY_CHUNKED);
+		c->is_chunk = true;
+	}
+	else if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
+	{
+		c->is_chunk = false;
+		c->body_.clear();
+		c->setPhaseMsg(BODY_COMPLETE);
+	}
+	else if (c->is_chunk == true)
+		c->setPhaseMsg(BODY_COMPLETE);
+	else
+		c->setPhaseMsg(BODY_INCOMPLETE);
 
-	if (!c->getRequest().getRequestHeaders().count("Host"))
+	if (checkHostHeader(c) == false)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 
+		// std::vector<std::string> ret = c->getBlock().locationList[0].getReturn();
+
+		// for (size_t i = 0; i < ret.size(); i++)
+		// 	std::cout << "vector value: " << ret[i] << std::endl;
 
 	//GET
 
@@ -259,15 +272,15 @@ int			OperateRequest::checkHeaderKey(const std::string &s) {
 	return (true);
 }
 
-std::string	OperateRequest::trimWhiteSpace(std::string &s) {
+// std::string	OperateRequest::trimWhiteSpace(std::string &s) {
 
-	std::string str;
-	std::string whitespace(" \n\r\t\f\v");
-	size_t found1 = s.find_first_not_of(whitespace);
-	size_t found2 = s.find_last_not_of(whitespace);
-	str = s.substr(found1, found2 - found1 + 1);
-	return (str);
-}
+// 	std::string str;
+// 	std::string whitespace(" \n\r\t\f\v");
+// 	size_t found1 = s.find_first_not_of(whitespace);
+// 	size_t found2 = s.find_last_not_of(whitespace);
+// 	str = s.substr(found1, found2 - found1 + 1);
+// 	return (str);
+// }
 
 int Stoi(const std::string &str, size_t *idx, int base) {
   char *end;
@@ -284,4 +297,21 @@ int Stoi(const std::string &str, size_t *idx, int base) {
     *idx = static_cast<size_t>(end - p);
   }
   return static_cast<int>(num);
+}
+
+bool	OperateRequest::checkHostHeader(Connection *c) {
+	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 7, "HTTP/1.") == 0))
+		return (true);
+	else if (c->getRequest().getVersion().compare("HTTP/1.0") == 0)
+		return (true);
+	return (false);
+}
+
+void	OperateRequest::getUriFromLocation(Connection *c) {
+	std::vector<LocationBlock> locationlist = c->getBlock().locationList;
+
+	std::cout << "Location list size: " << locationlist.size() << std::endl;
+	std::cout << c->getBlock().getRoot() << std::endl;
+	locationlist[0].getRoot();
+	
 }

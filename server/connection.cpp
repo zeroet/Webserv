@@ -9,6 +9,7 @@ Connection::Connection(int fd, ServerBlock block, Epoll *ep) : clntFd_(fd), bloc
 	req_status_code_ = NOT_DEFINE;
 	content_length = 0;
 	client_max_body_size = 0;
+	is_chunk = false;
 }
 
 Connection::~Connection() { }
@@ -45,7 +46,10 @@ void    Connection::processRequest()
 		std::cout << "************ Message body process **********" << std::endl;
 
 
+	// std::vector<std::string> ret = getBlock().locationList[0].getReturn();
 
+	// for (size_t i = 0; i < ret.size(); i++)
+	// 	std::cout << "///////////////////////////////////////////vector value: " << ret[i] << std::endl;
 
 	////////////
 	// if (phase_msg_ == BODY_COMPLETE)

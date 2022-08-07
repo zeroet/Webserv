@@ -47,7 +47,9 @@ class OperateRequest {
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
 		int		checkHeaderKey(const std::string &s);
-		std::string	trimWhiteSpace(std::string &s);
+		bool	checkHostHeader(Connection *c);
+		void	getUriFromLocation(Connection *c);
+		// std::string	trimWhiteSpace(std::string &s);
 
 		template<typename T>
 		std::string toString(const T& v)
