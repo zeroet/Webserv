@@ -11,6 +11,9 @@
 #include "../server/connection.hpp"
 #include "../server/epoll.hpp"
 
+// # path: /return_test/index.html
+// # filepath = /var/bbb/aaa/index.html
+
 namespace ft {
 
 typedef std::map<std::string, std::string> 	mapHeader;
