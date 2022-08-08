@@ -27,19 +27,20 @@ namespace ft
 		LocationBlock					return_location;
 		std::vector<LocationBlock>::const_iterator	current_location = location_list.begin();
 		std::vector<LocationBlock>::const_iterator	end_location = location_list.end();
-		unsigned long					value;
-		std::string					input_string; 
-		std::string::size_type				n;
+
 		
 		for (; current_location != end_location; ++current_location)
 		{
 			if (current_location->getUriPath().compare(path) == 0)
 				return (std::make_pair(true, *current_location));
+/*
+		unsigned long					value;
+		std::string					input_string; 
+		std::string::size_type				n;
 			else
 			{
 				find_first_not_of(path)
 			}
-
 			if (input_string.length() != 0)
 			{
 				n = input_string.find_first_not_of("0123456789");
@@ -55,6 +56,7 @@ namespace ft
 				}
 
 			}
+*/
 		}
 		return (std::make_pair(false, return_location));
 	}
