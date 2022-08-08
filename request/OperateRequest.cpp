@@ -72,7 +72,7 @@ void	OperateRequest::parseStartLine(Connection *c) {
 		c->getRequest().setMethod(split_start_line[0]);
 
 	//path check:
-	c->getRequest().setPath(split_start_line[1]);
+	c->getRequest().setUri(split_start_line[1]);
 
 	//HTTP/1.1 check: 'HTTP/' '1.*' / if not Error 400/505
 	std::string http = split_start_line[2].substr(0, 5);
@@ -93,6 +93,125 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	}
 	c->getRequest().setVersion(http + version);
 	c->setPhaseMsg(HEADER_INCOMPLETE);
+}
+
+int OperateRequest::parseUri(std::string uri_str, Connection *c) {
+  enum {
+    schema = 0,
+    host,
+    port,
+    uri,
+    args,
+    uri_complete
+  } state;
+
+  if (uri_str[0] == '/')
+    state = uri;
+  else
+    state = schema;
+  size_t pos;
+  while (state != uri_complete) {
+    switch (state) {
+      case schema:
+        if ((pos = uri_str.find("://")) == std::string::npos)
+          return (PARSE_INVALID_URI);
+        c->getRequest().setSchema(uri_str.substr(0, pos));
+        uri_str.erase(0, pos + 3);
+        state = host;
+        break;
+      case host:
+        if ((pos = uri_str.find_first_of(":/? ")) != std::string::npos)
+        {
+          if (pos != 0)
+            c->getRequest().setHost(uri_str.substr(0, pos));
+          uri_str.erase(0, pos);
+        }
+        else
+          return (PARSE_INVALID_URI);
+        switch (uri_str[0]) {
+          case ':':
+            state = port;
+            break;
+          case '/':
+            state = uri;
+            break;
+          case '?':
+            state = args;
+            break;
+          case ' ':
+            state = uri_complete;
+            break;
+          default:
+            return (PARSE_INVALID_URI);
+        }
+        break;
+      case port:
+        if ((pos = uri_str.find_first_of("/? ")) != std::string::npos)
+        {
+          for (size_t i = 1; i < pos; ++i) 
+          {
+            if (!isdigit(uri_str[i]))
+              return (PARSE_INVALID_URI);
+          }
+          if (pos != 1)
+            c->getRequest().setPort(uri_str.substr(1, pos - 1));
+          uri_str.erase(0, pos);
+        }
+        else
+          return (PARSE_INVALID_URI);
+        switch (uri_str[0]) {
+          case '/':
+            state = uri;
+            break;
+          case '?':
+            state = args;
+            break;
+          case ' ':
+            state = uri_complete;
+            break;
+          default:
+            return PARSE_INVALID_URI;
+        }
+        break;
+      case uri:
+        if ((pos = uri_str.find_first_of("? ")) != std::string::npos) 
+        {
+          if (pos != 1)
+            c->getRequest().setPath(uri_str.substr(0, pos));
+          uri_str.erase(0, pos);
+        }
+        else
+          return (PARSE_INVALID_URI);
+        switch (uri_str[0]) {
+          case '?':
+            state = args;
+            break;
+          case ' ':
+            state = uri_complete;
+            break;
+          default:
+            return (PARSE_INVALID_URI);
+        }
+        break;
+      case args:
+        if ((pos = uri_str.find(" ")) != std::string::npos)
+        {
+          if (pos != 1)
+            c->getRequest().setQueryString(uri_str.substr(1, pos - 1));
+          uri_str.erase(0, pos);
+        }
+        else
+          return (PARSE_INVALID_URI);
+        state = uri_complete;
+        break;
+      case uri_complete:
+        break;
+    }
+  }
+  if (c->getRequest().getPath().empty())
+    c->getRequest().setPath("/");
+
+  return (PARSE_VALID_URI);
 }
 
 void	OperateRequest::parseHeaders(Connection *c) {
@@ -160,7 +279,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-	getUriFromLocation(c);
+	// getUriFromLocation(c);
 
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getBlock().getClientMaxBodySize();
@@ -192,7 +311,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 	else if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
 	{
 		c->is_chunk = false;
-		c->body_.clear();
+		body_.clear();
 		c->setPhaseMsg(BODY_COMPLETE);
 	}
 	else if (c->is_chunk == true)
@@ -307,11 +426,11 @@ bool	OperateRequest::checkHostHeader(Connection *c) {
 	return (false);
 }
 
-void	OperateRequest::getUriFromLocation(Connection *c) {
-	std::vector<LocationBlock> locationlist = c->getBlock().locationList;
+// void	OperateRequest::getUriFromLocation(Connection *c) {
+// 	std::vector<LocationBlock> locationlist = c->getBlock().locationList;
 
-	std::cout << "Location list size: " << locationlist.size() << std::endl;
-	std::cout << c->getBlock().getRoot() << std::endl;
-	locationlist[0].getRoot();
+// 	std::cout << "Location list size: " << locationlist.size() << std::endl;
+// 	std::cout << c->getBlock().getRoot() << std::endl;
+// 	locationlist[0].getRoot();
 	
-}
+// }
