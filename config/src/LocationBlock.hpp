@@ -8,10 +8,10 @@ namespace ft
 	class LocationBlock : public BaseDirectives
 	{
 		private:
-			std::vector<std::string>	limitExcept_;
+			std::vector<std::string>	limit_except_;
 			std::vector<std::string>	return_;
 			std::vector<std::string>	cgi_;
-			std::string			cgiPath_;
+			std::string			cgi_path_;
 		public:
 			LocationBlock();
 			LocationBlock(const BaseDirectives& context);

@@ -5,11 +5,11 @@ namespace ft
 	BaseDirectives::BaseDirectives()
 	{
 		this->root_ = "html";
-		this->clientMaxBodySize_ = 1000000;
-		this->keepaliveTimeout_ = 75;
+		this->client_max_body_size_ = 1000000;
+		this->keepalive_timeout_ = 75;
 		this->index_.push_back("index.html");
 		this->autoindex_ = "off";
-		this->errorPage_ = "";
+		this->error_page_ = "";
 	}
 
 	// Getter	
@@ -20,12 +20,12 @@ namespace ft
 
 	unsigned long		BaseDirectives::getClientMaxBodySize(void) const
 	{
-		return (this->clientMaxBodySize_);
+		return (this->client_max_body_size_);
 	}
 
 	unsigned int		BaseDirectives::getKeepaliveTimeout(void) const
 	{
-		return (this->keepaliveTimeout_);
+		return (this->keepalive_timeout_);
 	}
 
 	const std::vector<std::string>	BaseDirectives::getIndex(void) const
@@ -40,7 +40,7 @@ namespace ft
 
 	const std::string		BaseDirectives::getErrorPage(void) const
 	{
-		return (this->errorPage_);
+		return (this->error_page_);
 	}
 
 	// Setter
@@ -51,12 +51,12 @@ namespace ft
 
 	void				BaseDirectives::setClientMaxBodySize(const unsigned long x)
 	{
-		this->clientMaxBodySize_ = x;
+		this->client_max_body_size_ = x;
 	}
 
 	void				BaseDirectives::setKeepaliveTimeout(const unsigned int x)
 	{
-		this->keepaliveTimeout_ = x;
+		this->keepalive_timeout_ = x;
 	}
 
 	void				BaseDirectives::setIndex(const std::string x)
@@ -71,7 +71,7 @@ namespace ft
 
 	void				BaseDirectives::setErrorPage(const std::string x)
 	{
-		this->errorPage_ = x;
+		this->error_page_ = x;
 	}
 
 

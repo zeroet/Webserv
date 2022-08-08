@@ -5,23 +5,30 @@ namespace ft
 	ServerBlock::ServerBlock(const BaseDirectives& context)
 	{
 		this->root_ = context.getRoot();
-		this->clientMaxBodySize_ = context.getClientMaxBodySize();
-		this->keepaliveTimeout_ = context.getKeepaliveTimeout();
+		this->client_max_body_size_ = context.getClientMaxBodySize();
+		this->keepalive_timeout_ = context.getKeepaliveTimeout();
 		this->index_ = context.getIndex();
 		this->autoindex_ = context.getAutoindex();
-		this->errorPage_ = context.getErrorPage();
+		this->error_page_ = context.getErrorPage();
+		//setErrorPage(context.getErrorPage());
 		this->listen_ = 80;
-		this->serverName_.push_back("");
-		this->socketFd_ = -1;
+		this->server_name_.push_back("");
+		this->socket_fd_ = -1;
 	}
 
 	// Getter
-/*
-	const std::vector<LocationBlock>			getLocationBlock()
+	const std::vector<LocationBlock>	ServerBlock::getLocationBlock() const
 	{
-		return (this->locationList);
+		return (this->location_list);
 	}
-*/
+
+	const std::pair<bool, LocationBlock>	ServerBlock::getLocationBlock(const std::string path) const
+	{
+		LocationBlock	return_location;
+		
+		(void)path;
+		return (std::make_pair(false, return_location));
+	}
 
 	unsigned int		ServerBlock::getListen(void) const
 	{
@@ -30,11 +37,12 @@ namespace ft
 
 	const std::vector<std::string>	ServerBlock::getServerName(void) const
 	{
-		return (this->serverName_);
+		return (this->server_name_);
 	}
+
 	const std::string		ServerBlock::getServerName(size_t index) const
 	{
-		return (this->serverName_.at(index));
+		return (this->server_name_.at(index));
 	}
 
 	const std::vector<std::string>	ServerBlock::getReturn(void) const
@@ -44,7 +52,7 @@ namespace ft
 
 	int	ServerBlock::getSocketFd(void) const
 	{
-		return (this->socketFd_);
+		return (this->socket_fd_);
 	}
 
 	// Setter
@@ -55,7 +63,7 @@ namespace ft
 
 	void				ServerBlock::setServerName(const std::string x)
 	{
-		this->serverName_.push_back(x);
+		this->server_name_.push_back(x);
 	}
 
 	void				ServerBlock::setReturn(const std::string x)
@@ -65,11 +73,11 @@ namespace ft
 
 	void				ServerBlock::setSocketFd(const int i)
 	{
-		this->socketFd_ = i;
+		this->socket_fd_ = i;
 	}
 
 	void				ServerBlock::clearServerName(void)
 	{
-		this->serverName_.clear();
+		this->server_name_.clear();
 	}
 }

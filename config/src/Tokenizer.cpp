@@ -6,11 +6,11 @@ namespace ft
 	std::vector<Token> Tokenizer::parse(const std::string& texts)
 	{
 		std::vector<Token>		tokens;
-		Token				currentToken;
+		Token				current_token;
 		std::string::const_iterator	it;
 		
-		currentToken.type = WHITESPACE;
-		currentToken.lineNumber = 1;
+		current_token.type = WHITESPACE;
+		current_token.line_num = 1;
 		for (it = texts.begin(); it != texts.end(); ++it)
 		{
 			switch (*it)
@@ -19,62 +19,62 @@ namespace ft
 				case '}':
 				case '=':
 				case ';':
-					if (currentToken.type != COMMENT && currentToken.type != PARAMETER)
+					if (current_token.type != COMMENT && current_token.type != PARAMETER)
 					{
-						endToken(currentToken, tokens);
-						currentToken.type = OPERATOR;
-						currentToken.text.append(1, *it);
-						endToken(currentToken, tokens);
+						endToken(current_token, tokens);
+						current_token.type = OPERATOR;
+						current_token.text.append(1, *it);
+						endToken(current_token, tokens);
 					}
 					else
-						currentToken.text.append(1, *it);
+						current_token.text.append(1, *it);
 					break ;
 				case ' ':
 				case '\t':
-					if (currentToken.type == PARAMETER || currentToken.type == COMMENT)
-						currentToken.text.append(1, *it);
+					if (current_token.type == PARAMETER || current_token.type == COMMENT)
+						current_token.text.append(1, *it);
 					else
-						endToken(currentToken, tokens);
+						endToken(current_token, tokens);
 					break ;
 				case '\r':
 				case '\n':
-					endToken(currentToken, tokens);
-					++currentToken.lineNumber;
+					endToken(current_token, tokens);
+					++current_token.line_num;
 					break ;
 				case '"':
-					if (currentToken.type == COMMENT)
-						currentToken.text.append(1, *it);
-					else if (currentToken.type != PARAMETER)
+					if (current_token.type == COMMENT)
+						current_token.text.append(1, *it);
+					else if (current_token.type != PARAMETER)
 					{
-						endToken(currentToken, tokens);
-						currentToken.type = PARAMETER;
+						endToken(current_token, tokens);
+						current_token.type = PARAMETER;
 					}
-					else if (currentToken.type == PARAMETER)
-						endToken(currentToken, tokens);
+					else if (current_token.type == PARAMETER)
+						endToken(current_token, tokens);
 					break ;
 				case '#':
-					if (currentToken.type == WHITESPACE)
+					if (current_token.type == WHITESPACE)
 					{
-						endToken(currentToken, tokens);
-						currentToken.type = COMMENT;
-						currentToken.text.erase();
+						endToken(current_token, tokens);
+						current_token.type = COMMENT;
+						current_token.text.erase();
 					}
-					else if (currentToken.type == COMMENT)
-						currentToken.text.append(1, *it);
+					else if (current_token.type == COMMENT)
+						current_token.text.append(1, *it);
 					break ;
 				default:
-					if (currentToken.type == WHITESPACE)
+					if (current_token.type == WHITESPACE)
 					{
-						endToken(currentToken, tokens);
-						currentToken.type = IDENTIFIER;
-						currentToken.text.append(1, *it);
+						endToken(current_token, tokens);
+						current_token.type = IDENTIFIER;
+						current_token.text.append(1, *it);
 					}
 					else 
-						currentToken.text.append(1, *it);
+						current_token.text.append(1, *it);
 					break ;
 			}
 		}
-		endToken(currentToken, tokens);
+		endToken(current_token, tokens);
 		return (tokens);
 	}
 
@@ -90,13 +90,13 @@ namespace ft
 
 	void	Token::debugPrint() const
 	{
-		std::cout << "Token(" << sTokenTypeStrings[type] << ", \"" << text << "\", " << lineNumber << ")" << std::endl;
+		std::cout << "Token(" << sTokenTypeStrings[type] << ", \"" << text << "\", " << line_num << ")" << std::endl;
 	}
 /*
 	Token::Token()
 	{
 		this->type = WHITESPACE;	
-		this->lineNumber = 1;
+		this->line_num = 1;
 	}
 */
 }

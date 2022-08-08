@@ -10,7 +10,7 @@ namespace ft
 	class HttpBlock : public BaseDirectives
 	{
 		public:
-			std::vector<ServerBlock>	serverList;
+			std::vector<ServerBlock>	server_list;
 		public:
 			HttpBlock();
 			HttpBlock(const HttpBlock& other);

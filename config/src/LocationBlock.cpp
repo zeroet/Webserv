@@ -2,19 +2,19 @@
 
 namespace ft
 {
+	// Constructor
 	LocationBlock::LocationBlock()
 	{
 	}
 
-	// Constructor
 	LocationBlock::LocationBlock(const BaseDirectives& context)
 	{
 		this->root_ = context.getRoot();
-		this->clientMaxBodySize_ = context.getClientMaxBodySize();
-		this->keepaliveTimeout_ = context.getKeepaliveTimeout();
+		this->client_max_body_size_ = context.getClientMaxBodySize();
+		this->keepalive_timeout_ = context.getKeepaliveTimeout();
 		this->index_ = context.getIndex();
 		this->autoindex_ = context.getAutoindex();
-		this->errorPage_ = context.getErrorPage();
+		this->error_page_ = context.getErrorPage();
 	}
 	LocationBlock::LocationBlock(const LocationBlock& other)
 	{
@@ -46,7 +46,7 @@ namespace ft
 	// Getter
 	const std::vector<std::string>	LocationBlock::getLimitExcept(void) const
 	{
-		return (this->limitExcept_);
+		return (this->limit_except_);
 	}
 
 	const std::vector<std::string>	LocationBlock::getReturn(void) const
@@ -60,18 +60,18 @@ namespace ft
 
 	const std::string		LocationBlock::getCgiPath(void) const
 	{
-		return (this->cgiPath_);
+		return (this->cgi_path_);
 	}
 
 	// Setter
 	void				LocationBlock::setLimitExcept(const std::vector<std::string> x)
 	{
-		this->limitExcept_ = x;
+		this->limit_except_ = x;
 	}
 
 	void				LocationBlock::setLimitExcept(const std::string x)
 	{
-		this->limitExcept_.push_back(x);
+		this->limit_except_.push_back(x);
 	}
 
 	void				LocationBlock::setReturn(const std::vector<std::string> x)
@@ -96,7 +96,7 @@ namespace ft
 
 	void				LocationBlock::setCgiPath(const std::string x)
 	{
-		this->cgiPath_ = x;
+		this->cgi_path_ = x;
 	}
 
 }

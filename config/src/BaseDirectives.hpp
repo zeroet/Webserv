@@ -10,11 +10,11 @@ namespace ft
 	{
 		protected:
 			std::string			root_;
-			unsigned long			clientMaxBodySize_;
-			unsigned int			keepaliveTimeout_;
+			unsigned long			client_max_body_size_;
+			unsigned int			keepalive_timeout_;
 			std::vector<std::string>	index_;
 			bool				autoindex_;
-			std::string			errorPage_;
+			std::string			error_page_;
 		public:
 			BaseDirectives();
 			// Getter

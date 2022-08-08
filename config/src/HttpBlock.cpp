@@ -6,7 +6,7 @@ namespace ft
 	{
 	}
 
-	HttpBlock::HttpBlock(const HttpBlock& other) : serverList(other.getServerBlock())
+	HttpBlock::HttpBlock(const HttpBlock& other) : server_list(other.getServerBlock())
 	{
 	}
 
@@ -17,12 +17,12 @@ namespace ft
 	HttpBlock& HttpBlock::operator= (const HttpBlock& other)
 	{
 		if (this != &other)
-			serverList = other.getServerBlock();
+			server_list = other.getServerBlock();
 		return (*this);
 	}
 
 	std::vector<ServerBlock>	HttpBlock::getServerBlock() const
 	{
-		return (this->serverList);
+		return (this->server_list);
 	}
 };
