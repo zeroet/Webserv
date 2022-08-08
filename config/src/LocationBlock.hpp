@@ -12,6 +12,7 @@ namespace ft
 			std::vector<std::string>	return_;
 			std::vector<std::string>	cgi_;
 			std::string			cgi_path_;
+			std::string			uri_path_;
 		public:
 			LocationBlock();
 			LocationBlock(const BaseDirectives& context);
@@ -23,6 +24,7 @@ namespace ft
 			const std::vector<std::string>	getReturn(void) const;
 			const std::vector<std::string>	getCgi(void) const;
 			const std::string		getCgiPath(void) const;
+			const std::string		getUriPath(void) const;
 
 			// Setter
 			void				setLimitExcept(const std::vector<std::string> x);
@@ -32,6 +34,7 @@ namespace ft
 			void				setCgi(const std::vector<std::string> x);
 			void				setCgi(const std::string x);
 			void				setCgiPath(const std::string x);
+			void				setUriPath(const std::string x);
 	};
 
 }

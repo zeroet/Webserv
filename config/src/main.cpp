@@ -20,6 +20,9 @@ int main(int argc, char** argv)
 
 		try {
 			std::cout << "server name: " << server_context.getServerName(0) << std::endl;
+			std::pair<bool, ft::LocationBlock>  location_pair = server_context.getLocationBlock("/test/");
+			if (location_pair.first == true)
+				std::cout << location_pair.second.getUriPath() << "\n";
 		}
 		catch (const std::out_of_range& e) {
 			std::cout << "Error: Out of Range.\n";

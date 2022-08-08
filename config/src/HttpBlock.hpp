@@ -14,8 +14,8 @@ namespace ft
 		public:
 			HttpBlock();
 			HttpBlock(const HttpBlock& other);
-			~HttpBlock();
 			HttpBlock& operator= (const HttpBlock& other);
+			~HttpBlock();
 			std::vector<ServerBlock>	getServerBlock() const;
 	};
 

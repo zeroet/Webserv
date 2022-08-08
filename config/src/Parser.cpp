@@ -27,8 +27,8 @@ namespace ft
 		current_token_ = tokens.begin();
 		start_token_ = tokens.begin();
 		end_token_ = tokens.end();
-		std::pair<bool, HttpBlock> http_pair;
-		std::pair<bool, Directive> valid_directive_pair;
+		std::pair<bool, HttpBlock> 	http_pair;
+		std::pair<bool, Directive> 	valid_directive_pair;
 
 		while (current_token_ != end_token_)
 		{
@@ -82,8 +82,8 @@ namespace ft
 
 	std::pair<bool, Directive>	Parser::checkValidDirective()
 	{
-		std::pair<bool, Token> token_pair = expectToken(DIRECTIVE);
-		std::map<std::string, Directive>::iterator found_directive;
+		std::pair<bool, Token> 				token_pair = expectToken(DIRECTIVE);
+		std::map<std::string, Directive>::iterator 	found_directive;
 
 		if (!token_pair.first)
 			return (std::make_pair(false, directives_.begin()->second)); 
@@ -205,6 +205,17 @@ namespace ft
 		return (true);
 	}
 
+	bool	Parser::setHttpDirectiveParameter(HttpBlock& context, std::vector<Directive> directive_list)
+	{
+		std::vector<Directive>::iterator	current_directive = directive_list.begin();
+		std::vector<Directive>::iterator	end_directive = directive_list.end();
+
+		for (; current_directive != end_directive; ++current_directive)
+			if (setBaseDirectiveParameter(context, current_directive) == false)
+				return (false);
+		return (true);
+	}
+
 	bool	Parser::setBaseDirectiveParameter(BaseDirectives& context, std::vector<Directive>::iterator& current_directive)
 	{
 		if (current_directive->directive == CLIENT_MAX_BODY_SIZE)
@@ -280,17 +291,6 @@ namespace ft
 		return (true);
 	}
 
-	bool	Parser::setHttpDirectiveParameter(HttpBlock& context, std::vector<Directive> directive_list)
-	{
-		std::vector<Directive>::iterator	current_directive = directive_list.begin();
-		std::vector<Directive>::iterator	end_directive = directive_list.end();
-
-		for (; current_directive != end_directive; ++current_directive)
-			if (setBaseDirectiveParameter(context, current_directive) == false)
-				return (false);
-		return (true);
-	}
-
 	std::pair<bool, Directive>	Parser::expectHttpContext()
 	{
 		std::vector<Token>::iterator parse_start = current_token_;
@@ -325,9 +325,9 @@ namespace ft
 
 	std::pair<bool, HttpBlock>	Parser::parseHttpContext(std::pair<bool, Directive> valid_directive)
 	{
-		std::vector<Token>::iterator parse_start = current_token_;
-		std::pair<bool, std::vector<Directive> > directives;
-		HttpBlock	http_context;
+		std::vector<Token>::iterator 			parse_start = current_token_;
+		std::pair<bool, std::vector<Directive> > 	directives;
+		HttpBlock					http_context;
 
 		while (current_token_ != end_token_ - 1 && expectToken(OPERATOR, "}").first == false)
 		{
@@ -390,9 +390,9 @@ namespace ft
 
 	std::pair<bool, ServerBlock>	Parser::parseServerContext(HttpBlock& http_context, std::pair<bool, Directive> valid_directive)
 	{
-		std::vector<Token>::iterator parse_start = current_token_;
-		std::pair<bool, std::vector<Directive> > directives;
-		std::pair<bool, Token> token_pair = expectToken(OPERATOR, "}");
+		std::vector<Token>::iterator			parse_start = current_token_;
+		std::pair<bool, std::vector<Directive> >	directives;
+		std::pair<bool, Token> 				token_pair = expectToken(OPERATOR, "}");
 
 		ServerBlock	server_context(http_context);
 		while (token_pair.first == false)
@@ -439,6 +439,7 @@ namespace ft
 					current_token_ = parse_start;
 					return (std::make_pair(false, server_context));
 				}
+				location_pair.second.setUriPath(*valid_directive.second.parameters.begin());
 				server_context.location_list.push_back(location_pair.second);
 			}
 			token_pair = expectToken(OPERATOR, "}");
@@ -450,8 +451,8 @@ namespace ft
 
 	std::pair<bool, Directive>	Parser::expectLocationContext()
 	{
-		std::vector<Token>::iterator parse_start = current_token_;
-		std::pair<bool, Directive> valid_directive_pair = checkValidDirective();
+		std::vector<Token>::iterator	parse_start = current_token_;
+		std::pair<bool, Directive>	valid_directive_pair = checkValidDirective();
 
 		if (valid_directive_pair.first == false) 
 		{
@@ -471,21 +472,21 @@ namespace ft
 			current_token_ = parse_start;
 			return (std::make_pair(false, valid_directive_pair.second));
 		}
-		std::pair<bool, Token> token_pair = expectToken(PARAMETER);
-		if (token_pair.first == false)
+		std::pair<bool, Token> parameter_token_pair = expectToken(PARAMETER);
+		if (parameter_token_pair.first == false)
 		{
 			current_token_ = parse_start;
 			std::cout << "Error: No parameter: Location directive should have one URI path\n";
 			return (std::make_pair(false, valid_directive_pair.second));
 		}
-		valid_directive_pair.second.parameters.push_back(token_pair.second.text);
+		valid_directive_pair.second.parameters.push_back(parameter_token_pair.second.text);
 		return (std::make_pair(true, valid_directive_pair.second));
 	}
 
 	std::pair<bool, LocationBlock>	Parser::parseLocationContext(ServerBlock& server_context)
 	{
-		std::vector<Token>::iterator parse_start = current_token_;
-		std::pair<bool, std::vector<Directive> > directives;
+		std::vector<Token>::iterator 			parse_start = current_token_;
+		std::pair<bool, std::vector<Directive> > 	directives;
 		std::pair<bool, Token> token_pair;
 		LocationBlock	locationContext(server_context);
 
@@ -513,8 +514,8 @@ namespace ft
 
 	std::pair<bool, std::vector<Directive> > Parser::parseContextBody(enum DirectiveKind kind)
 	{
-		std::vector<Directive>	directives;
-		std::pair<bool, Directive> simple_directive_pair = expectSimpleDirective(kind);
+		std::vector<Directive>		directives;
+		std::pair<bool, Directive> 	simple_directive_pair = expectSimpleDirective(kind);
 
 		while (simple_directive_pair.first == true)
 		{
@@ -566,8 +567,8 @@ namespace ft
 	std::pair<bool, Directive>	Parser::expectSimpleDirective(enum DirectiveKind kind)
 	{
 		(void)ft::sTokenTypeStrings[current_token_->type]; // for debuging
-		std::vector<Token>::iterator start_token = current_token_;
-		std::pair<bool, Directive> valid_directive_pair = checkValidDirective();
+		std::vector<Token>::iterator 	start_token = current_token_;
+		std::pair<bool, Directive> 	valid_directive_pair = checkValidDirective();
 
 		if (valid_directive_pair.first == true)
 		{
@@ -621,8 +622,8 @@ namespace ft
 
 	std::pair<bool, Directive> Parser::checkValidParameterNumber(std::pair<bool, Directive>& valid_directive)
 	{
-		std::vector<Token>::iterator start_token = current_token_;
-		std::pair<bool, Token> parameter_token_pair = expectToken(PARAMETER);
+		std::vector<Token>::iterator 	start_token = current_token_;
+		std::pair<bool, Token> 		parameter_token_pair = expectToken(PARAMETER);
 
 		if (parameter_token_pair.first == true)
 		{
