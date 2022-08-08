@@ -24,10 +24,10 @@ class Epoll
 public:
     typedef int                             clntFd;
     typedef std::vector<ServerBlock>        vecBloc;
-    typedef std::map<clntFd, Connection>    mapConnection;
+    typedef std::map<clntFd, Connection*>   mapConnection;
     typedef struct epoll_event              event;
     typedef event*                          pEvent;;
-    typedef std::pair<int, Connection>      mapPair;
+    typedef std::pair<int, Connection*>     mapPair;
     Socket                              sock;
 
 private:

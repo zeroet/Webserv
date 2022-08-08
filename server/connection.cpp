@@ -3,7 +3,6 @@
 OperateRequest operateRequest = OperateRequest();
 
 Connection::Connection(int fd, ServerBlock block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep), request_(new Request) {
-    std::cout << ep_->getepollfd() << std::endl;
 	// Ctl_mode_flag_ = false;
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;

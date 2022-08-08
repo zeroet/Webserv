@@ -41,7 +41,7 @@ void    Epoll::init_server_socket()
 	create_epoll_fd();
 	for (int i = 0; i < numServerFd; i++)
 	{
-		epoll_add(0);
+		// epoll_add(0);
         if (OK != (epoll_add(vecBloc_[i].getSocketFd())))
 			std::cout << RED << "PortNumber [" << vecBloc_[i].getListen() <<
             "] Epoll_Ctl_Add failed" << FIN <<std::endl;
@@ -149,7 +149,7 @@ void    Epoll::epoll_server_manager()
                 {
                     epoll_add(clntFd);
                     ServerBlock serverBlock = get_location_block(epEvent[i].data.fd);
-                    this->c_.insert(std::make_pair (clntFd, Connection(clntFd, serverBlock, this)));
+                    this->c_.insert(std::make_pair (clntFd, new Connection(clntFd, serverBlock, this)));
                 }
                 else
                 {
@@ -162,14 +162,14 @@ void    Epoll::epoll_server_manager()
             {
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
-                it->second.processRequest(); //treat_request()
-				it->second.printRequestMsg();
+                it->second->processRequest(); //treat_request()
+				it->second->printRequestMsg();
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
-                it->second.response();
+                it->second->response();
             }
         }
     }
@@ -214,7 +214,7 @@ int     Epoll::find_server_fd(int fd)
 
 void    Epoll::close_all_serv_socket()
 {
-	// int count = this->vecBloc_.size();
+	int count = this->vecBloc_.size();
 
     if (c_.size() != 0)
     {
@@ -222,14 +222,15 @@ void    Epoll::close_all_serv_socket()
         mapConnection::iterator it1 = c_.end();
         for (; it != it1; it++)
         {
-            // close(it->first);
+            close(it->first);
+            delete it->second;
             c_.erase(it);
         }
         c_.clear();
     }
-	// for(int i = 0; i < count; i++)
-	// 	close(this->vecBloc_[i].getSocketFd());
-	// close(this->epollFd_);
+	for(int i = 0; i < count; i++)
+		close(this->vecBloc_[i].getSocketFd());
+	close(this->epollFd_);
 	std::cout << GREEN << "All Socket Closed" << FIN << std::endl;
 }
 
