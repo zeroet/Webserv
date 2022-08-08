@@ -20,10 +20,17 @@ namespace ft
 	{
 		if (this != &other)
 		{
+			this->setRoot(other.getRoot());
+			this->setClientMaxBodySize(other.getClientMaxBodySize());
+			this->setKeepaliveTimeout(other.getKeepaliveTimeout());
+			this->setIndex(other.getIndex());
+			this->setAutoindex(other.getAutoindex());
+			this->setErrorPage(other.getErrorPage());
 			this->setLimitExcept(other.getLimitExcept());
 			this->setReturn(other.getReturn());
 			this->setCgi(other.getCgi());
 			this->setCgiPath(other.getCgiPath());
+			this->setUriPath(other.getUriPath());
 		}
 	}
 
@@ -35,10 +42,17 @@ namespace ft
 	{
 		if (this != &other)
 		{
+			this->setRoot(other.getRoot());
+			this->setClientMaxBodySize(other.getClientMaxBodySize());
+			this->setKeepaliveTimeout(other.getKeepaliveTimeout());
+			this->setIndex(other.getIndex());
+			this->setAutoindex(other.getAutoindex());
+			this->setErrorPage(other.getErrorPage());
 			this->setLimitExcept(other.getLimitExcept());
 			this->setReturn(other.getReturn());
 			this->setCgi(other.getCgi());
 			this->setCgiPath(other.getCgiPath());
+			this->setUriPath(other.getUriPath());
 		}
 		return (*this);
 	}
@@ -61,6 +75,11 @@ namespace ft
 	const std::string		LocationBlock::getCgiPath(void) const
 	{
 		return (this->cgi_path_);
+	}
+
+	const std::string		LocationBlock::getUriPath(void) const
+	{
+		return (this->uri_path_);
 	}
 
 	// Setter
@@ -97,6 +116,11 @@ namespace ft
 	void				LocationBlock::setCgiPath(const std::string x)
 	{
 		this->cgi_path_ = x;
+	}
+
+	void				LocationBlock::setUriPath(const std::string x)
+	{
+		this->uri_path_ = x;
 	}
 
 }

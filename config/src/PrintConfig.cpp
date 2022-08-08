@@ -74,6 +74,7 @@ namespace ft
 			std::cout << " " << *current_string;
 		std::cout << std::endl;
 		std::cout << "cgi_path: " << context.getCgiPath() << std::endl;
+		std::cout << "uri_path: " << context.getUriPath() << std::endl;
 	}
 
 	void	PrintConfig::printConfig(std::pair<bool, HttpBlock>& http_pair, int flags)

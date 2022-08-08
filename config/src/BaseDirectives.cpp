@@ -59,6 +59,11 @@ namespace ft
 		this->keepalive_timeout_ = x;
 	}
 
+	void				BaseDirectives::setIndex(const std::vector<std::string> x)
+	{
+		this->index_ = x;
+	}
+
 	void				BaseDirectives::setIndex(const std::string x)
 	{
 		this->index_.push_back(x);

@@ -29,6 +29,7 @@ namespace ft
 			void				setRoot(const std::string x);
 			void				setClientMaxBodySize(const unsigned long x);
 			void				setKeepaliveTimeout(const unsigned int x);
+			void				setIndex(const std::vector<std::string> x);
 			void				setIndex(const std::string x);
 			void				setAutoindex(const bool x);
 			void				setErrorPage(const std::string x);
