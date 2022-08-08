@@ -5,3 +5,4 @@ a.out
 *.o
 webserv
 TestText
+.DS_Store
