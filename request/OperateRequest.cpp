@@ -336,7 +336,13 @@ void	OperateRequest::checkHeader(Connection *c) {
 
 	//location config return value check
 
-	//
+	//Allow method check
+
+	//file exist check
+
+	//directory exist check
+
+	//When method Delete, 
 }
 
 
