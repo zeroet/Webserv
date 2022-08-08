@@ -334,16 +334,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-		// std::vector<std::string> ret = c->getBlock().locationList[0].getReturn();
-
-		// for (size_t i = 0; i < ret.size(); i++)
-		// 	std::cout << "vector value: " << ret[i] << std::endl;
-
-	//GET
-
-	//POST
-
-	//DELETE
+	//location config return value check
 
 	//
 }
