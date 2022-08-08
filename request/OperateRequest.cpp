@@ -73,6 +73,14 @@ void	OperateRequest::parseStartLine(Connection *c) {
 
 	//path check:
 	c->getRequest().setUri(split_start_line[1]);
+	split_start_line[1].append(" ");
+	
+	if (parseUri(split_start_line[1], c) == PARSE_INVALID_URI)
+	{
+		c->setReqStatusCode(BAD_REQUEST);
+		c->setPhaseMsg(HEADER_COMPLETE);
+		return ;
+	}
 
 	//HTTP/1.1 check: 'HTTP/' '1.*' / if not Error 400/505
 	std::string http = split_start_line[2].substr(0, 5);
