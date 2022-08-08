@@ -334,18 +334,15 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-		// std::vector<std::string> ret = c->getBlock().locationList[0].getReturn();
+	//location config return value check
 
-		// for (size_t i = 0; i < ret.size(); i++)
-		// 	std::cout << "vector value: " << ret[i] << std::endl;
+	//Allow method check
 
-	//GET
+	//file exist check
 
-	//POST
+	//directory exist check
 
-	//DELETE
-
-	//
+	//When method Delete, 
 }
 
 
