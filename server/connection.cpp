@@ -112,7 +112,7 @@ void	Connection::printRequestMsg(void) {
 	printf("Request_status_code: %d\n", getReqStatusCode());
 	printf("Phase_line: %d\n", getPhaseMsg());
 	printf("method_: %s\n", getRequest().getMethod().c_str());
-	printf("path_: %s\n", getRequest().getPath().c_str());
+	printf("path_: %s\n", getRequest().getUri().c_str());
 	printf("version_: %s\n", getRequest().getVersion().c_str());
 	getRequest().printHeaders();
 	std::cout << std::endl;

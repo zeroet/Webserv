@@ -14,6 +14,9 @@ namespace ft {
 // class Request;
 class Connection;
 
+#define PARSE_VALID_URI 1
+#define PARSE_INVALID_URI 0
+
 /*
  * Class to operate the validation and the parsing of http request message
  * After this process, the result will be transfered and stocked into Request class which located in Connection class
@@ -41,6 +44,7 @@ class OperateRequest {
 		void	parseHeaders(Connection *c);
 		int		parseHeaderLine(Connection *c, std::string headerline);
 		void	checkHeader(Connection *c);
+		int		parseUri(std::string uri, Connection *c);
 
 		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
@@ -48,7 +52,7 @@ class OperateRequest {
 		int		checkVersion(const std::string &s);
 		int		checkHeaderKey(const std::string &s);
 		bool	checkHostHeader(Connection *c);
-		void	getUriFromLocation(Connection *c);
+		// void	getUriFromLocation(Connection *c);
 		// std::string	trimWhiteSpace(std::string &s);
 
 		template<typename T>
