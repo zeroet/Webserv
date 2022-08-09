@@ -393,10 +393,11 @@ namespace ft
 		std::vector<Token>::iterator			parse_start = current_token_;
 		std::pair<bool, std::vector<Directive> >	directives;
 		std::pair<bool, Token> 				token_pair = expectToken(OPERATOR, "}");
+		ServerBlock					server_context(http_context);
 
-		ServerBlock	server_context(http_context);
 		while (token_pair.first == false)
 		{
+			std::vector<Token>::iterator	location_start = current_token_;
 			valid_directive = expectLocationContext();
 			if (valid_directive.first == false &&
 				 (valid_directive.second.directive == SERVER || 
@@ -406,14 +407,11 @@ namespace ft
 				current_token_ = parse_start;
 				return (std::make_pair(false, server_context));
 			}
-			//else if ((valid_directive.first == false) &&
-					 //(valid_directive.second.directive != LOCATION))
 			else if (valid_directive.first == false)
 			{
 				directives = parseContextBody(SERVER);
 				if (directives.first == false)
 				{
-					//if (expectToken(DIRECTIVE).first == false)
 					if (current_token_ == end_token_ && expectToken(OPERATOR, "}").first == false)
 					{
 						std::cout << "Error: Server context has not successfuly been enclosed with a closing curly bracket.\n";
@@ -439,13 +437,18 @@ namespace ft
 					current_token_ = parse_start;
 					return (std::make_pair(false, server_context));
 				}
-				location_pair.second.setUriPath(*valid_directive.second.parameters.begin());
+				if (server_context.checkLocationUriPath(*valid_directive.second.parameters.begin()) == true)
+					location_pair.second.setUriPath(*valid_directive.second.parameters.begin());
+				else
+				{
+					std::cout << "Error: Duplicate location " << *valid_directive.second.parameters.begin();
+					std::cout << " in line " << location_start->line_num << "\n";
+					return (std::make_pair(false, server_context));
+				}
 				server_context.location_list.push_back(location_pair.second);
 			}
 			token_pair = expectToken(OPERATOR, "}");
 		}
-
-		//if (current_token_ == end_token_ - 1 && expectToken(OPERATOR, "}").first == false)
 		return (std::make_pair(true, server_context));
 	}
 

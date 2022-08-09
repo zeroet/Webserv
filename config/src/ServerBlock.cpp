@@ -148,4 +148,18 @@ namespace ft
 	{
 		this->server_name_.clear();
 	}
+
+	bool				ServerBlock::checkLocationUriPath(const std::string& rui_path) const
+	{
+		std::vector<LocationBlock>::const_iterator	current_location = location_list.begin();
+		std::vector<LocationBlock>::const_iterator	end_location = location_list.end();
+		std::vector<std::pair<size_t, size_t> >		vector_pair;
+
+		for (; current_location != end_location; ++current_location)
+		{
+			if (current_location->getUriPath().compare(rui_path) == 0)
+				return (false);
+		}
+		return (true);
+	}
 }

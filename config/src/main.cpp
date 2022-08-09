@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 
 	(void)ft::sTokenTypeStrings;
 	(void)argc;
-	http_pair = ft::PrintConfig::parseConfig(argv[1], P_SERVER); // possible flags: P_TOKEN, P_CONTENT, P_SERVER, P_LOCATION
+	http_pair = ft::PrintConfig::parseConfig(argv[1], P_LOCATION); // possible flags: P_TOKEN, P_CONTENT, P_SERVER, P_LOCATION
 	if (http_pair.first == true)
 	{
 		http_context = http_pair.second;
