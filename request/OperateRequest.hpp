@@ -4,10 +4,13 @@
 # include "request.hpp"
 
 # include <cctype>
-#include <string>
-#include <algorithm>
-#include <sstream>
-#include <limits>
+# include <string>
+# include <algorithm>
+# include <sstream>
+# include <limits>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
 
 namespace ft {
 
@@ -52,6 +55,7 @@ class OperateRequest {
 		int		checkVersion(const std::string &s);
 		int		checkHeaderKey(const std::string &s);
 		bool	checkHostHeader(Connection *c);
+		bool	isFileExist(Connection *c);
 		// void	getUriFromLocation(Connection *c);
 		// std::string	trimWhiteSpace(std::string &s);
 

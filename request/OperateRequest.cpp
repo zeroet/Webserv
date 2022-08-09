@@ -281,6 +281,14 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 
 /* Set and check details along with header key and method of request message */
 void	OperateRequest::checkHeader(Connection *c) {
+
+	// test getLocationBlock
+	// // std::pair<bool, LocationBlock> loc = c->getBlock().getLocationBlock(c->getRequest().getPath());
+	// // if (!loc.first)
+	// // 	std::cout << "Invalide" << std::endl;
+	// // else
+	// // 	std::cout << loc.second.getRoot() << std::cout;
+
 	if (c->getReqStatusCode() != NOT_DEFINE)
 	{
 		c->setPhaseMsg(BODY_COMPLETE);
@@ -310,23 +318,8 @@ void	OperateRequest::checkHeader(Connection *c) {
 			c->getRequest().setBody(body_);
 		}
 	}
-	
-	if (c->getRequest().getRequestHeaders().count("Transfer-Encoding") && (c->getRequest().getHeaderValue("Transfer-Encoding") == "chunked"))
-	{
-		c->setPhaseMsg(BODY_CHUNKED);
-		c->is_chunk = true;
-	}
-	else if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
-	{
-		c->is_chunk = false;
-		body_.clear();
-		c->setPhaseMsg(BODY_COMPLETE);
-	}
-	else if (c->is_chunk == true)
-		c->setPhaseMsg(BODY_COMPLETE);
-	else
-		c->setPhaseMsg(BODY_INCOMPLETE);
 
+	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
 	if (checkHostHeader(c) == false)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
@@ -334,15 +327,41 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-	//location config return value check
+	//when file doesn't exist
+	// if (c->getRequest().getMethod() == "GET" && !isFileExist(c))
+	// {
+	// 	c->setReqStatusCode(NOT_FOUND);
+	// 	c->setPhaseMsg(BODY_COMPLETE);
+	// 	return ;
+	// }
+	
+	//chunked message flag on/off
+	if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
+	{
+		c->is_chunk = false;
+		body_.clear();
+		c->content_length = 0;
+		c->setPhaseMsg(BODY_COMPLETE);
+	}
+	else if (c->getRequest().getRequestHeaders().count("Transfer-Encoding") && (c->getRequest().getHeaderValue("Transfer-Encoding") == "chunked"))
+	{
+		c->setPhaseMsg(BODY_CHUNKED);
+		c->is_chunk = true;
+	}
+	else if (c->is_chunk == true)
+		c->setPhaseMsg(BODY_COMPLETE);
+	else
+		c->setPhaseMsg(BODY_INCOMPLETE);
 
+	//location config return value check
+	
 	//Allow method check
 
 	//file exist check
 
 	//directory exist check
 
-	//When method Delete, 
+	//When method Delete
 }
 
 
@@ -439,3 +458,12 @@ bool	OperateRequest::checkHostHeader(Connection *c) {
 // 	locationlist[0].getRoot();
 	
 // }
+
+bool OperateRequest::isFileExist(Connection *c) {
+	struct stat stat_buf;
+
+	if (stat(c->getRequest().getFilePath().c_str(), &stat_buf) == -1)
+		return (false);
+	return (true);
+
+}
