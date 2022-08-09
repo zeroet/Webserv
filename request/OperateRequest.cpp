@@ -283,11 +283,11 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 void	OperateRequest::checkHeader(Connection *c) {
 
 	// test getLocationBlock
-	// // std::pair<bool, LocationBlock> loc = c->getBlock().getLocationBlock(c->getRequest().getPath());
+	std::pair<bool, LocationBlock> location_pair = c->getBlock().getLocationBlock(c->getRequest().getPath());
 	// // if (!loc.first)
 	// // 	std::cout << "Invalide" << std::endl;
 	// // else
-	// // 	std::cout << loc.second.getRoot() << std::cout;
+		std::cout << "getroot: " << location_pair.second.getRoot() << std::cout;
 
 	if (c->getReqStatusCode() != NOT_DEFINE)
 	{
@@ -295,7 +295,10 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-	// getUriFromLocation(c);
+	//set path / file path / uri
+	// setUriStruct(&location_pair.second, c);
+
+
 
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getBlock().getClientMaxBodySize();
@@ -356,8 +359,6 @@ void	OperateRequest::checkHeader(Connection *c) {
 	//location config return value check
 	
 	//Allow method check
-
-	//file exist check
 
 	//directory exist check
 
@@ -466,4 +467,15 @@ bool OperateRequest::isFileExist(Connection *c) {
 		return (false);
 	return (true);
 
+}
+
+void	OperateRequest::setUriStruct(LocationBlock *location, Connection *c) {
+
+	std::string filepath;
+	filepath = location->getRoot();
+	std::cout << "location root: " << filepath << std::endl;
+	std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
+
+	if (location->getRoot() == c->getBlock().getRoot())
+		c->getRequest().setFilePath(filepath);
 }
