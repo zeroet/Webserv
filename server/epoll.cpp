@@ -164,6 +164,9 @@ void    Epoll::epoll_server_manager()
                 mapConnection::iterator it = this->c_.find(fd);
                 it->second->processRequest(); //treat_request()
 				it->second->printRequestMsg();
+                // int ret = check_status_connection(it->second->getstatus());
+                // if (ret == 1)
+                //     end_connection(fd);
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
@@ -245,4 +248,27 @@ ServerBlock   Epoll::get_location_block(int fd)
 			return(vecBloc_[i]);
 	}
     return 0;
+}
+
+// status = close 
+void       Epoll::end_connection(int fd)
+{
+    mapConnection::iterator it = this->c_.find(fd);
+    delete it->second;
+    close(it->first);
+    c_.erase(it);
+}
+
+
+int        Epoll::check_status_connection(std::string status)
+{
+    if (status.compare("Keep-Alive"))
+        return (0);
+    else if (status.compare("Close"))
+        return (1);
+    else
+    {   
+        std::cout << "connection status error" << std::endl;
+        return (2);
+    }
 }
