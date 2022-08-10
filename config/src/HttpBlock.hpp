@@ -17,6 +17,7 @@ namespace ft
 			HttpBlock& operator= (const HttpBlock& other);
 			~HttpBlock();
 			std::vector<ServerBlock>	getServerBlock() const;
+			std::pair<bool, ServerBlock>	getServerBlock(const unsigned int listen, const std::string& server_name = std::string()) const;
 	};
 
 }

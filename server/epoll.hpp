@@ -55,13 +55,11 @@ public:
     void            close_all_serv_socket();
     int             find_server_fd(int fd);
     int             create_clnt_socket(int fd);
+    void            end_connection(int fd);
 
     //Block class or utile ????
     ServerBlock           get_location_block(int fd);
-    int             getepollfd()
-    {
-        return (epollFd_);
-    }
+    int                  check_status_connection(std::string status);
 };
 
 }

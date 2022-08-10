@@ -2,6 +2,24 @@
 
 namespace ft
 {
+	ServerBlock::ServerBlock()
+	{
+	}
+
+	ServerBlock::ServerBlock(const ServerBlock& other) : location_list(other.getLocationBlock())
+	{
+		this->setRoot(other.getRoot());
+		this->setClientMaxBodySize(other.getClientMaxBodySize());
+		this->setKeepaliveTimeout(other.getKeepaliveTimeout());
+		this->setIndex(other.getIndex());
+		this->setAutoindex(other.getAutoindex());
+		this->setErrorPage(other.getErrorPage());
+		this->setListen(other.getListen());
+		this->setServerName(other.getServerName());
+		this->setSocketFd(other.getSocketFd());
+		this->setReturn(other.getReturn());
+	}
+
 	ServerBlock::ServerBlock(const BaseDirectives& context)
 	{
 		this->root_ = context.getRoot();
@@ -16,47 +34,45 @@ namespace ft
 		this->socket_fd_ = -1;
 	}
 
+	ServerBlock::~ServerBlock()
+	{
+	}
+
+	ServerBlock& ServerBlock::operator= (const ServerBlock& other)
+	{
+		if (this != &other)
+		{
+			this->setRoot(other.getRoot());
+			this->setClientMaxBodySize(other.getClientMaxBodySize());
+			this->setKeepaliveTimeout(other.getKeepaliveTimeout());
+			this->setIndex(other.getIndex());
+			this->setAutoindex(other.getAutoindex());
+			this->setErrorPage(other.getErrorPage());
+			this->setListen(other.getListen());
+			this->setServerName(other.getServerName());
+			this->setSocketFd(other.getSocketFd());
+			this->setReturn(other.getReturn());
+			this->location_list = other.getLocationBlock();
+		}
+		return (*this);
+	}
+
 	// Getter
 	const std::vector<LocationBlock>	ServerBlock::getLocationBlock() const
 	{
 		return (this->location_list);
 	}
 
-	const std::pair<bool, LocationBlock>	ServerBlock::getLocationBlock(const std::string path) const
+	const std::pair<bool, LocationBlock>	ServerBlock::getLocationBlock(const std::string& request_path) const
 	{
 		LocationBlock					return_location;
 		std::vector<LocationBlock>::const_iterator	current_location = location_list.begin();
 		std::vector<LocationBlock>::const_iterator	end_location = location_list.end();
 
-		
 		for (; current_location != end_location; ++current_location)
 		{
-			if (current_location->getUriPath().compare(path) == 0)
+			if (request_path.compare(0, current_location->getUriPath().length(), current_location->getUriPath()) == 0)
 				return (std::make_pair(true, *current_location));
-/*
-		unsigned long					value;
-		std::string					input_string; 
-		std::string::size_type				n;
-			else
-			{
-				find_first_not_of(path)
-			}
-			if (input_string.length() != 0)
-			{
-				n = input_string.find_first_not_of("0123456789");
-				if (n == std::string::npos)
-				{	
-					value = std::strtoul((*current_directive->parameters.begin()).c_str(), NULL, 10); // string to unsigned long
-					context.setClientMaxBodySize(value); 
-				}
-				else
-				{
-					std::cout << "Error: client_max_body_size parameter should be an integer literal.\n";
-					return (false);
-				}
-
-			}
-*/
 		}
 		return (std::make_pair(false, return_location));
 	}
@@ -92,12 +108,21 @@ namespace ft
 		this->listen_ = x;
 	}
 
-	void				ServerBlock::setServerName(const std::string x)
+	void				ServerBlock::setServerName(const std::vector<std::string>& x)
+	{
+		this->server_name_ = x;
+	}
+
+	void				ServerBlock::setServerName(const std::string& x)
 	{
 		this->server_name_.push_back(x);
 	}
+	void				ServerBlock::setReturn(const std::vector<std::string>& x)
+	{
+		this->return_ = x;
+	}
 
-	void				ServerBlock::setReturn(const std::string x)
+	void				ServerBlock::setReturn(const std::string& x)
 	{
 		this->return_.push_back(x);
 	}
@@ -110,5 +135,29 @@ namespace ft
 	void				ServerBlock::clearServerName(void)
 	{
 		this->server_name_.clear();
+	}
+
+	bool				ServerBlock::checkLocationUriPath(const std::string& uri_path) const
+	{
+		std::vector<LocationBlock>::const_iterator	current_location = location_list.begin();
+		std::vector<LocationBlock>::const_iterator	end_location = location_list.end();
+
+		for (; current_location != end_location; ++current_location)
+		{
+			if (current_location->getUriPath().compare(uri_path) == 0)
+				return (false);
+		}
+		return (true);
+	}
+
+	bool				ServerBlock::checkServerName(const unsigned int listen, const std::string& request_server_name) const
+	{
+		std::vector<std::string>::const_iterator	current_string = this->server_name_.begin();
+		std::vector<std::string>::const_iterator	end_string = this->server_name_.end();
+
+		for (; current_string != end_string; ++current_string)
+			if (listen == listen_ && current_string->compare(request_server_name) == 0)
+				return (true);
+		return (false);
 	}
 }

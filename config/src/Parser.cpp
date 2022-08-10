@@ -28,12 +28,12 @@ namespace ft
 		start_token_ = tokens.begin();
 		end_token_ = tokens.end();
 		std::pair<bool, HttpBlock> 	http_pair;
-		std::pair<bool, Directive> 	valid_directive_pair;
+		std::pair<bool, Directive> 	directive_pair;
 
 		while (current_token_ != end_token_)
 		{
-			valid_directive_pair = expectHttpContext();
-			if (valid_directive_pair.first == false)
+			directive_pair = expectHttpContext();
+			if (directive_pair.first == false)
 			{
 				if (expectToken(OPERATOR, "{").first == false)
 				{
@@ -45,7 +45,7 @@ namespace ft
 			}
 			else
 			{
-				http_pair = parseHttpContext(valid_directive_pair);
+				http_pair = parseHttpContext(directive_pair);
 				if (http_pair.first == false)
 					return (http_pair);
 			}
@@ -76,7 +76,6 @@ namespace ft
 				if (i == LAST_DIRECTIVE_KIND + 1)
 					current_token_->type = PARAMETER;
 			}
-
 		}
 	}
 
@@ -112,7 +111,7 @@ namespace ft
 		return (std::make_pair(true, return_token));
 	}
 
-	bool	Parser::setServerDirectiveParameter(ServerBlock& context, std::vector<Directive> directive_list)
+	bool	Parser::setServerDirectiveParameter(HttpBlock& http_context, ServerBlock& context, std::vector<Directive> directive_list)
 	{
 		std::vector<Directive>::iterator	current_directive = directive_list.begin();
 		std::vector<Directive>::iterator	end_directive = directive_list.end();
@@ -140,7 +139,6 @@ namespace ft
 						std::cout << "Error: listen parameter should be an integer literal.\n";
 						return (false);
 					}
-
 				}
 			}
 			else if (current_directive->directive == SERVER_NAME)
@@ -151,6 +149,27 @@ namespace ft
 				context.clearServerName();
 				for (; current_parameter != end_parameter; ++current_parameter)
 				{
+					std::vector<ServerBlock>::const_iterator	current_server = http_context.server_list.begin();
+					std::vector<ServerBlock>::const_iterator	    end_server = http_context.server_list.end();
+
+					for (; current_server != end_server; ++current_server)
+					{
+						if (current_server->getListen() == context.getListen()) 
+						{
+							std::vector<std::string>			server_name_vector = current_server->getServerName();
+							std::vector<std::string>::const_iterator	current_server_name = server_name_vector.begin();
+							std::vector<std::string>::const_iterator	    end_server_name = server_name_vector.end();
+
+							for (; current_server_name != end_server_name; ++current_server_name)
+							{
+								if (current_parameter->compare(*current_server_name) == 0)
+								{
+									std::cout << "Error: There can't be same server name with the same listen port.\n";
+									return (false);
+								}
+							}
+						}
+					}
 					context.setServerName(*current_parameter);
 				}
 			}
@@ -237,7 +256,6 @@ namespace ft
 					std::cout << "Error: client_max_body_size parameter should be an integer literal.\n";
 					return (false);
 				}
-
 			}
 		}
 		else if (current_directive->directive == KEEPALIVE_TIMEOUT)
@@ -259,9 +277,7 @@ namespace ft
 					std::cout << "Error: keepalive_timeout parameter should be an integer literal.\n";
 					return (false);
 				}
-
 			}
-
 		}
 		else if (current_directive->directive == AUTOINDEX)
 		{
@@ -294,60 +310,49 @@ namespace ft
 	std::pair<bool, Directive>	Parser::expectHttpContext()
 	{
 		std::vector<Token>::iterator parse_start = current_token_;
-		std::pair<bool, Directive> valid_directive_pair = checkValidDirective();
+		std::pair<bool, Directive> directive_pair = checkValidDirective();
 
-		if (current_token_ == start_token_ && valid_directive_pair.first == false) 
+		if (directive_pair.first == false) 
 		{
+			if (current_token_ == start_token_)
+				std::cout << "Error: First directive should be http block.\n";
 			current_token_ = parse_start;
-			//std::cout << "(start token) = " << start_token_->text << "\n";
-			//std::cout << "(current token, line) = " << current_token_->text << ", " << current_token_->line_num << "\n";
-			std::cout << "Error: first directive should be http block.\n";
-			return (std::make_pair(false, valid_directive_pair.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
-		if (valid_directive_pair.first == false) 
+		if (directive_pair.second.directive != HTTP)
 		{
 			current_token_ = parse_start;
-			return (std::make_pair(false, valid_directive_pair.second));
-		}
-		if (valid_directive_pair.second.directive != HTTP)
-		{
-			current_token_ = parse_start;
-			std::cout << "Error: It should start with http context but the directive is " << valid_directive_pair.second.name << "\n";
-			return (std::make_pair(false, valid_directive_pair.second));
+			std::cout << "Error: It should start with http context but the directive is ";
+			std::cout << directive_pair.second.name << "\n";
+			return (std::make_pair(false, directive_pair.second));
 		}
 		if (expectToken(OPERATOR, "{").first == false)
 		{
 			std::cout << "Error: Http context can't have any parameter.\n";
-			return (std::make_pair(false, valid_directive_pair.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
-		return (std::make_pair(true, valid_directive_pair.second));
+		return (std::make_pair(true, directive_pair.second));
 	}
 
-	std::pair<bool, HttpBlock>	Parser::parseHttpContext(std::pair<bool, Directive> valid_directive)
+	std::pair<bool, HttpBlock>	Parser::parseHttpContext(std::pair<bool, Directive> directive_pair)
 	{
-		std::vector<Token>::iterator 			parse_start = current_token_;
 		std::pair<bool, std::vector<Directive> > 	directives;
 		HttpBlock					http_context;
 
 		while (current_token_ != end_token_ - 1 && expectToken(OPERATOR, "}").first == false)
 		{
-			valid_directive = expectServerContext();
-			if (valid_directive.first == false)
+			directive_pair = expectServerContext();
+			if (directive_pair.first == false)
 			{
 				directives = parseContextBody(HTTP);
 				if (directives.first == false)
 				{
 					if (current_token_ == end_token_ && expectToken(OPERATOR, "}").first == false)
-					{
 						std::cout << "Error: Http context has not successfuly been enclosed with a closing curly bracket.\n";
-						return (std::make_pair(false, http_context));
-					}
-					current_token_ = parse_start;
 					return (std::make_pair(false, http_context));
 				}
 				if (setHttpDirectiveParameter(http_context, directives.second) == false)
 					return (std::make_pair(false, http_context));
-				
 			}
 			else
 			{
@@ -356,73 +361,59 @@ namespace ft
 					std::cout << "Error: Server block should start with a curly bracket.\n";
 					return (std::make_pair(false, http_context));
 				}
-				std::pair<bool, ServerBlock>	server_pair = parseServerContext(http_context, valid_directive);
+				std::pair<bool, ServerBlock>	server_pair = parseServerContext(http_context, directive_pair);
 
 				if (server_pair.first == false)
-				{
-					current_token_ = parse_start;
 					return (std::make_pair(false, http_context));
-				}
 				http_context.server_list.push_back(server_pair.second);
 			}
-
 		}
 		return (std::make_pair(true, http_context));
 	}
 
 	std::pair<bool, Directive>	Parser::expectServerContext()
 	{
-		std::vector<Token>::iterator parse_start = current_token_;
-		std::pair<bool, Directive> valid_directive_pair = checkValidDirective();
+		std::vector<Token>::iterator 	parse_start = current_token_;
+		std::pair<bool, Directive> 	directive_pair = checkValidDirective();
 
-		if (valid_directive_pair.first == false) 
+		if (directive_pair.first == false) 
 		{
 			current_token_ = parse_start;
-			return (std::make_pair(false, valid_directive_pair.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
-		if (valid_directive_pair.second.directive != SERVER)
+		if (directive_pair.second.directive != SERVER)
 		{
 			current_token_ = parse_start;
-			return (std::make_pair(false, valid_directive_pair.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
-		return (std::make_pair(true, valid_directive_pair.second));
+		return (std::make_pair(true, directive_pair.second));
 	}
 
-	std::pair<bool, ServerBlock>	Parser::parseServerContext(HttpBlock& http_context, std::pair<bool, Directive> valid_directive)
+	std::pair<bool, ServerBlock>	Parser::parseServerContext(HttpBlock& http_context, std::pair<bool, Directive> directive_pair)
 	{
-		std::vector<Token>::iterator			parse_start = current_token_;
 		std::pair<bool, std::vector<Directive> >	directives;
 		std::pair<bool, Token> 				token_pair = expectToken(OPERATOR, "}");
+		ServerBlock					server_context(http_context);
 
-		ServerBlock	server_context(http_context);
 		while (token_pair.first == false)
 		{
-			valid_directive = expectLocationContext();
-			if (valid_directive.first == false &&
-				 (valid_directive.second.directive == SERVER || 
-				 valid_directive.second.directive == HTTP || 
-				 valid_directive.second.directive == LOCATION))
-			{
-				current_token_ = parse_start;
+			std::vector<Token>::iterator	location_start = current_token_;
+			directive_pair = expectLocationContext();
+			if (directive_pair.first == false &&
+				 (directive_pair.second.directive == SERVER || 
+				 directive_pair.second.directive == HTTP || 
+				 directive_pair.second.directive == LOCATION))
 				return (std::make_pair(false, server_context));
-			}
-			//else if ((valid_directive.first == false) &&
-					 //(valid_directive.second.directive != LOCATION))
-			else if (valid_directive.first == false)
+			else if (directive_pair.first == false)
 			{
 				directives = parseContextBody(SERVER);
 				if (directives.first == false)
 				{
-					//if (expectToken(DIRECTIVE).first == false)
 					if (current_token_ == end_token_ && expectToken(OPERATOR, "}").first == false)
-					{
 						std::cout << "Error: Server context has not successfuly been enclosed with a closing curly bracket.\n";
-						return (std::make_pair(false, server_context));
-					}
-					current_token_ = parse_start;
 					return (std::make_pair(false, server_context));
 				}
-				if (setServerDirectiveParameter(server_context, directives.second) == false)
+				if (setServerDirectiveParameter(http_context, server_context, directives.second) == false)
 					return (std::make_pair(false, server_context));
 			}
 			else
@@ -435,60 +426,61 @@ namespace ft
 				std::pair<bool, LocationBlock>	location_pair = parseLocationContext(server_context);
 						
 				if (location_pair.first == false)
+					return (std::make_pair(false, server_context));
+				if (server_context.checkLocationUriPath(*directive_pair.second.parameters.begin()) == true)
+					location_pair.second.setUriPath(*directive_pair.second.parameters.begin());
+				else
 				{
-					current_token_ = parse_start;
+					std::cout << "Error: Duplicate location " << *directive_pair.second.parameters.begin();
+					std::cout << " in line " << location_start->line_num << "\n";
 					return (std::make_pair(false, server_context));
 				}
-				location_pair.second.setUriPath(*valid_directive.second.parameters.begin());
 				server_context.location_list.push_back(location_pair.second);
 			}
 			token_pair = expectToken(OPERATOR, "}");
 		}
-
-		//if (current_token_ == end_token_ - 1 && expectToken(OPERATOR, "}").first == false)
 		return (std::make_pair(true, server_context));
 	}
 
 	std::pair<bool, Directive>	Parser::expectLocationContext()
 	{
 		std::vector<Token>::iterator	parse_start = current_token_;
-		std::pair<bool, Directive>	valid_directive_pair = checkValidDirective();
+		std::pair<bool, Directive>	directive_pair = checkValidDirective();
 
-		if (valid_directive_pair.first == false) 
+		if (directive_pair.first == false) 
 		{
 			current_token_ = parse_start;
-			return (std::make_pair(false, valid_directive_pair.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
-		if ((valid_directive_pair.second.directive == SERVER) || 
-			(valid_directive_pair.second.directive == HTTP))
+		if ((directive_pair.second.directive == SERVER) || 
+			(directive_pair.second.directive == HTTP))
 		{
 			current_token_ = parse_start;
-			std::cout << "Error: There can't be any " << sDirectiveKindStrings[valid_directive_pair.second.directive] 
+			std::cout << "Error: There can't be any " << sDirectiveKindStrings[directive_pair.second.directive] 
 				<< " block inside a server block, currentToken is :" << current_token_->text << "\n";
-			return (std::make_pair(false, valid_directive_pair.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
-		if (valid_directive_pair.second.directive != LOCATION)
+		if (directive_pair.second.directive != LOCATION)
 		{
 			current_token_ = parse_start;
-			return (std::make_pair(false, valid_directive_pair.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
 		std::pair<bool, Token> parameter_token_pair = expectToken(PARAMETER);
 		if (parameter_token_pair.first == false)
 		{
 			current_token_ = parse_start;
 			std::cout << "Error: No parameter: Location directive should have one URI path\n";
-			return (std::make_pair(false, valid_directive_pair.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
-		valid_directive_pair.second.parameters.push_back(parameter_token_pair.second.text);
-		return (std::make_pair(true, valid_directive_pair.second));
+		directive_pair.second.parameters.push_back(parameter_token_pair.second.text);
+		return (std::make_pair(true, directive_pair.second));
 	}
 
 	std::pair<bool, LocationBlock>	Parser::parseLocationContext(ServerBlock& server_context)
 	{
-		std::vector<Token>::iterator 			parse_start = current_token_;
 		std::pair<bool, std::vector<Directive> > 	directives;
-		std::pair<bool, Token> token_pair;
-		LocationBlock	locationContext(server_context);
+		std::pair<bool, Token> 				token_pair;
+		LocationBlock					locationContext(server_context);
 
 		token_pair = expectToken(OPERATOR, "}");
 		while (token_pair.first == false)
@@ -497,12 +489,7 @@ namespace ft
 			if (directives.first == false)
 			{
 				if (current_token_ == end_token_ && expectToken(OPERATOR, "}").first == false)
-				//if (current_token_->text != "location" && expectToken(OPERATOR, "}").first == false)
-				{
 					std::cout << "Error: Location context has not successfuly been enclosed with a closing curly bracket.\n";
-					return (std::make_pair(false, locationContext));
-				}
-				current_token_ = parse_start;
 				return (std::make_pair(false, locationContext));
 			}
 			if (setLocationDirectiveParameter(locationContext, directives.second) == false)
@@ -532,7 +519,8 @@ namespace ft
 							simple_directive_pair.second.directive == LOCATION)
 				{
 					std::cout << "Error: There can't be any other block than server in http block, current directive is `";
-					std::cout << sDirectiveKindStrings[simple_directive_pair.second.directive] << "` in line " << current_token_->line_num << ".\n";
+					std::cout << sDirectiveKindStrings[simple_directive_pair.second.directive] << "` in line ";
+					std::cout << current_token_->line_num << ".\n";
 					return (std::make_pair(false, directives));
 				}
 			}
@@ -544,7 +532,8 @@ namespace ft
 						(simple_directive_pair.second.directive == HTTP))
 				{
 					std::cout << "Error: There can't be any other block than location in server block, current directive is `";
-					std::cout << sDirectiveKindStrings[simple_directive_pair.second.directive] << "` in line " << current_token_->line_num << ".\n";
+					std::cout << sDirectiveKindStrings[simple_directive_pair.second.directive] << "` in line ";
+					std::cout << current_token_->line_num << ".\n";
 					return (std::make_pair(false, directives));
 				}
 			}
@@ -568,100 +557,101 @@ namespace ft
 	{
 		(void)ft::sTokenTypeStrings[current_token_->type]; // for debuging
 		std::vector<Token>::iterator 	start_token = current_token_;
-		std::pair<bool, Directive> 	valid_directive_pair = checkValidDirective();
+		std::pair<bool, Directive> 	directive_pair = checkValidDirective();
 
-		if (valid_directive_pair.first == true)
+		if (directive_pair.first == true)
 		{
-			if ((valid_directive_pair.second.directive == HTTP) ||
-					(valid_directive_pair.second.directive == SERVER) ||
-					(valid_directive_pair.second.directive == LOCATION)) // check block directive
+			if ((directive_pair.second.directive == HTTP) ||
+				(directive_pair.second.directive == SERVER) ||
+				(directive_pair.second.directive == LOCATION)) // check block directive
 			{
 				current_token_ = start_token;
-				return (std::make_pair(false, valid_directive_pair.second));
+				return (std::make_pair(false, directive_pair.second));
 			}
 			if (kind == HTTP && 
-				(valid_directive_pair.second.directive == LIMIT_EXCEPT || 
-				valid_directive_pair.second.directive == LISTEN || 
-				valid_directive_pair.second.directive == SERVER_NAME || 
-				valid_directive_pair.second.directive == RETURN || 
-				valid_directive_pair.second.directive == CGI || 
-				valid_directive_pair.second.directive == CGI_PATH))
+				(directive_pair.second.directive == LIMIT_EXCEPT || 
+				directive_pair.second.directive == LISTEN || 
+				directive_pair.second.directive == SERVER_NAME || 
+				directive_pair.second.directive == RETURN || 
+				directive_pair.second.directive == CGI || 
+				directive_pair.second.directive == CGI_PATH))
 			{
-				std::cout << "Error: There can't be " << sDirectiveKindStrings[valid_directive_pair.second.directive] << " directive in http block.\n";
+				std::cout << "Error: There can't be " << sDirectiveKindStrings[directive_pair.second.directive];
+				std::cout << " directive in http block.\n";
 				current_token_ = start_token;
-				return (std::make_pair(false, valid_directive_pair.second));
+				return (std::make_pair(false, directive_pair.second));
 			}
 			if (kind == SERVER && 
-				(valid_directive_pair.second.directive == LIMIT_EXCEPT || 
-				valid_directive_pair.second.directive == CGI || 
-				valid_directive_pair.second.directive == CGI_PATH))
+				(directive_pair.second.directive == LIMIT_EXCEPT || 
+				directive_pair.second.directive == CGI || 
+				directive_pair.second.directive == CGI_PATH))
 			{
-				std::cout << "Error: There can't be " << sDirectiveKindStrings[valid_directive_pair.second.directive] << " directive in server block.\n";
+				std::cout << "Error: There can't be " << sDirectiveKindStrings[directive_pair.second.directive];
+				std::cout << " directive in server block.\n";
 				current_token_ = start_token;
-				return (std::make_pair(false, valid_directive_pair.second));
+				return (std::make_pair(false, directive_pair.second));
 			}
 			if (kind == LOCATION && 
-				(valid_directive_pair.second.directive == LISTEN || 
-				valid_directive_pair.second.directive == SERVER_NAME))
+				(directive_pair.second.directive == LISTEN || 
+				directive_pair.second.directive == SERVER_NAME))
 			{
-				std::cout << "Error: There can't be " << sDirectiveKindStrings[valid_directive_pair.second.directive] << " directive in location block.\n";
+				std::cout << "Error: There can't be " << sDirectiveKindStrings[directive_pair.second.directive];
+				std::cout << " directive in location block.\n";
 				current_token_ = start_token;
-				return (std::make_pair(false, valid_directive_pair.second));
+				return (std::make_pair(false, directive_pair.second));
 			}
 		
 		}
-		else if (valid_directive_pair.first == false)
+		else if (directive_pair.first == false)
 		{
 			if (current_token_ != end_token_ && expectToken(OPERATOR, "}").first == false)
 				std::cout << "Error: Unexpected directive, " << current_token_->text << " in line, " << current_token_->line_num << "\n";
 			current_token_ = start_token;
-			return (std::make_pair(false, valid_directive_pair.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
-		return (checkValidParameterNumber(valid_directive_pair));
+		return (checkValidParameterNumber(directive_pair));
 	}
 
-	std::pair<bool, Directive> Parser::checkValidParameterNumber(std::pair<bool, Directive>& valid_directive)
+	std::pair<bool, Directive> Parser::checkValidParameterNumber(std::pair<bool, Directive>& directive_pair)
 	{
-		std::vector<Token>::iterator 	start_token = current_token_;
 		std::pair<bool, Token> 		parameter_token_pair = expectToken(PARAMETER);
 
 		if (parameter_token_pair.first == true)
 		{
-			if ((valid_directive.second.directive == SERVER_NAME) ||
-					(valid_directive.second.directive == LIMIT_EXCEPT) ||
-					(valid_directive.second.directive == INDEX) ||
-					(valid_directive.second.directive == RETURN))
+			if ((directive_pair.second.directive == SERVER_NAME) ||
+					(directive_pair.second.directive == LIMIT_EXCEPT) ||
+					(directive_pair.second.directive == INDEX) ||
+					(directive_pair.second.directive == RETURN))
 			{
 				while (parameter_token_pair.first == true)
 				{
-					valid_directive.second.parameters.push_back(parameter_token_pair.second.text);
+					directive_pair.second.parameters.push_back(parameter_token_pair.second.text);
 					parameter_token_pair = expectToken(PARAMETER);
 				}
 			}
 			else
-				valid_directive.second.parameters.push_back(parameter_token_pair.second.text);
+				directive_pair.second.parameters.push_back(parameter_token_pair.second.text);
 		}
 		else
 		{
 			std::cout << "Error: Simple directive should at least one parameter\n";
-			current_token_ = start_token;
-			return (std::make_pair(false, valid_directive.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
 		parameter_token_pair = expectToken(PARAMETER);
 		if (parameter_token_pair.first == true)
 		{
-			current_token_ = start_token;
-			std::cout << "Error: There can't be more parameters with directive " << valid_directive.second.name << ", ";
+			std::cout << "Error: There can't be more parameters with directive " << directive_pair.second.name << ", ";
 			std::cout << "additional parameter is " << parameter_token_pair.second.text<< ".\n";
-			return (std::make_pair(false, valid_directive.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
 		std::pair<bool, Token> token_pair = expectToken(OPERATOR, ";");
 		if (token_pair.first == false)
 		{
-			current_token_ = start_token;
+			//std::cout << "current token: " << current_token_->text << std::endl;
+			//std::cout << "line: " << current_token_->line_num << std::endl;
 			std::cout << "Error: Simple directive should be terminated by ';' \n";
-			return (std::make_pair(false, valid_directive.second));
+			return (std::make_pair(false, directive_pair.second));
 		}
-		return (std::make_pair(true, valid_directive.second));
+		return (std::make_pair(true, directive_pair.second));
 	}
 }
