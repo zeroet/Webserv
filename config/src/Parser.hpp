@@ -46,7 +46,7 @@ namespace ft
 
 			bool						setBaseDirectiveParameter(BaseDirectives& context, std::vector<Directive>::iterator& currentDirective);
 			bool						setHttpDirectiveParameter(HttpBlock& context, std::vector<Directive> directive_list);
-			bool						setServerDirectiveParameter(ServerBlock& context, std::vector<Directive> directive_list);
+			bool						setServerDirectiveParameter(HttpBlock& http_context, ServerBlock& context, std::vector<Directive> directive_list);
 			bool						setLocationDirectiveParameter(LocationBlock& context, std::vector<Directive> directive_list);
 
 	};

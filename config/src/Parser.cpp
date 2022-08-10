@@ -111,7 +111,7 @@ namespace ft
 		return (std::make_pair(true, return_token));
 	}
 
-	bool	Parser::setServerDirectiveParameter(ServerBlock& context, std::vector<Directive> directive_list)
+	bool	Parser::setServerDirectiveParameter(HttpBlock& http_context, ServerBlock& context, std::vector<Directive> directive_list)
 	{
 		std::vector<Directive>::iterator	current_directive = directive_list.begin();
 		std::vector<Directive>::iterator	end_directive = directive_list.end();
@@ -149,6 +149,24 @@ namespace ft
 				context.clearServerName();
 				for (; current_parameter != end_parameter; ++current_parameter)
 				{
+					std::vector<ServerBlock>::const_iterator	current_server = http_context.server_list.begin();
+					std::vector<ServerBlock>::const_iterator	    end_server = http_context.server_list.end();
+
+					for (; current_server != end_server; ++current_server)
+					{
+						std::vector<std::string>			server_name_vector = current_server->getServerName();
+						std::vector<std::string>::const_iterator	current_server_name = server_name_vector.begin();
+						std::vector<std::string>::const_iterator	    end_server_name = server_name_vector.end();
+
+						for (; current_server_name != end_server_name; ++current_server_name)
+						{
+							if (current_parameter->compare(*current_server_name) == 0)
+							{
+								std::cout << "Error: There can't be same server name.\n";
+								return (false);
+							}
+						}
+					}
 					context.setServerName(*current_parameter);
 				}
 			}
@@ -392,7 +410,7 @@ namespace ft
 						std::cout << "Error: Server context has not successfuly been enclosed with a closing curly bracket.\n";
 					return (std::make_pair(false, server_context));
 				}
-				if (setServerDirectiveParameter(server_context, directives.second) == false)
+				if (setServerDirectiveParameter(http_context, server_context, directives.second) == false)
 					return (std::make_pair(false, server_context));
 			}
 			else
