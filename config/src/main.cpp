@@ -3,6 +3,7 @@
 #include <vector>
 #include "HttpBlock.hpp"
 #include "PrintConfig.hpp"
+#define	REQUEST_SERVER_NAME "alias"
 
 int main(int argc, char** argv)
 {
@@ -19,10 +20,16 @@ int main(int argc, char** argv)
 		ft::ServerBlock			server_context = server_vector.at(0);
 
 		try {
-			std::cout << "server name: " << server_context.getServerName(0) << std::endl;
-			std::pair<bool, ft::LocationBlock>  location_pair = server_context.getLocationBlock("/cgi_teste/dfjk");
+			//std::cout << "server name: " << server_context.getServerName(0) << std::endl; // getServerName by index
+			std::pair<bool, ft::LocationBlock>  location_pair = server_context.getLocationBlock("/cgi_teste/dfjk"); // getLocationBlock by request_path
 			if (location_pair.first == true)
 				std::cout << "selected uri: " << location_pair.second.getUriPath() << "\n";
+			std::pair<bool, ft::ServerBlock> server_pair = http_context.getServerBlock(9090, REQUEST_SERVER_NAME); // getServerBlock by listen, server_name
+			if (server_pair.first == true)
+			{
+				std::cout << server_pair.second.checkServerName(REQUEST_SERVER_NAME) << "\n";
+				std::cout << server_pair.second.getServerName(1) << "\n";
+			}
 		}
 		catch (const std::out_of_range& e) {
 			std::cout << "Error: Out of Range.\n";

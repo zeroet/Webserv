@@ -42,6 +42,7 @@ namespace ft
 
 			void					clearServerName(void);
 			bool					checkLocationUriPath(const std::string& uri_path) const;
+			bool					checkServerName(const std::string& request_server_name) const;
 	};
 
 }
