@@ -24,6 +24,7 @@ namespace ft
 
 	const std::pair<bool, LocationBlock>	ServerBlock::getLocationBlock(const std::string& request_path) const
 	{
+		LocationBlock					return_location;
 		std::vector<LocationBlock>::const_iterator	current_location = location_list.begin();
 		std::vector<LocationBlock>::const_iterator	end_location = location_list.end();
 
@@ -32,7 +33,7 @@ namespace ft
 			if (request_path.compare(0, current_location->getUriPath().length(), current_location->getUriPath()) == 0)
 				return (std::make_pair(true, *current_location));
 		}
-		return (std::make_pair(false, *current_location));
+		return (std::make_pair(false, return_location));
 	}
 
 	unsigned int		ServerBlock::getListen(void) const
@@ -86,14 +87,14 @@ namespace ft
 		this->server_name_.clear();
 	}
 
-	bool				ServerBlock::checkLocationUriPath(const std::string& rui_path) const
+	bool				ServerBlock::checkLocationUriPath(const std::string& uri_path) const
 	{
 		std::vector<LocationBlock>::const_iterator	current_location = location_list.begin();
 		std::vector<LocationBlock>::const_iterator	end_location = location_list.end();
 
 		for (; current_location != end_location; ++current_location)
 		{
-			if (current_location->getUriPath().compare(rui_path) == 0)
+			if (current_location->getUriPath().compare(uri_path) == 0)
 				return (false);
 		}
 		return (true);

@@ -41,7 +41,7 @@ namespace ft
 			void					setSocketFd(const int i);
 
 			void					clearServerName(void);
-			bool					checkLocationUriPath(const std::string& rui_path) const;
+			bool					checkLocationUriPath(const std::string& uri_path) const;
 	};
 
 }

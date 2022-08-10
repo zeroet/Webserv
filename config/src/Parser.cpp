@@ -296,23 +296,18 @@ namespace ft
 		std::vector<Token>::iterator parse_start = current_token_;
 		std::pair<bool, Directive> directive_pair = checkValidDirective();
 
-		if (current_token_ == start_token_ && directive_pair.first == false) 
-		{
-			current_token_ = parse_start;
-			//std::cout << "(start token) = " << start_token_->text << "\n";
-			//std::cout << "(current token, line) = " << current_token_->text << ", " << current_token_->line_num << "\n";
-			std::cout << "Error: first directive should be http block.\n";
-			return (std::make_pair(false, directive_pair.second));
-		}
 		if (directive_pair.first == false) 
 		{
+			if (current_token_ == start_token_)
+				std::cout << "Error: First directive should be http block.\n";
 			current_token_ = parse_start;
 			return (std::make_pair(false, directive_pair.second));
 		}
 		if (directive_pair.second.directive != HTTP)
 		{
 			current_token_ = parse_start;
-			std::cout << "Error: It should start with http context but the directive is " << directive_pair.second.name << "\n";
+			std::cout << "Error: It should start with http context but the directive is ";
+			std::cout << directive_pair.second.name << "\n";
 			return (std::make_pair(false, directive_pair.second));
 		}
 		if (expectToken(OPERATOR, "{").first == false)
