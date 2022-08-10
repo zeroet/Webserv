@@ -22,9 +22,13 @@ namespace ft
 		public:
 			std::vector<LocationBlock>	location_list;
 		public:
+			ServerBlock();
 			ServerBlock(int i) { (void)i;
 			std::cout << "server block not found" << std::endl; };
 			ServerBlock(const BaseDirectives& context);
+			ServerBlock(const ServerBlock& other);
+			ServerBlock& operator= (const ServerBlock& other);
+			~ServerBlock();
 			// Getter
 			const std::vector<LocationBlock>	getLocationBlock() const;
 			const std::pair<bool, LocationBlock>	getLocationBlock(const std::string& request_path) const;
@@ -36,13 +40,15 @@ namespace ft
 
 			// Setter
 			void					setListen(const unsigned int x);
+			void					setServerName(const std::vector<std::string>& x);
 			void					setServerName(const std::string& x);
+			void					setReturn(const std::vector<std::string>& x);
 			void					setReturn(const std::string& x);
 			void					setSocketFd(const int i);
 
 			void					clearServerName(void);
 			bool					checkLocationUriPath(const std::string& uri_path) const;
-			bool					checkServerName(const std::string& request_server_name) const;
+			bool					checkServerName(const unsigned int listen, const std::string& request_server_name) const;
 	};
 
 }

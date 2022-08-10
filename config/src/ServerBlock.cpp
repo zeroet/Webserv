@@ -2,6 +2,24 @@
 
 namespace ft
 {
+	ServerBlock::ServerBlock()
+	{
+	}
+
+	ServerBlock::ServerBlock(const ServerBlock& other) : location_list(other.getLocationBlock())
+	{
+		this->setRoot(other.getRoot());
+		this->setClientMaxBodySize(other.getClientMaxBodySize());
+		this->setKeepaliveTimeout(other.getKeepaliveTimeout());
+		this->setIndex(other.getIndex());
+		this->setAutoindex(other.getAutoindex());
+		this->setErrorPage(other.getErrorPage());
+		this->setListen(other.getListen());
+		this->setServerName(other.getServerName());
+		this->setSocketFd(other.getSocketFd());
+		this->setReturn(other.getReturn());
+	}
+
 	ServerBlock::ServerBlock(const BaseDirectives& context)
 	{
 		this->root_ = context.getRoot();
@@ -14,6 +32,29 @@ namespace ft
 		this->listen_ = 80;
 		this->server_name_.push_back("");
 		this->socket_fd_ = -1;
+	}
+
+	ServerBlock::~ServerBlock()
+	{
+	}
+
+	ServerBlock& ServerBlock::operator= (const ServerBlock& other)
+	{
+		if (this != &other)
+		{
+			this->setRoot(other.getRoot());
+			this->setClientMaxBodySize(other.getClientMaxBodySize());
+			this->setKeepaliveTimeout(other.getKeepaliveTimeout());
+			this->setIndex(other.getIndex());
+			this->setAutoindex(other.getAutoindex());
+			this->setErrorPage(other.getErrorPage());
+			this->setListen(other.getListen());
+			this->setServerName(other.getServerName());
+			this->setSocketFd(other.getSocketFd());
+			this->setReturn(other.getReturn());
+			this->location_list = other.getLocationBlock();
+		}
+		return (*this);
 	}
 
 	// Getter
@@ -67,9 +108,18 @@ namespace ft
 		this->listen_ = x;
 	}
 
+	void				ServerBlock::setServerName(const std::vector<std::string>& x)
+	{
+		this->server_name_ = x;
+	}
+
 	void				ServerBlock::setServerName(const std::string& x)
 	{
 		this->server_name_.push_back(x);
+	}
+	void				ServerBlock::setReturn(const std::vector<std::string>& x)
+	{
+		this->return_ = x;
 	}
 
 	void				ServerBlock::setReturn(const std::string& x)
@@ -100,13 +150,13 @@ namespace ft
 		return (true);
 	}
 
-	bool				ServerBlock::checkServerName(const std::string& request_server_name) const
+	bool				ServerBlock::checkServerName(const unsigned int listen, const std::string& request_server_name) const
 	{
 		std::vector<std::string>::const_iterator	current_string = this->server_name_.begin();
 		std::vector<std::string>::const_iterator	end_string = this->server_name_.end();
 
 		for (; current_string != end_string; ++current_string)
-			if (current_string->compare(request_server_name) == 0)
+			if (listen == listen_ && current_string->compare(request_server_name) == 0)
 				return (true);
 		return (false);
 	}

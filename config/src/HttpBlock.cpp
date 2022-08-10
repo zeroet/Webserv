@@ -52,7 +52,9 @@ namespace ft
 			if (current_server->getListen() == listen)
 				server_vector.push_back(*current_server);
 		}
-		if (server_vector.size() == 1)
+		if (request_server_name == "")
+			return (std::make_pair(true, server_vector.at(0)));
+		else if (server_vector.size() == 1)
 			return (std::make_pair(true, server_vector.at(0)));
 		else if (server_vector.size() == 0)
 			return (std::make_pair(false, return_server));
@@ -64,7 +66,7 @@ namespace ft
 			//std::cout << "there are more than one server with listen " << listen << "\n";
 			for (; current_server != end_server; ++current_server)
 			{
-				if (current_server->checkServerName(request_server_name) == true)
+				if (current_server->checkServerName(listen, request_server_name) == true)
 				{
 					//std::cout << "matched server name is " << request_server_name << "\n";
 					return (std::make_pair(true, *current_server));

@@ -3,11 +3,12 @@
 #include <vector>
 #include "HttpBlock.hpp"
 #include "PrintConfig.hpp"
-#define	REQUEST_SERVER_NAME "alias"
+#define	REQUEST_SERVER_NAME "worldhello"
 
 int main(int argc, char** argv)
 {
 	std::pair<bool, ft::HttpBlock>	http_pair;
+	std::pair<bool, ft::ServerBlock>	server_pair;
 	ft::HttpBlock	http_context;
 
 	(void)ft::sTokenTypeStrings;
@@ -16,19 +17,29 @@ int main(int argc, char** argv)
 	if (http_pair.first == true)
 	{
 		http_context = http_pair.second;
-		std::vector<ft::ServerBlock>	server_vector = http_context.getServerBlock();
-		ft::ServerBlock			server_context = server_vector.at(0);
+		std::vector<ft::ServerBlock>		server_vector = http_context.getServerBlock();
+		ft::ServerBlock				server_context = server_vector.at(0);
 
 		try {
 			//std::cout << "server name: " << server_context.getServerName(0) << std::endl; // getServerName by index
 			std::pair<bool, ft::LocationBlock>  location_pair = server_context.getLocationBlock("/cgi_teste/dfjk"); // getLocationBlock by request_path
 			if (location_pair.first == true)
 				std::cout << "selected uri: " << location_pair.second.getUriPath() << "\n";
-			std::pair<bool, ft::ServerBlock> server_pair = http_context.getServerBlock(9090, REQUEST_SERVER_NAME); // getServerBlock by listen, server_name
+
+			// listen port, server_name duplication test
+			server_pair = http_context.getServerBlock(9090, REQUEST_SERVER_NAME); // getServerBlock by listen, server_name
 			if (server_pair.first == true)
 			{
-				std::cout << server_pair.second.checkServerName(REQUEST_SERVER_NAME) << "\n";
-				std::cout << server_pair.second.getServerName(1) << "\n";
+				std::cout << "case 0. listen: 9090, surver_name: " << REQUEST_SERVER_NAME << "\n";
+				std::cout << "result: " << server_pair.second.getListen() << ", ";
+				std::cout << server_pair.second.getServerName(0) << "\n";
+			}
+			server_pair = http_context.getServerBlock(9090); // getServerBlock by listen, server_name
+			if (server_pair.first == true)
+			{
+				std::cout << "case 1. listen: 9090, unspecified surver_name \n";
+				std::cout << "result: " << server_pair.second.getListen() << ", ";
+				std::cout << server_pair.second.getServerName(0) << "\n";
 			}
 		}
 		catch (const std::out_of_range& e) {

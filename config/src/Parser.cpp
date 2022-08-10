@@ -154,16 +154,19 @@ namespace ft
 
 					for (; current_server != end_server; ++current_server)
 					{
-						std::vector<std::string>			server_name_vector = current_server->getServerName();
-						std::vector<std::string>::const_iterator	current_server_name = server_name_vector.begin();
-						std::vector<std::string>::const_iterator	    end_server_name = server_name_vector.end();
-
-						for (; current_server_name != end_server_name; ++current_server_name)
+						if (current_server->getListen() == context.getListen()) 
 						{
-							if (current_parameter->compare(*current_server_name) == 0)
+							std::vector<std::string>			server_name_vector = current_server->getServerName();
+							std::vector<std::string>::const_iterator	current_server_name = server_name_vector.begin();
+							std::vector<std::string>::const_iterator	    end_server_name = server_name_vector.end();
+
+							for (; current_server_name != end_server_name; ++current_server_name)
 							{
-								std::cout << "Error: There can't be same server name.\n";
-								return (false);
+								if (current_parameter->compare(*current_server_name) == 0)
+								{
+									std::cout << "Error: There can't be same server name with the same listen port.\n";
+									return (false);
+								}
 							}
 						}
 					}
