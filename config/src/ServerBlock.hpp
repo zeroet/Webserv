@@ -27,18 +27,17 @@ namespace ft
 			ServerBlock(const BaseDirectives& context);
 			// Getter
 			const std::vector<LocationBlock>	getLocationBlock() const;
-			const std::pair<bool, LocationBlock>	getLocationBlock(const std::string path) const;
+			const std::pair<bool, LocationBlock>	getLocationBlock(const std::string& request_path) const;
 			unsigned int				getListen(void) const;
 			const std::vector<std::string>		getServerName(void) const;
 			const std::string			getServerName(size_t index) const;
 			const std::vector<std::string>		getReturn(void) const;
 			int					getSocketFd(void) const;
 
-
 			// Setter
 			void					setListen(const unsigned int x);
-			void					setServerName(const std::string x);
-			void					setReturn(const std::string x);
+			void					setServerName(const std::string& x);
+			void					setReturn(const std::string& x);
 			void					setSocketFd(const int i);
 
 			void					clearServerName(void);
