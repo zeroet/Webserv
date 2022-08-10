@@ -62,9 +62,8 @@ class Connection
 		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
 		std::string		buffer_;					//append buffer
 
-		Request     	*request_;
-		// std::vector<Request>	multi_request;
-		Response		response_;
+		static Request	request_;
+		static Response	response_;
 
 		int				phase_msg_;
 		int				req_status_code_;

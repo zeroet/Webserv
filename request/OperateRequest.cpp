@@ -282,12 +282,14 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 /* Set and check details along with header key and method of request message */
 void	OperateRequest::checkHeader(Connection *c) {
 
+	
+	
 	// test getLocationBlock
-	std::pair<bool, LocationBlock> location_pair = c->getBlock().getLocationBlock(c->getRequest().getPath());
+	// std::pair<bool, LocationBlock> location_pair = c->getBlock().getLocationBlock(c->getRequest().getPath());
 	// // if (!loc.first)
 	// // 	std::cout << "Invalide" << std::endl;
 	// // else
-		std::cout << "getroot: " << location_pair.second.getRoot() << std::cout;
+		// std::cout << "getroot: " << location_pair.second.getRoot() << std::cout;
 
 	if (c->getReqStatusCode() != NOT_DEFINE)
 	{
