@@ -37,7 +37,7 @@ class OperateRequest {
 		~OperateRequest(void);
 
 		//getter
-		std::string	&getStartLine(vo	id);
+		std::string	&getStartLine(void);
 		std::string	&getHeaders(void);
 
 		//setter
