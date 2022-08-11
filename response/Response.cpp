@@ -144,6 +144,33 @@ void Response::makeStatusBody(std::string url)
 
 void			Response::executeGet(){
 	std::cout << "execute get" << std::endl;
+	
+	// std::string	buf;
+
+	//header setting
+	/*	
+		buf += setHeader();
+	*/
+
+	// execute html or cgi
+	/*
+		if (getFormat == "html")
+			buf += getBufHTML();
+		else (getFormat == cgi)
+			buf += getBufCGI();
+
+	*/
+	// envoyer par send
+	/*
+		send(this->clntFd_, &buf, sizeof(buf) - 1, 0); 
+	*/
+	// considerer EPOLLIN ou enlever fd de EPOLL
+	/*
+		if (keep_alive)
+			ep_->epoll_Ctl_Mode(clnFd_, EPOLLIN);
+		else
+			fd out!
+	*/
 }
 
 void			Response::executePost(){
