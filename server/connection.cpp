@@ -70,6 +70,18 @@ void    Connection::processRequest()
 void    Connection::processResponse()
 {
 	//std::cout << "processResponse execute" << std::endl;
+	//std::cout << "method is " << this->request_->getMethod() << std::endl;
+	//std::cout << "path is " << this->request_->getPath() << std::endl;
+	std::string current_method(this->request_->getMethod());
+
+	if (current_method == "GET")
+		this->response_.executeGet();
+	else if (current_method == "POST")
+		this->response_.executePost();
+	else if (current_method == "DELETE")
+		this->response_.executeDelete();
+	else
+		std::cout << "WTF! connard" << std::endl;
 }
 
 //getter
