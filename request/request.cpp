@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #include "../server/connection.hpp"
+=======
+#include "request.hpp"
+>>>>>>> ee1e01f7b3565ceaff46738994a699397c5ac1e2
 
 Request::Request(void) : method_(""), uri_(""), version_(""), requestHeaders_(), body_("") {}
 

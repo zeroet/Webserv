@@ -1,6 +1,6 @@
 #include "Response.hpp"
 
-void		Response::MapStatusCode(std::string code)
+void		Response::initialMapStatusCode()
 {
 	mapStatus_.insert(std::make_pair("100", "Continue"));
 	mapStatus_.insert(std::make_pair("101", "Switching Protocols"));
@@ -35,17 +35,18 @@ void		Response::MapStatusCode(std::string code)
 	mapStatus_.insert(std::make_pair("502", "Bad Gateway"));	
 	mapStatus_.insert(std::make_pair("505", "HTTP Version Not Supported"));	
 
-	std::map<std::string, std::string>::iterator it;
-	it = this->mapStatus_.find(code);
-	this->StatusCode_ = it->first;
-	this->StatusMessage_ = it->second;	
-	std::cout << StatusCode_ << std::endl;
-	std::cout << StatusMessage_ << std::endl;
+	//std::map<std::string, std::string>::iterator it;
+	//it = this->mapStatus_.find(code);
+	//this->StatusCode_ = it->first;
+	//this->StatusMessage_ = it->second;	
+	//std::cout << StatusCode_ << std::endl;
+	//std::cout << StatusMessage_ << std::endl;
 }
 		
 
 Response::Response()
 {
+	initialMapStatusCode();
 }
 
 Response::Response(Response const & copy)
@@ -71,7 +72,7 @@ Response::~Response()
 {
 }
 
-std::string	Response::getStatusCode()
+std::string	Response::getStatusCode() const
 {
 	return (this->StatusCode_);
 }
@@ -80,15 +81,16 @@ void	Response::setStatusCode(std::string code)
 {
 	this->StatusCode_ = code;
 }
- void	Response::response_manager()
- {
- 	std::string str;
 
- 	str = makeHeader();
- 	std::cout << str << std::endl;
- 	makeStatusBody();
- 	std::cout << Body_ << std::endl;
- }
+// void	Response::response_manager()
+// {
+// 	std::string str;
+//
+// 	str = makeHeader();
+// 	std::cout << str << std::endl;
+// 	makeStatusBody();
+// 	std::cout << Body_ << std::endl;
+// }
 
 void Response::appendHeader(std::string first, std::string second)
 {
@@ -134,3 +136,47 @@ void Response::makeStatusBody(std::string url)
 	Body_ = outcome;
 }
 
+
+
+///*========================================*/
+///* ========== execute function ========== */
+///*========================================*/
+
+void			Response::executeGet(){
+	std::cout << "execute get" << std::endl;
+	
+	// std::string	buf;
+
+	//header setting
+	/*	
+		buf += setHeader();
+	*/
+
+	// execute html or cgi
+	/*
+		if (getFormat == "html")
+			buf += getBufHTML();
+		else (getFormat == cgi)
+			buf += getBufCGI();
+
+	*/
+	// envoyer par send
+	/*
+		send(this->clntFd_, &buf, sizeof(buf) - 1, 0); 
+	*/
+	// considerer EPOLLIN ou enlever fd de EPOLL
+	/*
+		if (keep_alive)
+			ep_->epoll_Ctl_Mode(clnFd_, EPOLLIN);
+		else
+			fd out!
+	*/
+}
+
+void			Response::executePost(){
+	std::cout << "execute post" << std::endl;
+}
+
+void			Response::executeDelete(){
+	std::cout << "execute delete" << std::endl;
+}
