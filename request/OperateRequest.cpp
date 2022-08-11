@@ -281,13 +281,32 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 
 /* Set and check details along with header key and method of request message */
 void	OperateRequest::checkHeader(Connection *c) {
+
+	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
+	
+	// c->setLocationBlock(c->getRequest().getPath());
+	// std::cout << "location return : " << c->getLocationBlock()->getReturn()[0] << std::endl;
+	
+	// test getLocationBlock
+	// std::pair<bool, LocationBlock> location_pair = c->getBlock().getLocationBlock(c->getRequest().getPath());
+	// if (!location_pair.first)
+	// 	std::cout << "Invalide" << std::endl;
+	// else
+		// std::cout << "location root: " << location_pair.second.getRoot() << std::cout;
+
+
+
 	if (c->getReqStatusCode() != NOT_DEFINE)
 	{
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 
-	// getUriFromLocation(c);
+	//set path / file path / uri
+	// setFilePathWithLocation(&location_pair.second, c);
+
+	//Set Host Value again (incase of localhost:port)
+
 
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getBlock().getClientMaxBodySize();
@@ -310,23 +329,8 @@ void	OperateRequest::checkHeader(Connection *c) {
 			c->getRequest().setBody(body_);
 		}
 	}
-	
-	if (c->getRequest().getRequestHeaders().count("Transfer-Encoding") && (c->getRequest().getHeaderValue("Transfer-Encoding") == "chunked"))
-	{
-		c->setPhaseMsg(BODY_CHUNKED);
-		c->is_chunk = true;
-	}
-	else if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
-	{
-		c->is_chunk = false;
-		body_.clear();
-		c->setPhaseMsg(BODY_COMPLETE);
-	}
-	else if (c->is_chunk == true)
-		c->setPhaseMsg(BODY_COMPLETE);
-	else
-		c->setPhaseMsg(BODY_INCOMPLETE);
 
+	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
 	if (checkHostHeader(c) == false)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
@@ -334,15 +338,39 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
+	// when file doesn't exist
+	// if (c->getRequest().getMethod() == "GET" && !isFileExist(c))
+	// {
+	// 	c->setReqStatusCode(NOT_FOUND);
+	// 	c->setPhaseMsg(BODY_COMPLETE);
+	// 	return ;
+	// }
+	
+	//chunked message flag on/off
+	if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
+	{
+		c->is_chunk = false;
+		body_.clear();
+		c->content_length = 0;
+		c->setPhaseMsg(BODY_COMPLETE);
+	}
+	else if (c->getRequest().getRequestHeaders().count("Transfer-Encoding") && (c->getRequest().getHeaderValue("Transfer-Encoding") == "chunked"))
+	{
+		c->setPhaseMsg(BODY_CHUNKED);
+		c->is_chunk = true;
+	}
+	else if (c->is_chunk == true)
+		c->setPhaseMsg(BODY_COMPLETE);
+	else
+		c->setPhaseMsg(BODY_INCOMPLETE);
+
 	//location config return value check
-
+	
 	//Allow method check
-
-	//file exist check
 
 	//directory exist check
 
-	//When method Delete, 
+	//When method Delete
 }
 
 
@@ -439,3 +467,45 @@ bool	OperateRequest::checkHostHeader(Connection *c) {
 // 	locationlist[0].getRoot();
 	
 // }
+
+bool OperateRequest::isFileExist(Connection *c) {
+	struct stat stat_buf;
+
+	if (stat(c->getRequest().getFilePath().c_str(), &stat_buf) == -1)
+		return (false);
+	return (true);
+
+}
+
+void	OperateRequest::setFilePathWithLocation(LocationBlock *location, Connection *c) {
+
+	//example: request path : /test/
+	std::string filepath;
+	filepath = location->getRoot(); //location root로 filepath init /var/www/html/cgi_tester
+	// std::cout << "location root: " << filepath << std::endl;
+	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
+
+	/*	block root: /var/www/html
+		location root(filepath): /var/www/html/cgi_tester
+		case1)	location uri: /cgi_tester/
+				request path: /cgi_tester
+		case2)	location uri: /cgi_tester/
+				request path: /cgi_tester/test1		*/
+	if (location->getRoot() != c->getBlock().getRoot())
+	{
+		if (c->getRequest().getPath().substr(location->getUriPath().length()).empty()) //case 1
+			filepath.append("/");
+		else // case 2
+		{
+			if (*(location->getUriPath().rbegin()) == '/') // /cgi_tester/
+				filepath.append(c->getRequest().getPath().substr(location->getUriPath().length() - 1));
+			else // /cgi_tester
+				filepath.append(c->getRequest().getPath().substr(location->getUriPath().length()));
+		}
+	}
+	else
+	/* 	block root: /var/www/html
+		location root: /var/www/html */
+		filepath.append(c->getRequest().getPath()); //just append the rest of path on request path to complet path
+	c->getRequest().setFilePath(filepath);
+}
