@@ -242,10 +242,16 @@ std::vector<ServerBlock>   Epoll::get_location_block(int fd)
 {
     std::vector<ServerBlock> tmp;
 	int   size = this->vecBloc_.size();
+    int   portnumber = 0;
 
+    for (int tmp = 0; tmp < size; tmp++)
+    {
+        if (fd == vecBloc_[tmp].getSocketFd())    
+            portnumber = vecBloc_[tmp].getListen();
+    }
 	for (int i = 0; i < size; i++)
 	{
-		if (fd == vecBloc_[i].getSocketFd())
+		if (portnumber == vecBloc_[i].getListen())
 			tmp.push_back(vecBloc_[i]);
 	}
     return tmp;

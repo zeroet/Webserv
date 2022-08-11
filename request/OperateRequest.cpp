@@ -282,6 +282,13 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 /* Set and check details along with header key and method of request message */
 void	OperateRequest::checkHeader(Connection *c) {
 
+	if (checkHostHeader(c) == false)
+	{
+		c->setReqStatusCode(BAD_REQUEST);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
 	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
 	
 	// c->setLocationBlock(c->getRequest().getPath());
@@ -294,6 +301,9 @@ void	OperateRequest::checkHeader(Connection *c) {
 	// else
 		// std::cout << "location root: " << location_pair.second.getRoot() << std::cout;
 
+	ServerBlock block = c->get_server_name_block("helloworld");
+
+	std::cout << block.getListen() << std::endl;
 
 
 	if (c->getReqStatusCode() != NOT_DEFINE)
@@ -331,12 +341,6 @@ void	OperateRequest::checkHeader(Connection *c) {
 	}
 
 	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
-	if (checkHostHeader(c) == false)
-	{
-		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(BODY_COMPLETE);
-		return ;
-	}
 
 	// when file doesn't exist
 	// if (c->getRequest().getMethod() == "GET" && !isFileExist(c))

@@ -125,8 +125,6 @@ class Connection
 	private:
 		int				clntFd_;
 		std::vector<ServerBlock>  	block_;
-		LocationBlock	*location_block_;
-		HttpBlock		*http_block_;
 		std::string 	status_;
 		Epoll			*ep_;
 
