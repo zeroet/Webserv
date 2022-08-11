@@ -48,7 +48,7 @@ class OperateRequest {
 		int		parseHeaderLine(Connection *c, std::string headerline);
 		void	checkHeader(Connection *c);
 		int		parseUri(std::string uri, Connection *c);
-		void	setUriStruct(LocationBlock *location, Connection *c);
+		void	setFilePathWithLocation(LocationBlock *location, Connection *c);
 
 		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);

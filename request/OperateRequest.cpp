@@ -282,14 +282,19 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 /* Set and check details along with header key and method of request message */
 void	OperateRequest::checkHeader(Connection *c) {
 
+	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
 	
+	// c->setLocationBlock(c->getRequest().getPath());
+	// std::cout << "location return : " << c->getLocationBlock()->getReturn()[0] << std::endl;
 	
 	// test getLocationBlock
 	// std::pair<bool, LocationBlock> location_pair = c->getBlock().getLocationBlock(c->getRequest().getPath());
-	// // if (!loc.first)
-	// // 	std::cout << "Invalide" << std::endl;
-	// // else
-		// std::cout << "getroot: " << location_pair.second.getRoot() << std::cout;
+	// if (!location_pair.first)
+	// 	std::cout << "Invalide" << std::endl;
+	// else
+		// std::cout << "location root: " << location_pair.second.getRoot() << std::cout;
+
+
 
 	if (c->getReqStatusCode() != NOT_DEFINE)
 	{
@@ -298,8 +303,9 @@ void	OperateRequest::checkHeader(Connection *c) {
 	}
 
 	//set path / file path / uri
-	// setUriStruct(&location_pair.second, c);
+	// setFilePathWithLocation(&location_pair.second, c);
 
+	//Set Host Value again (incase of localhost:port)
 
 
 	//get Client_Max_Body_Size
@@ -332,7 +338,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-	//when file doesn't exist
+	// when file doesn't exist
 	// if (c->getRequest().getMethod() == "GET" && !isFileExist(c))
 	// {
 	// 	c->setReqStatusCode(NOT_FOUND);
@@ -471,13 +477,35 @@ bool OperateRequest::isFileExist(Connection *c) {
 
 }
 
-void	OperateRequest::setUriStruct(LocationBlock *location, Connection *c) {
+void	OperateRequest::setFilePathWithLocation(LocationBlock *location, Connection *c) {
 
+	//example: request path : /test/
 	std::string filepath;
-	filepath = location->getRoot();
-	std::cout << "location root: " << filepath << std::endl;
-	std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
+	filepath = location->getRoot(); //location root로 filepath init /var/www/html/cgi_tester
+	// std::cout << "location root: " << filepath << std::endl;
+	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
 
-	if (location->getRoot() == c->getBlock().getRoot())
-		c->getRequest().setFilePath(filepath);
+	/*	block root: /var/www/html
+		location root(filepath): /var/www/html/cgi_tester
+		case1)	location uri: /cgi_tester/
+				request path: /cgi_tester
+		case2)	location uri: /cgi_tester/
+				request path: /cgi_tester/test1		*/
+	if (location->getRoot() != c->getBlock().getRoot())
+	{
+		if (c->getRequest().getPath().substr(location->getUriPath().length()).empty()) //case 1
+			filepath.append("/");
+		else // case 2
+		{
+			if (*(location->getUriPath().rbegin()) == '/') // /cgi_tester/
+				filepath.append(c->getRequest().getPath().substr(location->getUriPath().length() - 1));
+			else // /cgi_tester
+				filepath.append(c->getRequest().getPath().substr(location->getUriPath().length()));
+		}
+	}
+	else
+	/* 	block root: /var/www/html
+		location root: /var/www/html */
+		filepath.append(c->getRequest().getPath()); //just append the rest of path on request path to complet path
+	c->getRequest().setFilePath(filepath);
 }

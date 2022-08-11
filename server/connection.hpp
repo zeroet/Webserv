@@ -56,14 +56,16 @@ class Connection
 	private:
 		int				clntFd_;
 		ServerBlock  	block_;
+		LocationBlock	*location_block_;
+		HttpBlock		*http_block_;
 		std::string 	status_;
 		Epoll			*ep_;
 
 		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
 		std::string		buffer_;					//append buffer
 
-		static Request	request_;
-		static Response	response_;
+		Request			*request_;
+		Response	response_;
 
 		int				phase_msg_;
 		int				req_status_code_;
@@ -86,10 +88,21 @@ class Connection
 		int			&getPhaseMsg(void);
 		std::string &getBuffer(void);
 		int			&getReqStatusCode(void);
+		// LocationBlock	*getLocationBlock(void) {
+		// 	return (location_);
+		// }
 
 		//setter
 		void	setPhaseMsg(int new_msg);
 		void	setReqStatusCode(int status_code);
+		// void	setLocationBlock(std::string uri) {
+		// 	std::pair<bool, LocationBlock> ret_location = getBlock().getLocationBlock(uri);
+
+		// 	if (ret_location.first == false)
+		// 		return ;
+		// 	else
+		// 		location_ = &ret_location.second;
+		// }
 
 		void    processRequest();
 		void    response();
