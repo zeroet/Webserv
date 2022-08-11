@@ -227,17 +227,17 @@ void	OperateRequest::parseHeaders(Connection *c) {
 	size_t pos = c->getBuffer().find(CRLFCRLF);
 	headers_ = c->getBuffer().substr(0, pos + LEN_CRLF);
 	c->getBuffer().erase(0, pos + LEN_CRLFCRLF);
-	std::cout << "headers" << std::endl;
-	std::cout << headers_ << std::endl;
+	// std::cout << "headers" << std::endl;
+	// std::cout << headers_ << std::endl;
 	// size_t header_len = header.length();
 	size_t pos1 = 0;
 	int code = 0;
-	int i = 0;
+	// int i = 0;
 	while ((pos1 = headers_.find(CRLF)) != std::string::npos)
 	{
 		std::string headerline = "";
 		headerline = headers_.substr(0, pos1);
-		std::cout << "Header line " << i++ << " : " << headerline << std::endl;
+		// std::cout << "Header line " << i++ << " : " << headerline << std::endl;
 		// }
 
 		//headerline parse - argument is < 2 => 400 // if field name is not alpha => 400
@@ -273,8 +273,8 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 	// std::string key = key_parse[0];
 	std::string key = header_line_parse[0];
 	std::string value = header_line_parse[1];
-	std::cout << "header key: " << key << std::endl;
-	std::cout << "header value: " << value << std::endl;
+	// std::cout << "header key: " << key << std::endl;
+	// std::cout << "header value: " << value << std::endl;
 	c->getRequest().setHeader(key, value);
 	return (NOT_DEFINE);
 }
@@ -282,6 +282,14 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 /* Set and check details along with header key and method of request message */
 void	OperateRequest::checkHeader(Connection *c) {
 
+	//if Request status code is set as error code, exit this function
+	if (c->getReqStatusCode() != NOT_DEFINE)
+	{
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
+	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
 	if (checkHostHeader(c) == false)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
@@ -289,6 +297,15 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
+	//check if host value is has host name and port at the same time. if so, parse.
+	//if host value doesn't exist, bad request.
+	if (setUriStructHostPort(c, c->getRequest().getHeaderValue("Host")) == false)
+	{
+		c->setReqStatusCode(BAD_REQUEST);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+	
 	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
 	
 	// c->setLocationBlock(c->getRequest().getPath());
@@ -301,27 +318,17 @@ void	OperateRequest::checkHeader(Connection *c) {
 	// else
 		// std::cout << "location root: " << location_pair.second.getRoot() << std::cout;
 
-	ServerBlock block = c->get_server_name_block("helloworld");
+	// ServerBlock block = c->get_server_name_block("helloworld");
 
-	std::cout << block.getListen() << std::endl;
-
-
-	if (c->getReqStatusCode() != NOT_DEFINE)
-	{
-		c->setPhaseMsg(BODY_COMPLETE);
-		return ;
-	}
+	// std::cout << block.getListen() << std::endl;
 
 	//set path / file path / uri
 	// setFilePathWithLocation(&location_pair.second, c);
 
-	//Set Host Value again (incase of localhost:port)
-
-
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getBlock()[0].getClientMaxBodySize();
 
-	if ((c->getRequest().getRequestHeaders().count("Content-Length")))
+	if ((c->getRequest().getRequestHeaders().count("Content-Length")) && !c->getRequest().getHeaderValue("Content-Length").empty())
 	{
 		c->content_length = fromString<int>((c->getRequest().getHeaderValue("Content-Length")));
 		// std::cout << "content-length in function:" << c->content_length << std::endl;
@@ -334,13 +341,13 @@ void	OperateRequest::checkHeader(Connection *c) {
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
 		{
 			// body_ = c->getBuffer().substr(0, c->getBuffer().length());
-			std::cout << "body check: " << body_ << std::endl;
+			std::cout << "////////////////body check: " << body_ << std::endl;
 			// c->getBuffer().erase(0, c->getBuffer().length());
 			c->getRequest().setBody(body_);
 		}
+		else
+			std::cout << "///////////////////////////EMPTY////////////////////////" << std::endl;
 	}
-
-	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
 
 	// when file doesn't exist
 	// if (c->getRequest().getMethod() == "GET" && !isFileExist(c))
@@ -374,7 +381,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 
 	//directory exist check
 
-	//When method Delete
+	//When Method is delete try to delete directory -> no no
 }
 
 
@@ -463,15 +470,6 @@ bool	OperateRequest::checkHostHeader(Connection *c) {
 	return (false);
 }
 
-// void	OperateRequest::getUriFromLocation(Connection *c) {
-// 	std::vector<LocationBlock> locationlist = c->getBlock().locationList;
-
-// 	std::cout << "Location list size: " << locationlist.size() << std::endl;
-// 	std::cout << c->getBlock().getRoot() << std::endl;
-// 	locationlist[0].getRoot();
-	
-// }
-
 bool OperateRequest::isFileExist(Connection *c) {
 	struct stat stat_buf;
 
@@ -512,4 +510,19 @@ void	OperateRequest::setFilePathWithLocation(LocationBlock *location, Connection
 		location root: /var/www/html */
 		filepath.append(c->getRequest().getPath()); //just append the rest of path on request path to complet path
 	c->getRequest().setFilePath(filepath);
+}
+
+int	OperateRequest::setUriStructHostPort(Connection *c, std::string host_value) {
+	std::vector<std::string> host_value_parse = splitDelim(host_value, ":");
+	
+	if (host_value.empty())
+		return (false);
+	if (host_value_parse.size() == 2)
+	{
+		c->getRequest().setHost(host_value_parse[0]);
+		c->getRequest().setPort(host_value_parse[1]);
+	}
+	else
+		c->getRequest().setHost(host_value_parse[0]);
+	return (true);
 }

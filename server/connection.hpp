@@ -143,6 +143,7 @@ class Connection
 		size_t			client_max_body_size;
 		size_t			content_length;
 		int				is_chunk;
+		std::string		body_buf;
 		// res
 		// exe
 

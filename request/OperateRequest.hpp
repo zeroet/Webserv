@@ -57,6 +57,7 @@ class OperateRequest {
 		int		checkHeaderKey(const std::string &s);
 		bool	checkHostHeader(Connection *c);
 		bool	isFileExist(Connection *c);
+		int		setUriStructHostPort(Connection *c, std::string host_value);
 		// void	getUriFromLocation(Connection *c);
 		// std::string	trimWhiteSpace(std::string &s);
 
