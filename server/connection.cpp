@@ -2,7 +2,7 @@
 
 OperateRequest operateRequest = OperateRequest();
 
-Connection::Connection(int fd, ServerBlock block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep), request_(new Request) {
+Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
 	// Ctl_mode_flag_ = false;
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
@@ -68,12 +68,12 @@ void    Connection::processRequest()
 }
 
 //getter
-ServerBlock		&Connection::getBlock(void) {
+std::vector<ServerBlock>		&Connection::getBlock(void) {
 	return (block_);
 }
 
 Request	&Connection::getRequest(void) {
-	return (*request_);
+	return (request_);
 }
 
 Response	&Connection::getResponse(void) {
@@ -127,4 +127,20 @@ void	Connection::printRequestMsg(void) {
 	std::cout << "content_length: " << content_length << std::endl;
 	std::cout << "client_max_body_size: " << client_max_body_size << std::endl;
 	printf("=====================\n");
+}
+
+ServerBlock	Connection::get_server_name_block(std::string server_name)
+{
+	int index = this->block_.size();
+	bool ret;
+
+	for (int i = 0; i < index; i++)
+	{
+		ret = block_[i].checkServerName(block_[i].getListen(), server_name);
+		if (ret == true)
+		{
+			return block_[i];
+		}
+	}
+	return block_[0];
 }

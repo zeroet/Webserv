@@ -148,7 +148,7 @@ void    Epoll::epoll_server_manager()
                 if (clntFd != ERROR)
                 {
                     epoll_add(clntFd);
-                    ServerBlock serverBlock = get_location_block(epEvent[i].data.fd);
+                    std::vector<ServerBlock> serverBlock = get_location_block(epEvent[i].data.fd);
                     this->c_.insert(std::make_pair (clntFd, new Connection(clntFd, serverBlock, this)));
                 }
                 else
@@ -238,16 +238,17 @@ void    Epoll::close_all_serv_socket()
 }
 
 // Block class or utile  ????
-ServerBlock   Epoll::get_location_block(int fd)
+std::vector<ServerBlock>   Epoll::get_location_block(int fd)
 {
+    std::vector<ServerBlock> tmp;
 	int   size = this->vecBloc_.size();
 
 	for (int i = 0; i < size; i++)
 	{
 		if (fd == vecBloc_[i].getSocketFd())
-			return(vecBloc_[i]);
+			tmp.push_back(vecBloc_[i]);
 	}
-    return 0;
+    return tmp;
 }
 
 // status = close 

@@ -7,6 +7,15 @@
 #include "../response/Response.hpp"
 #include "../config/src/ServerBlock.hpp"
 
+
+#include <iostream>
+#include <cstdio>
+#include <sys/epoll.h>
+#include <map>
+#include <vector>
+#include <algorithm>
+#include <cctype>
+
 # define CRLF "\r\n"
 # define CRLFCRLF "\r\n\r\n"
 # define LEN_CRLF 2
@@ -14,10 +23,70 @@
 
 # define BUFFER_SIZE 512
 
+
 namespace ft{
 
 class Epoll;
-class Request;
+
+typedef struct s_uri {
+  std::string schema_;
+  std::string host_;
+  std::string port_;
+  std::string path_;
+  std::string filepath_;
+  std::string query_string_;
+} t_uri;
+
+typedef std::map<std::string, std::string> 	mapHeader;
+class Request {	
+	private:
+		std::string 	method_;
+		std::string 	uri_;
+		t_uri			uri_struct_;
+		std::string		version_;
+		mapHeader		requestHeaders_;
+		std::string		body_;
+
+	public:
+		Request(void);
+		// Request(int fd);
+		Request(Request const &x);
+		const Request &operator=(const Request &x);
+		~Request(void);
+
+		//getter
+		const	std::string	&getMethod(void) const;
+		const	std::string &getUri(void)	const;
+		const	std::string	&getVersion(void)	const;
+		const	mapHeader	&getRequestHeaders(void)	const;		//Get all headers in the shape of Map Container
+		const	std::string &getHeaderValue(const std::string &key);	//Get one of header value
+		const	std::string	&getBody(void)	const;
+		const 	std::string &getSchema(void) const;
+		const 	std::string &getHost(void) const;
+		const 	std::string &getPort(void) const;
+		const 	std::string &getPath(void) const;
+		const 	std::string &getFilePath(void) const;
+		const 	std::string &getQueryString(void) const;
+
+		//setter
+		void	setMethod(std::string method);
+		void	setUri(std::string path);
+		void	setVersion(std::string version);
+		void	setHeader(std::string key, std::string value);		//Set one of header value
+		void	setBody(std::string body);
+		void	setSchema(std::string schema);
+		void	setHost(std::string host);
+		void 	setPort(std::string port);
+		void 	setPath(std::string path);
+		void 	setFilePath(std::string filepath);
+		void 	setQueryString(std::string query_string);
+
+		void	clear(void);
+
+		//tmp
+		void	printHeaders(void);
+};
+
 
 enum phaseMsg {
 	START_LINE_INCOMPLETE,
@@ -55,7 +124,7 @@ class Connection
 {
 	private:
 		int				clntFd_;
-		ServerBlock  	block_;
+		std::vector<ServerBlock>  	block_;
 		LocationBlock	*location_block_;
 		HttpBlock		*http_block_;
 		std::string 	status_;
@@ -64,7 +133,9 @@ class Connection
 		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
 		std::string		buffer_;					//append buffer
 
-		Request			*request_;
+		// Request			request_;
+		// Response		response_;
+		Request		request_;
 		Response	response_;
 
 		int				phase_msg_;
@@ -78,11 +149,10 @@ class Connection
 		// exe
 
 	public:
-		Connection(int fd, ServerBlock block, Epoll *ep);
+		Connection(int fd, std::vector<ServerBlock> block, Epoll *ep);
 		~Connection();
-
 		//getter
-		ServerBlock	&getBlock(void);
+		std::vector<ServerBlock>	&getBlock(void);
 		Request		&getRequest(void);
 		Response	&getResponse(void);
 		int			&getPhaseMsg(void);
@@ -109,6 +179,7 @@ class Connection
 
 		//tmp
 		void	printRequestMsg(void);
+		ServerBlock get_server_name_block(std::string server_name);
 };
 
 }

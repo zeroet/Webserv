@@ -309,7 +309,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 
 
 	//get Client_Max_Body_Size
-	c->client_max_body_size = c->getBlock().getClientMaxBodySize();
+	c->client_max_body_size = c->getBlock()[0].getClientMaxBodySize();
 
 	if ((c->getRequest().getRequestHeaders().count("Content-Length")))
 	{
@@ -491,7 +491,7 @@ void	OperateRequest::setFilePathWithLocation(LocationBlock *location, Connection
 				request path: /cgi_tester
 		case2)	location uri: /cgi_tester/
 				request path: /cgi_tester/test1		*/
-	if (location->getRoot() != c->getBlock().getRoot())
+	if (location->getRoot() != c->getBlock()[0].getRoot())
 	{
 		if (c->getRequest().getPath().substr(location->getUriPath().length()).empty()) //case 1
 			filepath.append("/");

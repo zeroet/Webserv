@@ -1,4 +1,4 @@
-#include "request.hpp"
+#include "../server/connection.hpp"
 
 Request::Request(void) : method_(""), uri_(""), version_(""), requestHeaders_(), body_("") {}
 
