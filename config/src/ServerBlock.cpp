@@ -150,13 +150,13 @@ namespace ft
 		return (true);
 	}
 
-	bool				ServerBlock::checkServerName(const unsigned int listen, const std::string& request_server_name) const
+	bool				ServerBlock::checkServerName(const std::string& request_server_name) const
 	{
 		std::vector<std::string>::const_iterator	current_string = this->server_name_.begin();
 		std::vector<std::string>::const_iterator	end_string = this->server_name_.end();
 
 		for (; current_string != end_string; ++current_string)
-			if (listen == listen_ && current_string->compare(request_server_name) == 0)
+			if (current_string->compare(request_server_name) == 0)
 				return (true);
 		return (false);
 	}

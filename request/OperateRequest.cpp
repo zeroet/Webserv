@@ -316,11 +316,13 @@ void	OperateRequest::checkHeader(Connection *c) {
 	// if (!location_pair.first)
 	// 	std::cout << "Invalide" << std::endl;
 	// else
-		// std::cout << "location root: " << location_pair.second.getRoot() << std::cout;
+	// 	std::cout << "location root: " << location_pair.second.getRoot() << std::cout;
 
-	// ServerBlock block = c->get_server_name_block("helloworld");
+	ServerBlock block = c->get_server_name_block("xxx");
+	std::vector<LocationBlock> tmp = block.getLocationBlock();
+	std::cout << GREEN <<  tmp.size() << FIN << std::endl;
 
-	// std::cout << block.getListen() << std::endl;
+ 	// std::cout << block.getListen() << std::endl;
 
 	//set path / file path / uri
 	// setFilePathWithLocation(&location_pair.second, c);
