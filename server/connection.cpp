@@ -136,7 +136,7 @@ ServerBlock	Connection::get_server_name_block(std::string server_name)
 
 	for (int i = 0; i < index; i++)
 	{
-		ret = block_[i].checkServerName(block_[i].getListen(), server_name);
+		ret = block_[i].checkServerName(server_name);
 		if (ret == true)
 		{
 			return block_[i];

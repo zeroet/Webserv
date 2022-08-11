@@ -58,7 +58,7 @@ public:
     void            end_connection(int fd);
 
     //Block class or utile ????
-    std::vector<ServerBlock>          get_location_block(int fd);
+    std::vector<ServerBlock>          make_new_serverblock(int fd);
     int                  check_status_connection(std::string status);
 };
 

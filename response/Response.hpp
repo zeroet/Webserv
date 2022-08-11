@@ -29,23 +29,33 @@ class Response
 {
 	public:
 		Response();
-//		Response(const std::string &status);
 		Response(Response const & copy);
-		Response & operator =(Response const & copy);
+		Response &operator=(Response const & copy);
 		~Response();
 
 		typedef std::map<std::string, std::string> mapStatus;
 
 		std::string 	makeHeader();
 		void			appendHeader(std::string first, std::string second);
+		
+		/*============================*/
+		/* ========== body ===========*/
+		/*============================*/
 		void			setBody(std::string & str);
 		void			makeStatusBody();
 		void			makeStatusBody(std::string url);
-		int				getBodySize();
-		void			MapStatusCode(std::string code);
-		void			response_manager();
-		std::string		getStatusCode();
+		int				getBodySize() const;
+		
+		/*===================================*/
+		/* ========== status code ========== */
+		/*===================================*/
+		void			initialMapStatusCode(void);
+		std::string		getStatusCode() const;
 		void			setStatusCode(std::string code);
+
+		void			executeGet(void);
+		void			executePost(void);
+		void			executeDelete(void);
 
 	private:
 		std::map<std::string, std::string> Headers_;
