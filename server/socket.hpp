@@ -29,11 +29,14 @@
 # define ORANGE "\033[38;5;202m"
 # define FIN "\033[0m"
 
+using namespace ft;
+
+namespace ft{
 
 class Socket
 {
 public:
-	typedef std::vector<ft::ServerBlock> vecBloc;
+	typedef std::vector<ServerBlock> vecBloc;
 
 private:
 	vecBloc vecBloc_;
@@ -41,7 +44,7 @@ private:
 
 public:
 	Socket(void);
-	Socket(std::vector<ft::ServerBlock> block);
+	Socket(std::vector<ServerBlock> block);
 	Socket(const Socket &other);
 	~Socket(void);
 
@@ -53,3 +56,4 @@ public:
 	vecBloc	getter_vecBloc() const;
 };
 
+}

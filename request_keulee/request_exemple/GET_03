@@ -1,6 +1,0 @@
-GET /index.html HTTP/1.1
-user-agent: MSIE 6.0; Window NT 5.0
-accept: test/html; */* 
-cookie:name=value
-refere: http://abc.com
-host: www.abc.com

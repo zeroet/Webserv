@@ -1,6 +1,7 @@
 #pragma once
 
 #include "epoll.hpp"
+#include "socket.hpp"
 #include "../request/request.hpp"
 #include "../request/OperateRequest.hpp"
 #include "../response/Response.hpp"
@@ -11,14 +12,12 @@
 # define LEN_CRLF 2
 # define LEN_CRLFCRLF 4
 
-# define DEFAULT -1
-
 # define BUFFER_SIZE 512
 
+namespace ft{
 
 class Epoll;
 class Request;
-class OperateRequest;
 
 enum phaseMsg {
 	START_LINE_INCOMPLETE,
@@ -32,6 +31,7 @@ enum phaseMsg {
 };
 
 enum RequestStatusCode {
+	NOT_DEFINE = -1,
 	ALL_OK = 200,
 	CREATED = 201,
 	ACCEPTED = 202,
@@ -54,31 +54,34 @@ enum RequestStatusCode {
 class Connection
 {
 	private:
-		int clntFd_;
-		ft::ServerBlock   block_;
-		std::string status_;
-		Epoll *ep_;
+		int				clntFd_;
+		ServerBlock  	block_;
+		std::string 	status_;
+		Epoll			*ep_;
 
 		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
 		std::string		buffer_;					//append buffer
 
-		Request     	request_;
+		Request     	*request_;
 		// std::vector<Request>	multi_request;
 		Response		response_;
 
-		//OperateRequest		operateRequest;
-
 		int				phase_msg_;
 		int				req_status_code_;
+
+	public:
+		size_t			client_max_body_size;
+		size_t			content_length;
+		int				is_chunk;
 		// res
 		// exe
 
 	public:
-		Connection(int fd, ft::ServerBlock block, Epoll *ep);
+		Connection(int fd, ServerBlock block, Epoll *ep);
 		~Connection();
 
 		//getter
-		ft::ServerBlock	&getBlock(void);
+		ServerBlock	&getBlock(void);
 		Request		&getRequest(void);
 		Response	&getResponse(void);
 		int			&getPhaseMsg(void);
@@ -90,9 +93,10 @@ class Connection
 		void	setReqStatusCode(int status_code);
 
 		void    processRequest();
-		void    response();
+		void    processResponse();
 
 		//tmp
 		void	printRequestMsg(void);
 };
 
+}

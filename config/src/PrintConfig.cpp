@@ -4,16 +4,16 @@ namespace ft
 {
 	void	PrintConfig::printBaseDirectivesParameters(ft::BaseDirectives& context)
 	{
-		std::vector<std::string>		vecString = context.getIndex();
-		std::vector<std::string>::iterator	currentString = vecString.begin();
-		std::vector<std::string>::iterator	    endString = vecString.end();
+		std::vector<std::string>		vec_string = context.getIndex();
+		std::vector<std::string>::iterator	current_string = vec_string.begin();
+		std::vector<std::string>::iterator	    end_string = vec_string.end();
 
 		std::cout << "Base root: " << context.getRoot() << std::endl;
 		std::cout << "Base client max body size: " << context.getClientMaxBodySize() << std::endl;
 		std::cout << "Base keepalive timeout: " << context.getKeepaliveTimeout() << std::endl;
 		std::cout << "Base index: ";
-		for (; currentString != endString; ++currentString)
-			std::cout << " " << *currentString;
+		for (; current_string != end_string; ++current_string)
+			std::cout << " " << *current_string;
 		std::cout << std::endl;
 		std::cout << "Base autoindex: " << context.getAutoindex() << std::endl;
 		std::cout << "Base error page: " << context.getErrorPage() << std::endl;
@@ -27,70 +27,71 @@ namespace ft
 
 	void	PrintConfig::printServerContextDirectiveParameters(ft::ServerBlock& context)
 	{
-		std::vector<std::string>		vecString = context.getServerName();
-		std::vector<std::string>::iterator	currentString = vecString.begin();
-		std::vector<std::string>::iterator	    endString = vecString.end();
+		std::vector<std::string>		vec_string = context.getServerName();
+		std::vector<std::string>::iterator	current_string = vec_string.begin();
+		std::vector<std::string>::iterator	    end_string = vec_string.end();
 
 		std::cout << YELLOW << "\n=======================[ServerBlock] directives parameters=====================\n";
 		printBaseDirectivesParameters(context);
-		std::cout << "Base listen: " << context.getListen() << std::endl;
-		std::cout << "Base server_name: ";
-		for (; currentString != endString; ++currentString)
-			std::cout << " " << *currentString;
+		std::cout << "listen: " << context.getListen() << std::endl;
+		std::cout << "server_name: ";
+		for (; current_string != end_string; ++current_string)
+			std::cout << " " << *current_string;
 		std::cout << std::endl;
-		std::cout << "Base return: ";
-		vecString = context.getReturn();
-		currentString = vecString.begin();
-		endString = vecString.end();
-		for (; currentString != endString; ++currentString)
-			std::cout << " " << *currentString;
-		std::cout << std::endl;
+		std::cout << "return: ";
+		vec_string = context.getReturn();
+		current_string = vec_string.begin();
+		end_string = vec_string.end();
+		for (; current_string != end_string; ++current_string)
+			std::cout << " " << *current_string;
+		std::cout << FIN << std::endl;
 	}
 
 	void	PrintConfig::printLocationContextDirectiveParameters(ft::LocationBlock& context)
 	{
-		std::vector<std::string>		vecString = context.getLimitExcept();
-		std::vector<std::string>::iterator	currentString = vecString.begin();
-		std::vector<std::string>::iterator	    endString = vecString.end();
+		std::vector<std::string>		vec_string = context.getLimitExcept();
+		std::vector<std::string>::iterator	current_string = vec_string.begin();
+		std::vector<std::string>::iterator	    end_string = vec_string.end();
 
 		std::cout << "\n---------------------[LocationBlock] directives parameters--------------------\n";
 		printBaseDirectivesParameters(context);
-		std::cout << "Base limit_except: ";
-		for (; currentString != endString; ++currentString)
-			std::cout << " " << *currentString;
+		std::cout << "limit_except: ";
+		for (; current_string != end_string; ++current_string)
+			std::cout << " " << *current_string;
 		std::cout << std::endl;
-		std::cout << "Base return: ";
-		vecString = context.getReturn();
-		currentString = vecString.begin();
-		endString = vecString.end();
-		for (; currentString != endString; ++currentString)
-			std::cout << " " << *currentString;
+		std::cout << "return: ";
+		vec_string = context.getReturn();
+		current_string = vec_string.begin();
+		end_string = vec_string.end();
+		for (; current_string != end_string; ++current_string)
+			std::cout << " " << *current_string;
 		std::cout << std::endl;
-		vecString = context.getCgi();
-		std::cout << "Base cgi: ";
-		currentString = vecString.begin();
-		endString = vecString.end();
-		for (; currentString != endString; ++currentString)
-			std::cout << " " << *currentString;
+		vec_string = context.getCgi();
+		std::cout << "cgi: ";
+		current_string = vec_string.begin();
+		end_string = vec_string.end();
+		for (; current_string != end_string; ++current_string)
+			std::cout << " " << *current_string;
 		std::cout << std::endl;
-		std::cout << "Base cgi_path: " << context.getCgiPath() << std::endl;
+		std::cout << "cgi_path: " << context.getCgiPath() << std::endl;
+		std::cout << "uri_path: " << context.getUriPath() << std::endl;
 	}
 
-	void	PrintConfig::printConfig(std::pair<bool, HttpBlock>& validHttpContext, int flags)
+	void	PrintConfig::printConfig(std::pair<bool, HttpBlock>& http_pair, int flags)
 	{
-		if (validHttpContext.first == true)
+		if (http_pair.first == true)
 		{
-			printHttpContextDirectiveParameters(validHttpContext.second);
-			std::vector<ft::ServerBlock>::iterator	currentServer = validHttpContext.second.serverList.begin();
-			std::vector<ft::ServerBlock>::iterator	    endServer = validHttpContext.second.serverList.end();
+			printHttpContextDirectiveParameters(http_pair.second);
+			std::vector<ft::ServerBlock>::iterator	currentServer = http_pair.second.server_list.begin();
+			std::vector<ft::ServerBlock>::iterator	    endServer = http_pair.second.server_list.end();
 
 			for (;currentServer != endServer; ++currentServer)
 			{
 				printServerContextDirectiveParameters(*currentServer);
 				if ((flags & P_LOCATION) == P_LOCATION)
 				{
-					std::vector<ft::LocationBlock>::iterator	currentLocation = currentServer->locationList.begin();
-					std::vector<ft::LocationBlock>::iterator	    endLocation = currentServer->locationList.end();
+					std::vector<ft::LocationBlock>::iterator	currentLocation = currentServer->location_list.begin();
+					std::vector<ft::LocationBlock>::iterator	    endLocation = currentServer->location_list.end();
 					for (;currentLocation != endLocation; ++currentLocation)
 						printLocationContextDirectiveParameters(*currentLocation);
 				}
@@ -102,31 +103,31 @@ namespace ft
 	{
 		std::cout << "\t\t <Print tokenized tokens>\n";
 		std::cout << "example: Token(token type, text, line number)\n\n";
-		std::vector<ft::Token>::iterator	currentToken = tokens.begin();
-		std::vector<ft::Token>::iterator	endToken = tokens.end();
-		(void)ft::sTokenTypeStrings[currentToken->type];
-		for (;currentToken != endToken; ++currentToken)
-			currentToken->debugPrint();
+		std::vector<ft::Token>::iterator	current_token = tokens.begin();
+		std::vector<ft::Token>::iterator	end_token = tokens.end();
+		(void)ft::sTokenTypeStrings[current_token->type];
+		for (;current_token != end_token; ++current_token)
+			current_token->debugPrint();
 	}
 
-	std::pair<bool, HttpBlock>	PrintConfig::parseConfig(char* configPath, int flags)
+	std::pair<bool, HttpBlock>	PrintConfig::parseConfig(char* config_path, int flags)
 	{
-		std::pair<bool, ft::HttpBlock>	validHttpContext;
-		FILE* fh;
+		std::pair<bool, ft::HttpBlock>	http_pair;
+		FILE* fp;
 
-		if (configPath == NULL)
-			fh = fopen(CONFIG_PATH DEFALUT_CONF, "r");
+		if (config_path == NULL)
+			fp = fopen(CONFIG_PATH DEFALUT_CONF, "r");
 		else
-			fh = fopen(configPath, "r");
-		if (!fh)
+			fp = fopen(config_path, "r");
+		if (!fp)
 			std::cerr << "Error: Can not open file.\n";
 		else
 		{
-			fseek(fh, 0, SEEK_END);
-			size_t fileSize = ftell(fh);
-			fseek(fh, 0, SEEK_SET);
+			fseek(fp, 0, SEEK_END);
+			size_t fileSize = ftell(fp);
+			fseek(fp, 0, SEEK_SET);
 			std::string fileContents(fileSize, ' ');
-			fread((void*)fileContents.data(), 1, fileSize, fh);
+			fread((void*)fileContents.data(), 1, fileSize, fp);
 
 			if ((flags & P_CONTENT) == P_CONTENT)
 			{
@@ -140,14 +141,14 @@ namespace ft
 				printTokens(tokens); // to print tokenized tokens.
 
 			ft::Parser	parser;
-			validHttpContext = parser.parse(tokens);
+			http_pair = parser.parse(tokens);
 
 			if ((flags & P_SERVER) == P_SERVER)
-				printConfig(validHttpContext, P_SERVER); // to print server directives
+				printConfig(http_pair, P_SERVER); // to print server directives
 			else if ((flags & P_LOCATION) == P_LOCATION)
-				printConfig(validHttpContext, P_LOCATION); // to print location directives
-			fclose(fh);
+				printConfig(http_pair, P_LOCATION); // to print location directives
+			fclose(fp);
 		}
-		return (validHttpContext);
+		return (http_pair);
 	}
 };

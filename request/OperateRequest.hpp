@@ -6,11 +6,16 @@
 # include <cctype>
 #include <string>
 #include <algorithm>
+#include <sstream>
+#include <limits>
 
 namespace ft {
 
 // class Request;
 class Connection;
+
+#define PARSE_VALID_URI 1
+#define PARSE_INVALID_URI 0
 
 /*
  * Class to operate the validation and the parsing of http request message
@@ -21,7 +26,8 @@ class OperateRequest {
 	private:
 		std::string	startLine_;	//extract of start line from buffer
 		std::string	headers_;	//extract of headers from buffer
-		size_t		tmp_;		//for stock end pos of buffer(from connection)
+		std::string body_;
+		//size_t		tmp_;		//for stock end pos of buffer(from connection)
 
 	public:
 		OperateRequest(void);
@@ -37,14 +43,34 @@ class OperateRequest {
 		void	parseStartLine(Connection *c);
 		void	parseHeaders(Connection *c);
 		int		parseHeaderLine(Connection *c, std::string headerline);
-		void	checkRequestHeader(Connection *c);
+		void	checkHeader(Connection *c);
+		int		parseUri(std::string uri, Connection *c);
 
 		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
-		int		checkHeaderValue(const std::string &s);
-		std::string	trimWhiteSpace(std::string &s);
+		int		checkHeaderKey(const std::string &s);
+		bool	checkHostHeader(Connection *c);
+		// void	getUriFromLocation(Connection *c);
+		// std::string	trimWhiteSpace(std::string &s);
+
+		template<typename T>
+		std::string toString(const T& v)
+		{
+			std::ostringstream ss;
+			ss << v;
+			return (ss.str());
+		}
+
+		template<typename T>
+		T fromString(const std::string& str)
+		{
+			std::istringstream ss(str);
+			T ret;
+			ss >> ret;
+			return (ret);
+		}
 
 };
 

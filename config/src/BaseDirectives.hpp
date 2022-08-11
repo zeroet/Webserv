@@ -10,11 +10,11 @@ namespace ft
 	{
 		protected:
 			std::string			root_;
-			unsigned long			clientMaxBodySize_;
-			unsigned int			keepaliveTimeout_;
+			unsigned long			client_max_body_size_;
+			unsigned int			keepalive_timeout_;
 			std::vector<std::string>	index_;
 			bool				autoindex_;
-			std::string			errorPage_;
+			std::string			error_page_;
 		public:
 			BaseDirectives();
 			// Getter
@@ -29,6 +29,7 @@ namespace ft
 			void				setRoot(const std::string x);
 			void				setClientMaxBodySize(const unsigned long x);
 			void				setKeepaliveTimeout(const unsigned int x);
+			void				setIndex(const std::vector<std::string> x);
 			void				setIndex(const std::string x);
 			void				setAutoindex(const bool x);
 			void				setErrorPage(const std::string x);

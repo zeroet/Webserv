@@ -30,7 +30,7 @@ namespace ft
 		public:
 			enum TokenType 	type;
 			std::string	text;
-			size_t		lineNumber;
+			size_t		line_num;
 
 		public:
 			//Token();
@@ -40,8 +40,8 @@ namespace ft
 	class Tokenizer
 	{
 		private:
-			std::vector<Token>::iterator	currentToken_;
-			std::vector<Token>::iterator	endToken_;
+			std::vector<Token>::iterator	current_token_;
+			std::vector<Token>::iterator	end_token_;
 		public:
 			std::vector<Token>	 	parse(const std::string& texts);
 		private:

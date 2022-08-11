@@ -37,9 +37,9 @@ namespace ft
 			static void				printHttpContextDirectiveParameters(HttpBlock& context);
 			static void				printServerContextDirectiveParameters(ServerBlock& context);
 			static void				printLocationContextDirectiveParameters(LocationBlock& context);
-			static void				printConfig(std::pair<bool, HttpBlock>& validHttpContext, int flags);
+			static void				printConfig(std::pair<bool, HttpBlock>& http_pair, int flags);
 			static void				printTokens(std::vector<Token>& tokens);
-			static std::pair<bool, HttpBlock>	parseConfig(char* configPath, int flags = 0);
+			static std::pair<bool, HttpBlock>	parseConfig(char* config_path, int flags = 0);
 	};
 }
 #endif

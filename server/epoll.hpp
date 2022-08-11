@@ -1,5 +1,4 @@
-#ifndef EPOLL_HPP
-# define EPOLL_HPP
+#pragma once
 
 #include "socket.hpp"
 #include "connection.hpp"
@@ -10,25 +9,25 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-//#include "../config/src/serverBlock.hpp"
 
 
 # define MAX_EVENT 1024
 # define TIMEOUT -1
 
+namespace ft{
 
 class Connection;
-class Request;
+// class Request;
 
 class Epoll
 {
 public:
     typedef int                             clntFd;
-    typedef std::vector<ft::ServerBlock>        vecBloc;
-    typedef std::map< clntFd, Connection >    mapConnection;
+    typedef std::vector<ServerBlock>        vecBloc;
+    typedef std::map<clntFd, Connection*>   mapConnection;
     typedef struct epoll_event              event;
     typedef event*                          pEvent;;
-    typedef std::pair< int, Connection >      mapPair;
+    typedef std::pair<int, Connection*>     mapPair;
     Socket                              sock;
 
 private:
@@ -38,7 +37,7 @@ private:
 
 public:
     Epoll();
-    Epoll(std::vector<ft::ServerBlock> block); // epoll fd create
+    Epoll(std::vector<ServerBlock> block); // epoll fd create
     Epoll(const Epoll &other);
     ~Epoll();
 
@@ -56,14 +55,11 @@ public:
     void            close_all_serv_socket();
     int             find_server_fd(int fd);
     int             create_clnt_socket(int fd);
+    void            end_connection(int fd);
 
     //Block class or utile ????
-//et nu
-    ft::ServerBlock           get_location_block(int fd);
-    int             getepollfd()
-    {
-        return (epollFd_);
-    }
+    ServerBlock           get_location_block(int fd);
+    int                  check_status_connection(std::string status);
 };
 
-#endif
+}

@@ -1,4 +1,6 @@
 #include "epoll.hpp"
+#include <iostream>
+#include <limits>
 //
 //Canocial Form
 //
@@ -7,7 +9,7 @@
 Epoll::Epoll() {}
 
 //Construct for excute
-Epoll::Epoll(std::vector<ft::ServerBlock> block) : vecBloc_(block)
+Epoll::Epoll(std::vector<ServerBlock> block) : vecBloc_(block)
 {
 	init_server_socket();
 	std::cout << BLUE << "Webserver Run" << FIN << std::endl;
@@ -22,7 +24,9 @@ Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), c_(other.c_), epoll
 }
 
 //Destruct
-Epoll::~Epoll() { close_all_serv_socket(); }
+Epoll::~Epoll() {
+    this->close_all_serv_socket();
+	}
 
 //
 //Epoll utility functions
@@ -37,7 +41,8 @@ void    Epoll::init_server_socket()
 	create_epoll_fd();
 	for (int i = 0; i < numServerFd; i++)
 	{
-		if (OK != (epoll_add(vecBloc_[i].getSocketFd())))
+		// epoll_add(0);
+        if (OK != (epoll_add(vecBloc_[i].getSocketFd())))
 			std::cout << RED << "PortNumber [" << vecBloc_[i].getListen() <<
             "] Epoll_Ctl_Add failed" << FIN <<std::endl;
         else
@@ -48,7 +53,7 @@ void    Epoll::init_server_socket()
         }
 	}
     if (count == 0)
-    { 
+    {
         close_all_serv_socket();
         exit(1);
     }
@@ -118,7 +123,7 @@ void    Epoll::epoll_server_manager()
     while (1)
     {
         evCount = epoll_wait(this->epollFd_, epEvent, MAX_EVENT, TIMEOUT);
-        std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
+        // std::cout << "Epoll event count [ " << evCount <<" ]" << std::endl;
         if (evCount < 0)
         {
             std::cout << "Epoll event count error" << std::endl;
@@ -132,14 +137,19 @@ void    Epoll::epoll_server_manager()
                 close(epEvent[i].data.fd);
                 continue ;
             }
+            // else if (epEvent[i].data.fd == 0)
+            // {
+            //     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            //     return ;
+            // }
             else if ((find_server_fd(epEvent[i].data.fd)) == OK)
             {
                 clntFd = create_clnt_socket(epEvent[i].data.fd);
                 if (clntFd != ERROR)
                 {
                     epoll_add(clntFd);
-		    ft::ServerBlock serverBlock = get_location_block(epEvent[i].data.fd);
-                    this->c_.insert(std::make_pair (clntFd, Connection(clntFd, serverBlock, this)));
+                    ServerBlock serverBlock = get_location_block(epEvent[i].data.fd);
+                    this->c_.insert(std::make_pair (clntFd, new Connection(clntFd, serverBlock, this)));
                 }
                 else
                 {
@@ -152,13 +162,17 @@ void    Epoll::epoll_server_manager()
             {
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
-                it->second.processRequest(); //treat_request()
+                it->second->processRequest(); //treat_request()
+				it->second->printRequestMsg();
+                // int ret = check_status_connection(it->second->getstatus());
+                // if (ret == 1)
+                //     end_connection(fd);
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
-                it->second.response();
+                it->second->processResponse();
             }
         }
     }
@@ -205,22 +219,26 @@ void    Epoll::close_all_serv_socket()
 {
 	int count = this->vecBloc_.size();
 
-	for(int i = 0; i < count; i++)
-		close(this->vecBloc_[i].getSocketFd());
-	close(this->epollFd_);
     if (c_.size() != 0)
     {
         mapConnection::iterator it = c_.begin();
         mapConnection::iterator it1 = c_.end();
         for (; it != it1; it++)
+        {
+            close(it->first);
+            delete it->second;
             c_.erase(it);
+        }
         c_.clear();
     }
+	for(int i = 0; i < count; i++)
+		close(this->vecBloc_[i].getSocketFd());
+	close(this->epollFd_);
 	std::cout << GREEN << "All Socket Closed" << FIN << std::endl;
 }
 
 // Block class or utile  ????
-ft::ServerBlock   Epoll::get_location_block(int fd)
+ServerBlock   Epoll::get_location_block(int fd)
 {
 	int   size = this->vecBloc_.size();
 
@@ -230,4 +248,27 @@ ft::ServerBlock   Epoll::get_location_block(int fd)
 			return(vecBloc_[i]);
 	}
     return 0;
+}
+
+// status = close 
+void       Epoll::end_connection(int fd)
+{
+    mapConnection::iterator it = this->c_.find(fd);
+    delete it->second;
+    close(it->first);
+    c_.erase(it);
+}
+
+
+int        Epoll::check_status_connection(std::string status)
+{
+    if (status.compare("Keep-Alive"))
+        return (0);
+    else if (status.compare("Close"))
+        return (1);
+    else
+    {   
+        std::cout << "connection status error" << std::endl;
+        return (2);
+    }
 }

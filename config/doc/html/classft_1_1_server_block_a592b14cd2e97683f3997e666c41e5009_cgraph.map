@@ -1,0 +1,11 @@
+<map id="ServerBlock" name="ServerBlock">
+<area shape="rect" id="node2" href="$classft_1_1_server_block.html#a2e03d2c2635620f103971ff8031779a7" title="getListen" alt="" coords="171,5,245,32"/>
+<area shape="rect" id="node3" href="$classft_1_1_server_block.html#aa14d06f644ee8148fa9e2ee53d9625f9" title="getServerName" alt="" coords="151,56,265,83"/>
+<area shape="rect" id="node4" href="$classft_1_1_server_block.html#aeef5e4710c02406c46e54d4aa0c8f57c" title="getReturn" alt="" coords="169,107,247,133"/>
+<area shape="rect" id="node5" href="$classft_1_1_server_block.html#ac1e0cef7ed1f4b52957f006c3fa71b03" title="getSocketFd" alt="" coords="160,157,256,184"/>
+<area shape="rect" id="node6" href="$classft_1_1_server_block.html#a6ada7f58bd6d345178035030f68d15d1" title="setListen" alt="" coords="171,208,245,235"/>
+<area shape="rect" id="node7" href="$classft_1_1_server_block.html#a89dfb84333debfc1871f28ef625f9556" title="setServerName" alt="" coords="151,259,265,285"/>
+<area shape="rect" id="node8" href="$classft_1_1_server_block.html#a041d07c701e052b114ef353d5e588998" title="setReturn" alt="" coords="169,309,247,336"/>
+<area shape="rect" id="node9" href="$classft_1_1_server_block.html#aee928b6b4811d6e7bfee9d37796597f6" title="setSocketFd" alt="" coords="160,360,256,387"/>
+<area shape="rect" id="node10" href="$classft_1_1_server_block.html#aaf4aa7d96124b157e91274eb88c77808" title="clearServerName" alt="" coords="147,411,269,437"/>
+</map>

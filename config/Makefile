@@ -4,10 +4,10 @@ SRCS_DIR = src/
 
 INCLUDES = includes/
 
-SRCS = main.cpp \
+SRCS =	main.cpp \
 	PrintConfig.cpp \
-       Tokenizer.cpp \
-       Parser.cpp \
+      	Tokenizer.cpp \
+      	Parser.cpp \
 	BaseDirectives.cpp \
 	HttpBlock.cpp \
 	ServerBlock.cpp \
@@ -18,6 +18,8 @@ OBJS_DIR = obj/
 
 OBJS = $(SRCS:.cpp=.o)
 OBJS := $(addprefix $(OBJS_DIR), $(OBJS))
+MKDIR = /bin/mkdir -p
+MKDIR_OBJS = $(MKDIR) $(OBJS_DIR)
 
 CC = c++
 
@@ -27,13 +29,13 @@ CFLAGS = -Wall -Wextra -Werror -g #-std=c++98
 
 RM = /bin/rm -rf
 
-all : $(NAME)
+all :  $(NAME)
 
 $(NAME) : $(OBJS)
 	$(CC) -o $(NAME) $(OBJS) -I $(INCLUDES)
 
-$(OBJS_DIR)%.o: $(SRCS_DIR)%.cpp
-	mkdir -p $(OBJS_DIR)
+$(OBJS_DIR)%.o: $(SRCS_DIR)%.cpp 
+	@$(MKDIR_OBJS)
 	$(CC) $(CFLAGS) -std=c++98 -c $< -o $@ 
 #%.o:%.cpp
 #	$(CC) -c -o $@ $<
