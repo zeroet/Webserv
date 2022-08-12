@@ -316,7 +316,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 	}
 
 	
-	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
+	std::cout << "location root: " << c->getLocationConfig()->getUriPath() << std::endl;
 	
 	// c->setLocationBlock(c->getRequest().getPath());
 	// std::cout << "location return : " << c->getLocationBlock()->getReturn()[0] << std::endl;
@@ -454,22 +454,22 @@ int			OperateRequest::checkHeaderKey(const std::string &s) {
 // 	return (str);
 // }
 
-int Stoi(const std::string &str, size_t *idx, int base) {
-  char *end;
-  const char *p = str.c_str();
-  long num = std::strtol(p, &end, base);
-  if (p == end) {
-    throw std::invalid_argument("Stoi");
-  }
-  if (num < std::numeric_limits<int>::min() ||
-      num > std::numeric_limits<int>::max() || errno == ERANGE) {
-    throw std::out_of_range("Stoi");
-  }
-  if (idx != NULL) {
-    *idx = static_cast<size_t>(end - p);
-  }
-  return static_cast<int>(num);
-}
+// int Stoi(const std::string &str, size_t *idx, int base) {
+//   char *end;
+//   const char *p = str.c_str();
+//   long num = std::strtol(p, &end, base);
+//   if (p == end) {
+//     throw std::invalid_argument("Stoi");
+//   }
+//   if (num < std::numeric_limits<int>::min() ||
+//       num > std::numeric_limits<int>::max() || errno == ERANGE) {
+//     throw std::out_of_range("Stoi");
+//   }
+//   if (idx != NULL) {
+//     *idx = static_cast<size_t>(end - p);
+//   }
+//   return static_cast<int>(num);
+// }
 
 bool	OperateRequest::checkHostHeader(Connection *c) {
 	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 7, "HTTP/1.") == 0))
