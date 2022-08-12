@@ -316,7 +316,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 	}
 
 	
-	std::cout << "location root: " << c->getLocationConfig()->getUriPath() << std::endl;
+	std::cout << "location root: " << c->getLocationConfig().getCgiPath() << std::endl;
 	
 	// c->setLocationBlock(c->getRequest().getPath());
 	// std::cout << "location return : " << c->getLocationBlock()->getReturn()[0] << std::endl;

@@ -127,8 +127,8 @@ class Connection
 		std::vector<ServerBlock>  	block_;
 		std::string 				status_;
 		Epoll						*ep_;
-		ServerBlock					*serverConfig_;
-		LocationBlock				*locationConfig_;
+		ServerBlock					serverConfig_;
+		LocationBlock				locationConfig_;
 
 		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
 		std::string		buffer_;					//append buffer
@@ -159,18 +159,18 @@ class Connection
 		int							&getPhaseMsg(void);
 		std::string 				&getBuffer(void);
 		int							&getReqStatusCode(void);
-		ServerBlock					*getServerConfig(void);
-		LocationBlock				*getLocationConfig(void);
+		ServerBlock					getServerConfig(void);
+		LocationBlock				getLocationConfig(void);
 
 		//setter
 		void		setPhaseMsg(int new_msg);
 		void		setReqStatusCode(int status_code);
 		void		setServerBlockConfig(std::string server_name);
 		bool		checkLocationConfigExist(std::string path);
-		void		setLocationConfig(LocationBlock *locationblock);
+		void		setLocationConfig(LocationBlock locationblock);
 
 		//utils
-		ServerBlock 	*getServerConfigByServerName(std::string server_name);
+		ServerBlock 	getServerConfigByServerName(std::string server_name);
 		// LocationBlock	*getLocationConfigByPath(std::string path);
 		void    		processRequest(void);
 		void    		response(void);
