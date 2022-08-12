@@ -252,7 +252,7 @@ void	OperateRequest::parseHeaders(Connection *c) {
 		}
 		headers_ = headers_.substr(pos1 + LEN_CRLF, headers_.length());
 		// std::cout << "headers to parse line : " << std::endl;
-		std::cout << headers_ << std::endl;
+		// std::cout << headers_ << std::endl;
 		// std::cout << "header 길이: " << headers_.length() << std::endl;
 	}
 	// std::cout <<
@@ -282,6 +282,27 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 /* Set and check details along with header key and method of request message */
 void	OperateRequest::checkHeader(Connection *c) {
 
+	//check if host value is has host name and port at the same time. if so, parse.
+	//if host value doesn't exist, bad request.
+	if (setUriStructHostPort(c, c->getRequest().getHeaderValue("Host")) == false)
+	{
+		c->setReqStatusCode(BAD_REQUEST);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+	
+	// ServerBlock block = c->getServerConfigByServerName(c->getRequest().getHost());
+	c->setServerBlockConfig(c->getRequest().getHost());
+	// c->getBlock().getLocationBlock(c->getRequest().getPath());
+	// c->setLocationConfig(c->getRequest().getPath());
+	// c->getServerConfig()->getLocationBlock(c->getRequest().getPath());
+	c->getServerConfig()->getLocationBlock(c->getRequest().getPath());
+
+	std::cout << "location block root: " << c->getLocationConfig()->getRoot() << std::endl;
+
+	// std::vector<LocationBlock> tmp = c->getServerConfig()->getLocationBlock();
+	// std::cout << GREEN <<  tmp.size() << FIN << std::endl;
+
 	//if Request status code is set as error code, exit this function
 	if (c->getReqStatusCode() != NOT_DEFINE)
 	{
@@ -297,14 +318,6 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-	//check if host value is has host name and port at the same time. if so, parse.
-	//if host value doesn't exist, bad request.
-	if (setUriStructHostPort(c, c->getRequest().getHeaderValue("Host")) == false)
-	{
-		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(BODY_COMPLETE);
-		return ;
-	}
 	
 	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
 	
@@ -318,9 +331,6 @@ void	OperateRequest::checkHeader(Connection *c) {
 	// else
 	// 	std::cout << "location root: " << location_pair.second.getRoot() << std::cout;
 
-	ServerBlock block = c->get_server_name_block("xxx");
-	std::vector<LocationBlock> tmp = block.getLocationBlock();
-	std::cout << GREEN <<  tmp.size() << FIN << std::endl;
 
  	// std::cout << block.getListen() << std::endl;
 

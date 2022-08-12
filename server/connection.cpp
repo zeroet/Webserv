@@ -9,6 +9,7 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	content_length = 0;
 	client_max_body_size = 0;
 	is_chunk = false;
+	serverConfig_ = NULL;
 }
 
 Connection::~Connection() { }
@@ -92,6 +93,15 @@ std::string	&Connection::getBuffer(void) {
 	return (buffer_);
 }
 
+ServerBlock	*Connection::getServerConfig(void) {
+	return (serverConfig_);
+}
+
+LocationBlock	*Connection::getLocationConfig(void) {
+	return (locationConfig_);
+}
+
+
 //setter
 void	Connection::setReqStatusCode(int status_code) {
 	req_status_code_ = status_code;
@@ -103,6 +113,23 @@ void	Connection::setPhaseMsg(int new_msg) {
 
 void    Connection::response() {
     std::cout <<"Response execute" <<std::endl;
+}
+
+void	Connection::setServerBlockConfig(std::string server_name) {
+	serverConfig_ = getServerConfigByServerName(server_name);
+}
+
+void	Connection::setLocationConfig(std::string path) {
+	std::pair<bool, LocationBlock> location_pair;
+
+	location_pair = serverConfig_->getLocationBlock(path);
+	if (location_pair.first == true)
+		locationConfig_ = &location_pair.second;
+	else
+	{
+		req_status_code_ = NOT_FOUND;
+		phase_msg_ = BODY_COMPLETE;
+	}
 }
 
 //tmp
@@ -129,7 +156,7 @@ void	Connection::printRequestMsg(void) {
 	printf("=====================\n");
 }
 
-ServerBlock	Connection::get_server_name_block(std::string server_name)
+ServerBlock	*Connection::getServerConfigByServerName(std::string server_name)
 {
 	int index = this->block_.size();
 	bool ret;
@@ -139,8 +166,9 @@ ServerBlock	Connection::get_server_name_block(std::string server_name)
 		ret = block_[i].checkServerName(server_name);
 		if (ret == true)
 		{
-			return block_[i];
+			return (&block_[i]);
 		}
 	}
-	return block_[0];
+	return (&block_[0]);
 }
+
