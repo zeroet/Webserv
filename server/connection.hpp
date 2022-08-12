@@ -166,7 +166,8 @@ class Connection
 		void		setPhaseMsg(int new_msg);
 		void		setReqStatusCode(int status_code);
 		void		setServerBlockConfig(std::string server_name);
-		void		setLocationConfig(std::string path);
+		bool		checkLocationConfigExist(std::string path);
+		void		setLocationConfig(LocationBlock *locationblock);
 
 		//utils
 		ServerBlock 	*getServerConfigByServerName(std::string server_name);

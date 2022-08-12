@@ -119,17 +119,22 @@ void	Connection::setServerBlockConfig(std::string server_name) {
 	serverConfig_ = getServerConfigByServerName(server_name);
 }
 
-void	Connection::setLocationConfig(std::string path) {
+void	Connection::setLocationConfig(LocationBlock *locationblock) {
+	locationConfig_ = locationblock;
+}
+
+
+bool		Connection::checkLocationConfigExist(std::string path) {
 	std::pair<bool, LocationBlock> location_pair;
 
 	location_pair = serverConfig_->getLocationBlock(path);
 	if (location_pair.first == true)
-		locationConfig_ = &location_pair.second;
-	else
 	{
-		req_status_code_ = NOT_FOUND;
-		phase_msg_ = BODY_COMPLETE;
+		setLocationConfig(&location_pair.second);
+		return (true);
 	}
+	else
+		return (false);
 }
 
 //tmp

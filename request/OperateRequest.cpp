@@ -291,17 +291,14 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 	
-	// ServerBlock block = c->getServerConfigByServerName(c->getRequest().getHost());
+	//find right server block(with host name) and location block(request path) 
 	c->setServerBlockConfig(c->getRequest().getHost());
-	// c->getBlock().getLocationBlock(c->getRequest().getPath());
-	// c->setLocationConfig(c->getRequest().getPath());
-	// c->getServerConfig()->getLocationBlock(c->getRequest().getPath());
-	c->getServerConfig()->getLocationBlock(c->getRequest().getPath());
-
-	std::cout << "location block root: " << c->getLocationConfig()->getRoot() << std::endl;
-
-	// std::vector<LocationBlock> tmp = c->getServerConfig()->getLocationBlock();
-	// std::cout << GREEN <<  tmp.size() << FIN << std::endl;
+	if (!c->checkLocationConfigExist(c->getRequest().getPath()))
+	{
+		c->setReqStatusCode(NOT_FOUND);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
 
 	//if Request status code is set as error code, exit this function
 	if (c->getReqStatusCode() != NOT_DEFINE)
