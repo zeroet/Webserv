@@ -123,10 +123,12 @@ enum RequestStatusCode {
 class Connection
 {
 	private:
-		int				clntFd_;
+		int							clntFd_;
 		std::vector<ServerBlock>  	block_;
-		std::string 	status_;
-		Epoll			*ep_;
+		std::string 				status_;
+		Epoll						*ep_;
+		ServerBlock					*serverConfig_;
+		LocationBlock				*locationConfig_;
 
 		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
 		std::string		buffer_;					//append buffer
@@ -152,33 +154,29 @@ class Connection
 		~Connection();
 		//getter
 		std::vector<ServerBlock>	&getBlock(void);
-		Request		&getRequest(void);
-		Response	&getResponse(void);
-		int			&getPhaseMsg(void);
-		std::string &getBuffer(void);
-		int			&getReqStatusCode(void);
-		// LocationBlock	*getLocationBlock(void) {
-		// 	return (location_);
-		// }
+		Request						&getRequest(void);
+		Response					&getResponse(void);
+		int							&getPhaseMsg(void);
+		std::string 				&getBuffer(void);
+		int							&getReqStatusCode(void);
+		ServerBlock					*getServerConfig(void);
+		LocationBlock				*getLocationConfig(void);
 
 		//setter
-		void	setPhaseMsg(int new_msg);
-		void	setReqStatusCode(int status_code);
-		// void	setLocationBlock(std::string uri) {
-		// 	std::pair<bool, LocationBlock> ret_location = getBlock().getLocationBlock(uri);
+		void		setPhaseMsg(int new_msg);
+		void		setReqStatusCode(int status_code);
+		void		setServerBlockConfig(std::string server_name);
+		bool		checkLocationConfigExist(std::string path);
+		void		setLocationConfig(LocationBlock *locationblock);
 
-		// 	if (ret_location.first == false)
-		// 		return ;
-		// 	else
-		// 		location_ = &ret_location.second;
-		// }
-
-		void    processRequest();
-		void    response();
+		//utils
+		ServerBlock 	*getServerConfigByServerName(std::string server_name);
+		// LocationBlock	*getLocationConfigByPath(std::string path);
+		void    		processRequest(void);
+		void    		response(void);
 
 		//tmp
 		void	printRequestMsg(void);
-		ServerBlock get_server_name_block(std::string server_name);
 };
 
 }

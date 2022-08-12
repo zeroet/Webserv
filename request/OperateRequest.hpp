@@ -32,6 +32,8 @@ class OperateRequest {
 		std::string body_;
 		size_t		tmp_;		//for stock end pos of buffer(from connection)
 
+		// ServerBlock	*serverConfig_;
+
 	public:
 		OperateRequest(void);
 		~OperateRequest(void);
@@ -39,9 +41,9 @@ class OperateRequest {
 		//getter
 		std::string	&getStartLine(void);
 		std::string	&getHeaders(void);
+		std::string	&getBody(void);
 
 		//setter
-
 		void	checkRequestMessage(Connection *c);
 		void	parseStartLine(Connection *c);
 		void	parseHeaders(Connection *c);
@@ -49,6 +51,7 @@ class OperateRequest {
 		void	checkHeader(Connection *c);
 		int		parseUri(std::string uri, Connection *c);
 		void	setFilePathWithLocation(LocationBlock *location, Connection *c);
+		void	setServerConfig(std::string server_name);
 
 		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
@@ -58,8 +61,6 @@ class OperateRequest {
 		bool	checkHostHeader(Connection *c);
 		bool	isFileExist(Connection *c);
 		int		setUriStructHostPort(Connection *c, std::string host_value);
-		// void	getUriFromLocation(Connection *c);
-		// std::string	trimWhiteSpace(std::string &s);
 
 		template<typename T>
 		std::string toString(const T& v)
