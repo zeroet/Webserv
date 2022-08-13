@@ -4,10 +4,13 @@
 # include "request.hpp"
 
 # include <cctype>
-#include <string>
-#include <algorithm>
-#include <sstream>
-#include <limits>
+# include <string>
+# include <algorithm>
+# include <sstream>
+# include <limits>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
 
 namespace ft {
 
@@ -27,7 +30,7 @@ class OperateRequest {
 		std::string	startLine_;	//extract of start line from buffer
 		std::string	headers_;	//extract of headers from buffer
 		std::string body_;
-		//size_t		tmp_;		//for stock end pos of buffer(from connection)
+		size_t		tmp_;		//for stock end pos of buffer(from connection)
 
 	public:
 		OperateRequest(void);
@@ -45,6 +48,7 @@ class OperateRequest {
 		int		parseHeaderLine(Connection *c, std::string headerline);
 		void	checkHeader(Connection *c);
 		int		parseUri(std::string uri, Connection *c);
+		void	setFilePathWithLocation(LocationBlock *location, Connection *c);
 
 		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
@@ -52,6 +56,8 @@ class OperateRequest {
 		int		checkVersion(const std::string &s);
 		int		checkHeaderKey(const std::string &s);
 		bool	checkHostHeader(Connection *c);
+		bool	isFileExist(Connection *c);
+		int		setUriStructHostPort(Connection *c, std::string host_value);
 		// void	getUriFromLocation(Connection *c);
 		// std::string	trimWhiteSpace(std::string &s);
 

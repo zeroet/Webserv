@@ -2,7 +2,7 @@
 
 OperateRequest operateRequest = OperateRequest();
 
-Connection::Connection(int fd, ServerBlock block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep), request_(new Request) {
+Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
 	// Ctl_mode_flag_ = false;
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
@@ -51,46 +51,90 @@ void    Connection::processRequest()
 	// 	std::cout << "///////////////////////////////////////////vector value: " << ret[i] << std::endl;
 
 	////////////
-	if (phase_msg_ == BODY_COMPLETE)
-	{
-		std::cout << "CGI / EXECUTE / RESPONSE NEED TO BE DEAL" << std::endl;
-	 	ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
-	}
+	// if (phase_msg_ == BODY_COMPLETE)
+	// {
+	// 	std::cout << "CGI / EXECUTE / RESPONSE NEED TO BE DEAL" << std::endl;
+	// 	// ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+	// }
 	////////////
 
 	//to change Ctl Mode when message is done with CRLFCRLF
 	size_t pos;
 	if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos) {
-		if (buffer_.empty())
-			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+		//if (buffer_.empty())
+		ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 	}
 	// if (n == 0 && buffer_.empty() && phase_msg_ == BODY_COMPLETE)
 }
+
+/* ****************************************************************************** */
+/* *************************** function for processResponse ********************* */
+/* ****************************************************************************** */
 
 void    Connection::processResponse()
 {
 	//std::cout << "processResponse execute" << std::endl;
 	//std::cout << "method is " << this->request_->getMethod() << std::endl;
 	//std::cout << "path is " << this->request_->getPath() << std::endl;
-	std::string current_method(this->request_->getMethod());
-
+	std::string current_method(this->request_.getMethod());
 	if (current_method == "GET")
-		this->response_.executeGet();
-	else if (current_method == "POST")
-		this->response_.executePost();
-	else if (current_method == "DELETE")
-		this->response_.executeDelete();
-	else
-		std::cout << "WTF! connard" << std::endl;
+		this->executeGetMothod();
+	//else if (current_method == "POST")
+	//	this->response_.executePost();
+	//else if (current_method == "DELETE")
+	//	this->response_.executeDelete();
+	//else
+	//	std::cout << "WTF! connard" << std::endl;
+}
+
+void	Connection::executeGetMothod(void){
+
+	ServerBlock server_ = this->get_server_name_block(this->request_.getHost());
+
+	
+	//std::cout << this->request_.getBody() << std::endl;
+	//std::cout << this->request_.getFilePath() << std::endl;
+	////std::cout << this->request_.getHeaderValue() << std::endl;
+	//std::cout << this->request_.getHost() << std::endl;
+	//std::cout << this->request_.getMethod() << std::endl;
+	//std::cout << this->request_.getPath() << std::endl;
+	//std::cout << this->request_.getQueryString() << std::endl;
+	//std::cout << this->request_.getUri() << std::endl;
+//	// std::string	buf;
+//
+//	//header setting
+//	/*	
+//		buf += setHeader();
+//	*/
+//
+//	// execute html or cgi
+//	/*
+//		if (getFormat == "html")
+//			buf += getBufHTML();
+//		else (getFormat == cgi)
+//			buf += getBufCGI();
+//
+//	*/
+//	// envoyer par send
+//	/*
+//		send(this->clntFd_, &buf, sizeof(buf) - 1, 0); 
+//	*/
+//	// considerer EPOLLIN ou enlever fd de EPOLL
+//	/*
+//		if (keep_alive)
+//			ep_->epoll_Ctl_Mode(clnFd_, EPOLLIN);
+//		else
+//			fd out!
+//	*/
 }
 
 //getter
-ServerBlock		&Connection::getBlock(void) {
+std::vector<ServerBlock>		&Connection::getBlock(void) {
 	return (block_);
 }
 
 Request	&Connection::getRequest(void) {
-	return (*request_);
+	return (request_);
 }
 
 Response	&Connection::getResponse(void) {
@@ -128,7 +172,12 @@ void	Connection::printRequestMsg(void) {
 	printf("Request_status_code: %d\n", getReqStatusCode());
 	printf("Phase_line: %d\n", getPhaseMsg());
 	printf("method_: %s\n", getRequest().getMethod().c_str());
-	printf("path_: %s\n", getRequest().getUri().c_str());
+	printf("uri_: %s\n", getRequest().getUri().c_str());
+	printf("path_: %s\n", getRequest().getPath().c_str());
+	printf("file_path_: %s\n", getRequest().getFilePath().c_str());
+	printf("host_: %s\n", getRequest().getHost().c_str());
+	printf("port_: %s\n", getRequest().getPort().c_str());
+
 	printf("version_: %s\n", getRequest().getVersion().c_str());
 	getRequest().printHeaders();
 	std::cout << std::endl;
@@ -139,4 +188,20 @@ void	Connection::printRequestMsg(void) {
 	std::cout << "content_length: " << content_length << std::endl;
 	std::cout << "client_max_body_size: " << client_max_body_size << std::endl;
 	printf("=====================\n");
+}
+
+ServerBlock	Connection::get_server_name_block(std::string server_name)
+{
+	int index = this->block_.size();
+	bool ret;
+
+	for (int i = 0; i < index; i++)
+	{
+		ret = block_[i].checkServerName(server_name);
+		if (ret == true)
+		{
+			return block_[i];
+		}
+	}
+	return block_[0];
 }

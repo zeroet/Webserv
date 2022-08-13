@@ -55,13 +55,13 @@ class Response
 		std::string		getStatusCode() const;
 		void			setStatusCode(std::string code);
 		// void			response_manager();
-	
-		/*========================================*/
-		/* ========== execute function ========== */
-		/*========================================*/
-		void			executeGet();
-		void			executePost();
-		void			executeDelete();
+	//
+		///*========================================*/
+		///* ========== execute function ========== */
+		///*========================================*/
+		//void			executeGet();
+		//void			executePost();
+		//void			executeDelete();
 
 	private:
 		std::map<std::string, std::string> Headers_;

@@ -2,6 +2,7 @@
 
 #include "socket.hpp"
 #include "connection.hpp"
+#include "../request/request.hpp"
 #include <sys/epoll.h>
 #include <map>
 
@@ -17,7 +18,6 @@
 namespace ft{
 
 class Connection;
-// class Request;
 
 class Epoll
 {
@@ -58,7 +58,7 @@ public:
     void            end_connection(int fd);
 
     //Block class or utile ????
-    ServerBlock           get_location_block(int fd);
+    std::vector<ServerBlock>          make_new_serverblock(int fd);
     int                  check_status_connection(std::string status);
 };
 
