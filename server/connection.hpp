@@ -129,7 +129,7 @@ class Connection
 		Epoll						*ep_;
 		ServerBlock					serverConfig_;
 		LocationBlock				locationConfig_;
-		
+
 		Request		request_;
 		Response	response_;
 
@@ -141,7 +141,7 @@ class Connection
 		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
 		std::string		buffer_;					//append buffer
 		size_t			client_max_body_size;
-		size_t			content_length;
+		int				buffer_content_length;
 		int				is_chunk;
 		std::string		body_buf;
 		// res

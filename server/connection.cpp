@@ -6,7 +6,7 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	// Ctl_mode_flag_ = false;
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
-	content_length = 0;
+	buffer_content_length = -1;
 	client_max_body_size = 0;
 	is_chunk = false;
 }
@@ -39,10 +39,10 @@ void    Connection::processRequest()
 		|| phase_msg_ == HEADER_INCOMPLETE
 		|| phase_msg_ == HEADER_COMPLETE)
 		operateRequest.checkRequestMessage(this);
-	if (phase_msg_ == BODY_INCOMPLETE)
-		operateRequest.checkRequestBody(this);
-	else if (phase_msg_ == BODY_CHUNKED)
+	if (phase_msg_ == BODY_CHUNKED)
 		std::cout << "check CHUNCKED MESSAGE" << std::endl;
+	else if (phase_msg_ == BODY_INCOMPLETE)
+		operateRequest.checkRequestBody(this);
 	if (phase_msg_ == BODY_COMPLETE)
 	{
 		std::cout << "************ Message body process **********" << std::endl;
@@ -145,10 +145,7 @@ bool		Connection::checkLocationConfigExist(std::string path) {
 		return (true);
 	}
 	else
-	{
-
 		return (false);
-	}
 }
 
 //tmp
@@ -171,7 +168,7 @@ void	Connection::printRequestMsg(void) {
 	// printf("%s", getRequest().getBody().c_str());
 	printf("%s", getBodyBuf().c_str());
 	printf("=====================\n");
-	std::cout << "content_length: " << content_length << std::endl;
+	std::cout << "buffer_content_length: " << buffer_content_length << std::endl;
 	std::cout << "client_max_body_size: " << client_max_body_size << std::endl;
 	printf("=====================\n");
 }
