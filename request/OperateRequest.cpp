@@ -315,27 +315,14 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-	
-	std::cout << "location root: " << c->getLocationConfig().getCgiPath() << std::endl;
-	
-	// c->setLocationBlock(c->getRequest().getPath());
-	// std::cout << "location return : " << c->getLocationBlock()->getReturn()[0] << std::endl;
-	
-	// test getLocationBlock
-	// std::pair<bool, LocationBlock> location_pair = c->getBlock().getLocationBlock(c->getRequest().getPath());
-	// if (!location_pair.first)
-	// 	std::cout << "Invalide" << std::endl;
-	// else
-	// 	std::cout << "location root: " << location_pair.second.getRoot() << std::cout;
-
-
- 	// std::cout << block.getListen() << std::endl;
+	// location block test
+	// std::cout << "location root:  << c->getLocationConfig().getRoot() << std::endl;
 
 	//set path / file path / uri
-	// setFilePathWithLocation(&location_pair.second, c);
+	setFilePathWithLocation(c->getLocationConfig(), c);
 
 	//get Client_Max_Body_Size
-	c->client_max_body_size = c->getBlock()[0].getClientMaxBodySize();
+	c->client_max_body_size = c->getServerConfig().getClientMaxBodySize();
 
 	if ((c->getRequest().getRequestHeaders().count("Content-Length")) && !c->getRequest().getHeaderValue("Content-Length").empty())
 	{
@@ -488,11 +475,11 @@ bool OperateRequest::isFileExist(Connection *c) {
 
 }
 
-void	OperateRequest::setFilePathWithLocation(LocationBlock *location, Connection *c) {
+void	OperateRequest::setFilePathWithLocation(LocationBlock location, Connection *c) {
 
 	//example: request path : /test/
 	std::string filepath;
-	filepath = location->getRoot(); //location root로 filepath init /var/www/html/cgi_tester
+	filepath = location.getRoot(); //location root로 filepath init /var/www/html/cgi_tester
 	// std::cout << "location root: " << filepath << std::endl;
 	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
 
@@ -502,16 +489,16 @@ void	OperateRequest::setFilePathWithLocation(LocationBlock *location, Connection
 				request path: /cgi_tester
 		case2)	location uri: /cgi_tester/
 				request path: /cgi_tester/test1		*/
-	if (location->getRoot() != c->getBlock()[0].getRoot())
+	if (location.getRoot() != c->getBlock()[0].getRoot())
 	{
-		if (c->getRequest().getPath().substr(location->getUriPath().length()).empty()) //case 1
+		if (c->getRequest().getPath().substr(location.getUriPath().length()).empty()) //case 1
 			filepath.append("/");
 		else // case 2
 		{
-			if (*(location->getUriPath().rbegin()) == '/') // /cgi_tester/
-				filepath.append(c->getRequest().getPath().substr(location->getUriPath().length() - 1));
+			if (*(location.getUriPath().rbegin()) == '/') // /cgi_tester/
+				filepath.append(c->getRequest().getPath().substr(location.getUriPath().length() - 1));
 			else // /cgi_tester
-				filepath.append(c->getRequest().getPath().substr(location->getUriPath().length()));
+				filepath.append(c->getRequest().getPath().substr(location.getUriPath().length()));
 		}
 	}
 	else
