@@ -50,7 +50,7 @@ class OperateRequest {
 		int		parseHeaderLine(Connection *c, std::string headerline);
 		void	checkHeader(Connection *c);
 		int		parseUri(std::string uri, Connection *c);
-		void	setFilePathWithLocation(LocationBlock *location, Connection *c);
+		void	setFilePathWithLocation(LocationBlock location, Connection *c);
 		void	setServerConfig(std::string server_name);
 
 		//utiles
