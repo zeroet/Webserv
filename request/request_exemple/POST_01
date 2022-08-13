@@ -1,8 +1,8 @@
-POST /return_test/process.cgi HTTP/1.1
+POST /test/process.cgi HTTP/1.1
 User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
 Host: www.tutorialspoint.com
 Content-Type: text/xml; charset=utf-8
-Content-Length: 200
+Content-Length: 100
 Accept-Language: en-us
 Accept-Encoding: gzip, deflate
 Connection: Keep-Alive

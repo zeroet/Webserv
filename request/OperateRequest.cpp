@@ -313,9 +313,6 @@ void	OperateRequest::checkHeader(Connection *c) {
 	else
 		setFilePathWithLocation(c->getLocationConfig(), c);
 
-
-	std::cout << "///////////root/////////" << c->getServerConfig().getRoot() << std::endl;
-
 	//if Request status code is set as error code, exit this function
 	if (c->getReqStatusCode() != NOT_DEFINE)
 	{
@@ -349,9 +346,9 @@ void	OperateRequest::checkHeader(Connection *c) {
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
 		{
 			c->setBodyBuf(c->getBuffer());
-			std::cout << "////////////////body buf check: " << c->getBodyBuf() << std::endl;
+			// std::cout << "////////////////body buf check: " << c->getBodyBuf() << std::endl;
 			// c->getBuffer().erase(0, c->getBuffer().length());
-			c->getRequest().setBody(c->getBodyBuf());
+			// c->getRequest().setBody(c->getBodyBuf());
 			// c->setBodyBuf(body_);
 			// c->getBuffer().erase(0, c->getBuffer().length());
 		}
@@ -380,7 +377,10 @@ void	OperateRequest::checkHeader(Connection *c) {
 	else if (c->is_chunk == false && c->buffer_content_length != -1 && c->buffer_content_length <= (int)c->getBodyBuf().size())
 		c->setPhaseMsg(BODY_COMPLETE);
 	else
+	{
+		// std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" <<std::endl;
 		c->setPhaseMsg(BODY_INCOMPLETE);
+	}
 	
 
 	//location config return value check
@@ -395,18 +395,18 @@ void	OperateRequest::checkHeader(Connection *c) {
 void	OperateRequest::checkRequestBody(Connection *c) {
 	if (!c->is_chunk)
 	{
-		if (((ssize_t)c->buffer_content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_char))
+		if (((ssize_t)c->buffer_content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_.c_str()))
 			return ;
-		else if ((size_t)c->buffer_content_length <= strlen(c->buffer_char))
+		else if ((size_t)c->buffer_content_length <= strlen(c->buffer_.c_str()))
 		{
-			c->body_buf.append(c->buffer_char, c->buffer_content_length);
+			c->body_buf.append(c->buffer_, c->buffer_content_length);
 			c->buffer_content_length = 0;
 			c->setPhaseMsg(BODY_COMPLETE);
 		}
 		else
 		{
-			c->buffer_content_length = c->buffer_content_length - strlen(c->buffer_char);
-			c->setBodyBuf(c->buffer_char);
+			c->buffer_content_length = c->buffer_content_length - strlen(c->buffer_.c_str());
+			c->setBodyBuf(c->buffer_);
 		}
 	}
 	else
