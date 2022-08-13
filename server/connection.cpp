@@ -123,6 +123,10 @@ void	Connection::setLocationConfig(LocationBlock locationblock) {
 	locationConfig_ = locationblock;
 }
 
+void	Connection::setBodyBuf(std::string bodybuf) {
+	body_buf = bodybuf;
+}
+
 
 bool		Connection::checkLocationConfigExist(std::string path) {
 	std::pair<bool, LocationBlock> location_pair;

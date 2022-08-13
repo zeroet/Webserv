@@ -52,6 +52,7 @@ class OperateRequest {
 		int		parseUri(std::string uri, Connection *c);
 		void	setFilePathWithLocation(LocationBlock location, Connection *c);
 		void	setServerConfig(std::string server_name);
+		void	setBody(std::string bodybuf_);
 
 		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);

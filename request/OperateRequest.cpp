@@ -14,6 +14,10 @@ std::string	&OperateRequest::getHeaders(void) {
 
 //setter
 
+void	OperateRequest::setBody(std::string bodybuf_) {
+	body_ = bodybuf_;
+}
+
 void	OperateRequest::checkRequestMessage(Connection *c) {
 
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
@@ -327,7 +331,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 	if ((c->getRequest().getRequestHeaders().count("Content-Length")) && !c->getRequest().getHeaderValue("Content-Length").empty())
 	{
 		c->content_length = fromString<int>((c->getRequest().getHeaderValue("Content-Length")));
-		// std::cout << "content-length in function:" << c->content_length << std::endl;
+		std::cout << "content-length in function:" << c->content_length << std::endl;
 		if (c->content_length > (c->client_max_body_size))
 		{
 			c->setReqStatusCode(PAYLOAD_TOO_LARGE);
@@ -336,22 +340,24 @@ void	OperateRequest::checkHeader(Connection *c) {
 		}
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
 		{
-			// body_ = c->getBuffer().substr(0, c->getBuffer().length());
+			body_ = c->getBuffer().substr(0, c->getBuffer().length());
 			std::cout << "////////////////body check: " << body_ << std::endl;
 			// c->getBuffer().erase(0, c->getBuffer().length());
 			c->getRequest().setBody(body_);
+			c->setBodyBuf(body_);
+			// c->getBuffer().erase(0, c->getBuffer().length());
 		}
 		else
 			std::cout << "///////////////////////////EMPTY////////////////////////" << std::endl;
 	}
 
 	// when file doesn't exist
-	// if (c->getRequest().getMethod() == "GET" && !isFileExist(c))
-	// {
-	// 	c->setReqStatusCode(NOT_FOUND);
-	// 	c->setPhaseMsg(BODY_COMPLETE);
-	// 	return ;
-	// }
+	if (c->getRequest().getMethod() == "GET" && !isFileExist(c))
+	{
+		c->setReqStatusCode(NOT_FOUND);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
 	
 	//chunked message flag on/off
 	if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
