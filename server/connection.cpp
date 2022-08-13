@@ -9,7 +9,6 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	content_length = 0;
 	client_max_body_size = 0;
 	is_chunk = false;
-	// serverConfig_ = NULL;
 }
 
 Connection::~Connection() { }
@@ -17,7 +16,6 @@ Connection::~Connection() { }
 void    Connection::processRequest()
 {
 
-	memset(&buffer_char, 0, BUFFER_SIZE);
     int n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0); //except \r
 
 	/* protection to disconnect
@@ -41,9 +39,17 @@ void    Connection::processRequest()
 		|| phase_msg_ == HEADER_INCOMPLETE
 		|| phase_msg_ == HEADER_COMPLETE)
 		operateRequest.checkRequestMessage(this);
-
+	if (phase_msg_ == BODY_INCOMPLETE)
+		operateRequest.checkRequestBody(this);
+	else if (phase_msg_ == BODY_CHUNKED)
+		std::cout << "check CHUNCKED MESSAGE" << std::endl;
 	if (phase_msg_ == BODY_COMPLETE)
+	{
 		std::cout << "************ Message body process **********" << std::endl;
+		size_t pos = 0;
+		if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos) 
+			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+	}
 
 
 	// std::vector<std::string> ret = getBlock().locationList[0].getReturn();
@@ -60,12 +66,9 @@ void    Connection::processRequest()
 	////////////
 
 	//to change Ctl Mode when message is done with CRLFCRLF
-	size_t pos = 0;
-	if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos) {
-		if (buffer_.empty())
-			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
-	}
+	
 	// if (n == 0 && buffer_.empty() && phase_msg_ == BODY_COMPLETE)
+	memset(&buffer_char, 0, n);
 }
 
 //getter
@@ -99,6 +102,10 @@ ServerBlock	Connection::getServerConfig(void) {
 
 LocationBlock	Connection::getLocationConfig(void) {
 	return (locationConfig_);
+}
+
+std::string		&Connection::getBodyBuf(void) {
+	return (body_buf);
 }
 
 
@@ -158,7 +165,8 @@ void	Connection::printRequestMsg(void) {
 	std::cout << std::endl;
 	printf("=====================\n");
 	printf("body:\n");
-	printf("%s", getRequest().getBody().c_str());
+	// printf("%s", getRequest().getBody().c_str());
+	printf("%s", getBodyBuf().c_str());
 	printf("=====================\n");
 	std::cout << "content_length: " << content_length << std::endl;
 	std::cout << "client_max_body_size: " << client_max_body_size << std::endl;

@@ -330,7 +330,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 
 	if ((c->getRequest().getRequestHeaders().count("Content-Length")) && !c->getRequest().getHeaderValue("Content-Length").empty())
 	{
-		c->content_length = fromString<int>((c->getRequest().getHeaderValue("Content-Length")));
+		c->content_length = fromString<size_t>((c->getRequest().getHeaderValue("Content-Length")));
 		std::cout << "content-length in function:" << c->content_length << std::endl;
 		if (c->content_length > (c->client_max_body_size))
 		{
@@ -340,16 +340,18 @@ void	OperateRequest::checkHeader(Connection *c) {
 		}
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
 		{
-			body_ = c->getBuffer().substr(0, c->getBuffer().length());
-			std::cout << "////////////////body check: " << body_ << std::endl;
+			c->setBodyBuf(c->getBuffer());
+			std::cout << "////////////////body buf check: " << c->getBodyBuf() << std::endl;
 			// c->getBuffer().erase(0, c->getBuffer().length());
-			c->getRequest().setBody(body_);
-			c->setBodyBuf(body_);
+			c->getRequest().setBody(c->getBodyBuf());
+			// c->setBodyBuf(body_);
 			// c->getBuffer().erase(0, c->getBuffer().length());
 		}
 		else
 			std::cout << "///////////////////////////EMPTY////////////////////////" << std::endl;
 	}
+	else if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("Chunked"))
+		c->is_chunk = true;
 
 	// when file doesn't exist
 	if (c->getRequest().getMethod() == "GET" && !isFileExist(c))
@@ -363,7 +365,6 @@ void	OperateRequest::checkHeader(Connection *c) {
 	if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
 	{
 		c->is_chunk = false;
-		body_.clear();
 		c->content_length = 0;
 		c->setPhaseMsg(BODY_COMPLETE);
 	}
@@ -384,6 +385,37 @@ void	OperateRequest::checkHeader(Connection *c) {
 	//directory exist check
 
 	//When Method is delete try to delete directory -> no no
+}
+
+void	OperateRequest::checkRequestBody(Connection *c) {
+	(void)c;
+	std::cout << "+++++++++++++++MANAGING BODY+++++++++++++++++" << std::endl;
+	std::cout << "status chunk ? " << c->is_chunk << std::endl;
+	std::cout << "+++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+	if (!c->is_chunk)
+	{
+		if (((ssize_t)c->content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_char))
+		{
+			std::cout << "&&&&&&&&&&&&& HERE 1 &&&&&&&&&&&&&&" << std::endl;
+			return ;
+		}
+		else if ((size_t)c->content_length <= strlen(c->buffer_char))
+		{
+			std::cout << "&&&&&&&&&&&&& HERE 2 &&&&&&&&&&&&&&" << std::endl;
+			c->body_buf.append(c->buffer_char, c->content_length);
+			c->content_length = 0;
+			c->setPhaseMsg(BODY_COMPLETE);
+		}
+		else
+		{
+			std::cout << "&&&&&&&&&&&&& HERE 3 &&&&&&&&&&&&&&" << std::endl;
+			c->content_length = c->content_length - strlen(c->buffer_char);
+			c->setBodyBuf(c->buffer_char);
+		}
+
+	}
+	else
+		c->setPhaseMsg(BODY_COMPLETE);
 }
 
 
