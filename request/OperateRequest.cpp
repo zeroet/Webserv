@@ -42,8 +42,6 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	{
 		std::cout << "Parse Header" << std::endl;
 		parseHeaders(c);
-	// 	std::cout << "Header parse done" << std::endl;
-	// 	std::cout << "buffer check: " << c->getBuffer() << std::endl;
 		checkHeader(c);
 	}
 }
@@ -59,7 +57,6 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	{
 		c->setReqStatusCode(BAD_REQUEST);
 		c->setPhaseMsg(HEADER_COMPLETE);
-		std::cout << "start line argument wrong request code : " <<  c->getReqStatusCode() <<  std::endl;
 		return ;
 	}
 	// for (size_t i = 0; i < split_start_line.size(); i++)
@@ -299,10 +296,25 @@ void	OperateRequest::checkHeader(Connection *c) {
 	c->setServerBlockConfig(c->getRequest().getHost());
 	if (!c->checkLocationConfigExist(c->getRequest().getPath()))
 	{
-		c->setReqStatusCode(NOT_FOUND);
-		c->setPhaseMsg(BODY_COMPLETE);
-		return ;
+		// uri root == serverblock root
+		// index.html check -> index.html use
+		// if not -> autoindex check -> on => directory list / off => forbidden 403 
+		c->getRequest().setFilePath(c->getServerConfig().getRoot());
+		if (!checkIndex(c))
+		{
+			if (c->getServerConfig().getAutoindex() == false)
+			{
+				c->setReqStatusCode(NOT_FOUND);
+				c->setPhaseMsg(BODY_COMPLETE);
+				return ;
+			}
+		}
 	}
+	else
+		setFilePathWithLocation(c->getLocationConfig(), c);
+
+
+	std::cout << "///////////root/////////" << c->getServerConfig().getRoot() << std::endl;
 
 	//if Request status code is set as error code, exit this function
 	if (c->getReqStatusCode() != NOT_DEFINE)
@@ -319,20 +331,16 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-	// location block test
-	// std::cout << "location root:  << c->getLocationConfig().getRoot() << std::endl;
-
 	//set path / file path / uri
-	setFilePathWithLocation(c->getLocationConfig(), c);
 
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getServerConfig().getClientMaxBodySize();
 
 	if ((c->getRequest().getRequestHeaders().count("Content-Length")) && !c->getRequest().getHeaderValue("Content-Length").empty())
 	{
-		c->content_length = fromString<size_t>((c->getRequest().getHeaderValue("Content-Length")));
-		std::cout << "content-length in function:" << c->content_length << std::endl;
-		if (c->content_length > (c->client_max_body_size))
+		c->buffer_content_length = fromString<size_t>((c->getRequest().getHeaderValue("Content-Length")));
+		std::cout << "content-length in function:" << c->buffer_content_length << std::endl;
+		if ((size_t)c->buffer_content_length > (c->client_max_body_size))
 		{
 			c->setReqStatusCode(PAYLOAD_TOO_LARGE);
 			c->setPhaseMsg(BODY_COMPLETE);
@@ -347,10 +355,8 @@ void	OperateRequest::checkHeader(Connection *c) {
 			// c->setBodyBuf(body_);
 			// c->getBuffer().erase(0, c->getBuffer().length());
 		}
-		else
-			std::cout << "///////////////////////////EMPTY////////////////////////" << std::endl;
 	}
-	else if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("Chunked"))
+	else if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("chunked"))
 		c->is_chunk = true;
 
 	// when file doesn't exist
@@ -365,18 +371,17 @@ void	OperateRequest::checkHeader(Connection *c) {
 	if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
 	{
 		c->is_chunk = false;
-		c->content_length = 0;
+		c->getBodyBuf().clear();
+		c->buffer_content_length = -1;
 		c->setPhaseMsg(BODY_COMPLETE);
-	}
-	else if (c->getRequest().getRequestHeaders().count("Transfer-Encoding") && (c->getRequest().getHeaderValue("Transfer-Encoding") == "chunked"))
-	{
-		c->setPhaseMsg(BODY_CHUNKED);
-		c->is_chunk = true;
 	}
 	else if (c->is_chunk == true)
 		c->setPhaseMsg(BODY_COMPLETE);
+	else if (c->is_chunk == false && c->buffer_content_length != -1 && c->buffer_content_length <= (int)c->getBodyBuf().size())
+		c->setPhaseMsg(BODY_COMPLETE);
 	else
 		c->setPhaseMsg(BODY_INCOMPLETE);
+	
 
 	//location config return value check
 	
@@ -388,31 +393,21 @@ void	OperateRequest::checkHeader(Connection *c) {
 }
 
 void	OperateRequest::checkRequestBody(Connection *c) {
-	(void)c;
-	std::cout << "+++++++++++++++MANAGING BODY+++++++++++++++++" << std::endl;
-	std::cout << "status chunk ? " << c->is_chunk << std::endl;
-	std::cout << "+++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 	if (!c->is_chunk)
 	{
-		if (((ssize_t)c->content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_char))
-		{
-			std::cout << "&&&&&&&&&&&&& HERE 1 &&&&&&&&&&&&&&" << std::endl;
+		if (((ssize_t)c->buffer_content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_char))
 			return ;
-		}
-		else if ((size_t)c->content_length <= strlen(c->buffer_char))
+		else if ((size_t)c->buffer_content_length <= strlen(c->buffer_char))
 		{
-			std::cout << "&&&&&&&&&&&&& HERE 2 &&&&&&&&&&&&&&" << std::endl;
-			c->body_buf.append(c->buffer_char, c->content_length);
-			c->content_length = 0;
+			c->body_buf.append(c->buffer_char, c->buffer_content_length);
+			c->buffer_content_length = 0;
 			c->setPhaseMsg(BODY_COMPLETE);
 		}
 		else
 		{
-			std::cout << "&&&&&&&&&&&&& HERE 3 &&&&&&&&&&&&&&" << std::endl;
-			c->content_length = c->content_length - strlen(c->buffer_char);
+			c->buffer_content_length = c->buffer_content_length - strlen(c->buffer_char);
 			c->setBodyBuf(c->buffer_char);
 		}
-
 	}
 	else
 		c->setPhaseMsg(BODY_COMPLETE);
@@ -559,4 +554,22 @@ int	OperateRequest::setUriStructHostPort(Connection *c, std::string host_value) 
 	else
 		c->getRequest().setHost(host_value_parse[0]);
 	return (true);
+}
+
+bool	OperateRequest::checkIndex(Connection *c) {
+	std::vector<std::string> index = c->getServerConfig().getIndex();
+	struct stat stat_buf;
+	std::string index_path;
+
+	for (std::vector<std::string>::iterator it = index.begin(); it != index.end(); it++)
+	{
+		index_path = c->getRequest().getFilePath() + "/" + (*it);
+		if (stat(index_path.c_str(), &stat_buf) == 0)
+		{
+			c->getRequest().setFilePath(index_path);
+			return (true);
+		}
+		index_path.clear();
+	}
+	return (false);
 }
