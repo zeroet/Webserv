@@ -145,7 +145,10 @@ bool		Connection::checkLocationConfigExist(std::string path) {
 		return (true);
 	}
 	else
+	{
+
 		return (false);
+	}
 }
 
 //tmp

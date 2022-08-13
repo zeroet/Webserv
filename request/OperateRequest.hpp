@@ -55,6 +55,7 @@ class OperateRequest {
 		void	checkHeader(Connection *c);
 		int		parseUri(std::string uri, Connection *c);
 		void	checkRequestBody(Connection *c);
+		bool	checkIndex(Connection *c);
 		
 
 		//utiles

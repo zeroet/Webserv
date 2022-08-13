@@ -299,9 +299,19 @@ void	OperateRequest::checkHeader(Connection *c) {
 	c->setServerBlockConfig(c->getRequest().getHost());
 	if (!c->checkLocationConfigExist(c->getRequest().getPath()))
 	{
-		c->setReqStatusCode(NOT_FOUND);
-		c->setPhaseMsg(BODY_COMPLETE);
-		return ;
+		// uri root == serverblock root
+		// index.html check -> index.html use
+		// if not -> autoindex check -> on => directory list / off => forbidden 403 
+		c->getRequest().setFilePath(c->getServerConfig().getRoot());
+		if (!checkIndex(c))
+		{
+			if (c->getServerConfig().getAutoindex() == false)
+			{
+				c->setReqStatusCode(NOT_FOUND);
+				c->setPhaseMsg(BODY_COMPLETE);
+				return ;
+			}
+		}
 	}
 
 	//if Request status code is set as error code, exit this function
@@ -388,31 +398,21 @@ void	OperateRequest::checkHeader(Connection *c) {
 }
 
 void	OperateRequest::checkRequestBody(Connection *c) {
-	(void)c;
-	std::cout << "+++++++++++++++MANAGING BODY+++++++++++++++++" << std::endl;
-	std::cout << "status chunk ? " << c->is_chunk << std::endl;
-	std::cout << "+++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 	if (!c->is_chunk)
 	{
 		if (((ssize_t)c->content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_char))
-		{
-			std::cout << "&&&&&&&&&&&&& HERE 1 &&&&&&&&&&&&&&" << std::endl;
 			return ;
-		}
 		else if ((size_t)c->content_length <= strlen(c->buffer_char))
 		{
-			std::cout << "&&&&&&&&&&&&& HERE 2 &&&&&&&&&&&&&&" << std::endl;
 			c->body_buf.append(c->buffer_char, c->content_length);
 			c->content_length = 0;
 			c->setPhaseMsg(BODY_COMPLETE);
 		}
 		else
 		{
-			std::cout << "&&&&&&&&&&&&& HERE 3 &&&&&&&&&&&&&&" << std::endl;
 			c->content_length = c->content_length - strlen(c->buffer_char);
 			c->setBodyBuf(c->buffer_char);
 		}
-
 	}
 	else
 		c->setPhaseMsg(BODY_COMPLETE);
@@ -559,4 +559,22 @@ int	OperateRequest::setUriStructHostPort(Connection *c, std::string host_value) 
 	else
 		c->getRequest().setHost(host_value_parse[0]);
 	return (true);
+}
+
+bool	OperateRequest::checkIndex(Connection *c) {
+	std::vector<std::string> index = c->getServerConfig().getIndex();
+	struct stat stat_buf;
+	std::string index_path;
+
+	for (std::vector<std::string>::iterator it = index.begin(); it != index.end(); it++)
+	{
+		index_path = c->getRequest().getFilePath() + "/" + (*it);
+		if (stat(index_path.c_str(), &stat_buf))
+		{
+			c->getRequest().setFilePath(index_path);
+			return (true);
+		}
+		index_path.clear();
+	}
+	return (false);
 }
