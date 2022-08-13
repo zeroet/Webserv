@@ -168,6 +168,7 @@ class Connection
 		void		setServerBlockConfig(std::string server_name);
 		bool		checkLocationConfigExist(std::string path);
 		void		setLocationConfig(LocationBlock locationblock);
+		void		setBodyBuf(std::string bodybuf);
 
 		//utils
 		ServerBlock 	getServerConfigByServerName(std::string server_name);
