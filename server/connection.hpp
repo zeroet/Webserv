@@ -129,12 +129,7 @@ class Connection
 		Epoll						*ep_;
 		ServerBlock					serverConfig_;
 		LocationBlock				locationConfig_;
-
-		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
-		std::string		buffer_;					//append buffer
-
-		// Request			request_;
-		// Response		response_;
+		
 		Request		request_;
 		Response	response_;
 
@@ -142,6 +137,9 @@ class Connection
 		int				req_status_code_;
 
 	public:
+
+		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
+		std::string		buffer_;					//append buffer
 		size_t			client_max_body_size;
 		size_t			content_length;
 		int				is_chunk;
@@ -159,6 +157,7 @@ class Connection
 		int							&getPhaseMsg(void);
 		std::string 				&getBuffer(void);
 		int							&getReqStatusCode(void);
+		std::string					&getBodyBuf(void);
 		ServerBlock					getServerConfig(void);
 		LocationBlock				getLocationConfig(void);
 
