@@ -56,7 +56,8 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (split_start_line.size() != 3)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	// for (size_t i = 0; i < split_start_line.size(); i++)
@@ -66,7 +67,8 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (!checkMethod(split_start_line[0]))
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	else
@@ -79,7 +81,8 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (parseUri(split_start_line[1], c) == PARSE_INVALID_URI)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 
@@ -90,14 +93,17 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (!checkVersion(version) || version.length() != 3 || cmp)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	cmp = version.compare(0, 2, "1.");
 	if (cmp)
 	{
+		std::cout << "hererkejflksdjflksdjf" << std::endl;
 		c->setReqStatusCode(HTTP_VERSION_NOT_SUPPORTED);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	c->getRequest().setVersion(http + version);
@@ -283,9 +289,16 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 /* Set and check details along with header key and method of request message */
 void	OperateRequest::checkHeader(Connection *c) {
 
+	//if Request status code is set as error code, exit this function
+	if (c->getReqStatusCode() != NOT_DEFINE)
+	{
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
 	//check if host value is has host name and port at the same time. if so, parse.
 	//if host value doesn't exist, bad request.
-	if (setUriStructHostPort(c, c->getRequest().getHeaderValue("Host")) == false)
+	if (setUriStructHostPort(c, c->getRequest().getHeaderValue("Host")) == false && c->getRequest().getVersion().compare("HTTP/1.0"))
 	{
 		c->setReqStatusCode(BAD_REQUEST);
 		c->setPhaseMsg(BODY_COMPLETE);
@@ -310,25 +323,18 @@ void	OperateRequest::checkHeader(Connection *c) {
 			}
 		}
 	}
-	else
+	else //set path / file path / uri
 		setFilePathWithLocation(c->getLocationConfig(), c);
 
-	//if Request status code is set as error code, exit this function
-	if (c->getReqStatusCode() != NOT_DEFINE)
-	{
-		c->setPhaseMsg(BODY_COMPLETE);
-		return ;
-	}
 
 	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
-	if (checkHostHeader(c) == false)
-	{
-		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(BODY_COMPLETE);
-		return ;
-	}
+	// if (checkHostHeader(c) != NOT_DEFINE)
+	// {
+	// 	c->setReqStatusCode(checkHostHeader(c));
+	// 	c->setPhaseMsg(BODY_COMPLETE);
+	// 	return ;
+	// }
 
-	//set path / file path / uri
 
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getServerConfig().getClientMaxBodySize();
@@ -364,6 +370,17 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 	
+	//Allow method check
+	if (checkAllowMethod(c) == false)
+	{
+		c->setReqStatusCode(METHOD_NOT_ALLOWED);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
+	//location config return value check
+	
+	
 	//chunked message flag on/off
 	if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
 	{
@@ -377,15 +394,9 @@ void	OperateRequest::checkHeader(Connection *c) {
 	else if (c->is_chunk == false && c->buffer_content_length != -1 && c->buffer_content_length <= (int)c->getBodyBuf().size())
 		c->setPhaseMsg(BODY_COMPLETE);
 	else
-	{
-		// std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" <<std::endl;
 		c->setPhaseMsg(BODY_INCOMPLETE);
-	}
-	
 
-	//location config return value check
 	
-	//Allow method check
 
 	//directory exist check
 
@@ -401,6 +412,7 @@ void	OperateRequest::checkRequestBody(Connection *c) {
 		{
 			c->body_buf.append(c->buffer_, c->buffer_content_length);
 			c->buffer_content_length = 0;
+			c->getRequest().setBody(c->body_buf);
 			c->setPhaseMsg(BODY_COMPLETE);
 		}
 		else
@@ -491,13 +503,13 @@ int			OperateRequest::checkHeaderKey(const std::string &s) {
 //   return static_cast<int>(num);
 // }
 
-bool	OperateRequest::checkHostHeader(Connection *c) {
-	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 7, "HTTP/1.") == 0))
-		return (true);
-	else if (c->getRequest().getVersion().compare("HTTP/1.0") == 0)
-		return (true);
-	return (false);
-}
+// int	OperateRequest::checkHostHeader(Connection *c) {
+// 	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 5, "HTTP/") != 0))
+// 		return (BAD_REQUEST);
+// 	else if (c->getRequest().getVersion().compare(5, 3, "1.0") || c->getRequest().getVersion().compare(5, 3, "1.1"))
+// 		return (NOT_DEFINE);
+// 	return (HTTP_VERSION_NOT_SUPPORTED);
+// }
 
 bool OperateRequest::isFileExist(Connection *c) {
 	struct stat stat_buf;
@@ -570,6 +582,18 @@ bool	OperateRequest::checkIndex(Connection *c) {
 			return (true);
 		}
 		index_path.clear();
+	}
+	return (false);
+}
+
+bool	OperateRequest::checkAllowMethod(Connection *c) {
+	std::vector<std::string> limit_method = c->getLocationConfig().getLimitExcept();
+	if (limit_method.size() == 0)
+		return (true);
+	for(size_t i = 0; i < limit_method.size(); i++)
+	{
+		if (limit_method[i] == c->getRequest().getMethod())
+			return (true);
 	}
 	return (false);
 }

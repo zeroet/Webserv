@@ -63,9 +63,10 @@ class OperateRequest {
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
 		int		checkHeaderKey(const std::string &s);
-		bool	checkHostHeader(Connection *c);
+		// int		checkHostHeader(Connection *c);
 		bool	isFileExist(Connection *c);
 		int		setUriStructHostPort(Connection *c, std::string host_value);
+		bool	checkAllowMethod(Connection *c);
 
 		template<typename T>
 		std::string toString(const T& v)
