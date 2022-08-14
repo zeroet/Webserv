@@ -68,6 +68,7 @@ class OperateRequest {
 		int		setUriStructHostPort(Connection *c, std::string host_value);
 		bool	checkAllowMethod(Connection *c);
 		void	checkLocationReturnAndApply(std::vector<std::string> ret, Connection *c);
+		bool	isUriDirectory(Connection *c);
 
 		template<typename T>
 		std::string toString(const T& v)

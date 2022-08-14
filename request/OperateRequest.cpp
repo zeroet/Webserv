@@ -362,7 +362,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 		c->is_chunk = true;
 
 	// when file doesn't exist
-	if (c->getRequest().getMethod() == "GET" && !isFileExist(c))
+	if (c->getRequest().getMethod() != "POST" && !isFileExist(c))
 	{
 		c->setReqStatusCode(NOT_FOUND);
 		c->setPhaseMsg(BODY_COMPLETE);
@@ -380,13 +380,39 @@ void	OperateRequest::checkHeader(Connection *c) {
 	//location config return value check
 	if (!c->getLocationConfig().getReturn().empty())
 	{
-		std::cout << "/////////////// LOCATION RETURN EXIST //////////////" << std::endl;
+		// std::cout << "/////////////// LOCATION RETURN EXIST //////////////" << std::endl;
 		checkLocationReturnAndApply(c->getLocationConfig().getReturn(), c);
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	
 	
+	if((isUriDirectory(c) == true) && (c->getRequest().getMethod() == "DELETE") && (c->getLocationConfig().getAutoindex() == false))
+	{
+		c->setReqStatusCode(MOVED_PERMANENTLY);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
+	if (c->getRequest().getMethod() == "DELETE")
+	{
+		struct stat stat_buffer;
+
+		stat(c->getRequest().getFilePath().c_str(), &stat_buffer);
+		if (S_ISDIR(stat_buffer.st_mode) && *(c->getRequest().getFilePath().rbegin()) != '/')
+		{
+			c->setReqStatusCode(CONFLICT);
+			c->setPhaseMsg(BODY_COMPLETE);
+			return ;
+		}
+		else if (c->getRequest().getPath() == "/")
+		{
+			c->setReqStatusCode(FORBIDDEN);
+			c->setPhaseMsg(BODY_COMPLETE);
+			return ;
+		}
+	}
+
 	//chunked message flag on/off
 	if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
 	{
@@ -401,12 +427,6 @@ void	OperateRequest::checkHeader(Connection *c) {
 		c->setPhaseMsg(BODY_COMPLETE);
 	else
 		c->setPhaseMsg(BODY_INCOMPLETE);
-
-	
-
-	//directory exist check
-
-	//When Method is delete try to delete directory -> no no
 }
 
 void	OperateRequest::checkRequestBody(Connection *c) {
@@ -619,9 +639,6 @@ void	OperateRequest::checkLocationReturnAndApply(std::vector<std::string> ret, C
 		else
 			str = ret[i];
 	}
-	std::cout << "code: " << code << std::endl;
-	// std::cout << "uri: " << uri << std::endl;
-	std::cout << "str: " << str << std::endl;
 	if (code == 301 || code == 302 || code == 303 || code == 307 || code == 308)
 	{
 		c->setReqStatusCode(code);
@@ -633,7 +650,14 @@ void	OperateRequest::checkLocationReturnAndApply(std::vector<std::string> ret, C
 	}
 	if (!str.empty())
 		c->setBodyBuf(str);
-	// else if (!str)
-		// c->setBodyBuf(str);
 	c->setReqStatusCode(code);
+}
+
+bool OperateRequest::isUriDirectory(Connection *c) {
+	struct stat stat_buffer;
+
+	stat(c->getRequest().getFilePath().c_str(), &stat_buffer);
+	if (S_ISDIR(stat_buffer.st_mode))
+		return (true);
+	return (false);
 }
