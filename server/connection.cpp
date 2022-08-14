@@ -78,9 +78,9 @@ void    Connection::processResponse()
 	//std::cout << "processResponse execute" << std::endl;
 	//std::cout << "method is " << this->request_->getMethod() << std::endl;
 	//std::cout << "path is " << this->request_->getPath() << std::endl;
-	std::string current_method(this->request_.getMethod());
-	if (current_method == "GET")
-		this->executeGetMothod();
+	//std::string current_method(this->request_.getMethod());
+	//if (current_method == "GET")
+	//	this->executeGetMothod();
 	//else if (current_method == "POST")
 	//	this->response_.executePost();
 	//else if (current_method == "DELETE")
@@ -91,8 +91,7 @@ void    Connection::processResponse()
 
 void	Connection::executeGetMothod(void){
 
-	std::cout << "here is get" << std::endl;
-	//ServerBlock server_ = this->get_server_name_block(this->request_.getHost());
+	//std::cout << "get" << std::endl;
 
 	
 	//std::cout << this->request_.getBody() << std::endl;
