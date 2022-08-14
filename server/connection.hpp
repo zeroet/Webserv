@@ -121,6 +121,12 @@ enum RequestStatusCode {
 	HTTP_VERSION_NOT_SUPPORTED = 505
 };
 
+enum ChunkedMessageStatus {
+  STR_SIZE = 0,
+  STR,
+  END
+};
+
 class Connection
 {
 	private:

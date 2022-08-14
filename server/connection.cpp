@@ -40,7 +40,9 @@ void    Connection::processRequest()
 		|| phase_msg_ == HEADER_COMPLETE)
 		operateRequest.checkRequestMessage(this);
 	if (phase_msg_ == BODY_CHUNKED)
-		std::cout << "check CHUNCKED MESSAGE" << std::endl;
+	{
+		operateRequest.checkChunkedMessage(this);
+	}
 	else if (phase_msg_ == BODY_INCOMPLETE)
 		operateRequest.checkRequestBody(this);
 	if (phase_msg_ == BODY_COMPLETE)

@@ -359,7 +359,10 @@ void	OperateRequest::checkHeader(Connection *c) {
 		}
 	}
 	else if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("chunked"))
+	{
 		c->is_chunk = true;
+		c->setPhaseMsg(BODY_CHUNKED);
+	}
 
 	// when file doesn't exist
 	if (c->getRequest().getMethod() != "POST" && !isFileExist(c))
@@ -451,6 +454,9 @@ void	OperateRequest::checkRequestBody(Connection *c) {
 		c->setPhaseMsg(BODY_COMPLETE);
 }
 
+void	OperateRequest::checkChunkedMessage(Connection *c) {
+	std::cout << "check CHUNCKED MESSAGE" << std::endl;
+}
 
 //utiles
 std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string delim) {
