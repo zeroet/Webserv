@@ -32,7 +32,7 @@ void    Connection::processRequest()
 	// std::cout << "buffer_char + n: " << buffer_char + n << std::endl;
     // buf_.insert(buf_.end(), buffer_char, buffer_char + n);
 	buffer_.insert(buffer_.end(), buffer_char, buffer_char + n);
-	std::cout << "buffer_: " << buffer_ << std::endl;
+	// std::cout << "buffer_: " << buffer_ << std::endl;
 
 	if (phase_msg_ == START_LINE_INCOMPLETE
 		|| phase_msg_ == START_LINE_COMPLETE
@@ -40,14 +40,16 @@ void    Connection::processRequest()
 		|| phase_msg_ == HEADER_COMPLETE)
 		operateRequest.checkRequestMessage(this);
 	if (phase_msg_ == BODY_CHUNKED)
-		std::cout << "check CHUNCKED MESSAGE" << std::endl;
+	{
+		operateRequest.checkChunkedMessage(this);
+	}
 	else if (phase_msg_ == BODY_INCOMPLETE)
 		operateRequest.checkRequestBody(this);
 	if (phase_msg_ == BODY_COMPLETE)
 	{
 		std::cout << "************ Message body process **********" << std::endl;
 		size_t pos = 0;
-		if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos) 
+		if ((pos = buffer_.find(CRLF)) != std::string::npos) 
 			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 	}
 
@@ -139,9 +141,11 @@ bool		Connection::checkLocationConfigExist(std::string path) {
 	std::pair<bool, LocationBlock> location_pair;
 
 	location_pair = serverConfig_.getLocationBlock(path);
+	// std::cout << "how many: " << serverConfig_.getLocationBlock().size() << std::endl;
 	if (location_pair.first == true)
 	{
 		setLocationConfig(location_pair.second);
+		// std::cout << "$$$$$" << location_pair.second.getUriPath() << std::endl;
 		return (true);
 	}
 	else
@@ -165,10 +169,10 @@ void	Connection::printRequestMsg(void) {
 	std::cout << std::endl;
 	printf("=====================\n");
 	printf("body:\n");
-	// printf("%s", getRequest().getBody().c_str());
-	printf("%s", getBodyBuf().c_str());
+	printf("%s\n", getRequest().getBody().c_str());
+	// printf("%s\n", getBodyBuf().c_str());
 	printf("=====================\n");
-	std::cout << "buffer_content_length: " << buffer_content_length << std::endl;
+	std::cout << "content_length: " << getRequest().getHeaderValue("Content-Length") << std::endl;
 	std::cout << "client_max_body_size: " << client_max_body_size << std::endl;
 	printf("=====================\n");
 }

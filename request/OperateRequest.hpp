@@ -56,6 +56,7 @@ class OperateRequest {
 		int		parseUri(std::string uri, Connection *c);
 		void	checkRequestBody(Connection *c);
 		bool	checkIndex(Connection *c);
+		void	checkChunkedMessage(Connection *c);
 		
 
 		//utiles
@@ -63,9 +64,12 @@ class OperateRequest {
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
 		int		checkHeaderKey(const std::string &s);
-		bool	checkHostHeader(Connection *c);
+		// int		checkHostHeader(Connection *c);
 		bool	isFileExist(Connection *c);
 		int		setUriStructHostPort(Connection *c, std::string host_value);
+		bool	checkAllowMethod(Connection *c);
+		void	checkLocationReturnAndApply(std::vector<std::string> ret, Connection *c);
+		bool	isUriDirectory(Connection *c);
 
 		template<typename T>
 		std::string toString(const T& v)
