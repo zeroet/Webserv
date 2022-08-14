@@ -164,7 +164,7 @@ namespace ft
 							{
 								if (current_parameter->compare(*current_server_name) == 0)
 								{
-									std::cout << "Error: There can't be same server name with the same listen port.\n";
+									std::cout << "Error: There can't be the same server name with the same listen port.\n";
 									return (false);
 								}
 							}
@@ -175,11 +175,36 @@ namespace ft
 			}
 			else if (current_directive->directive == RETURN)
 			{
-				std::vector<std::string>::iterator	current_parameter = current_directive->parameters.begin();
-				std::vector<std::string>::iterator	    end_parameter = current_directive->parameters.end();
-				for (; current_parameter != end_parameter; ++current_parameter)
-					context.setReturn(*current_parameter);
-				// return error code error handling
+				if (current_directive->parameters.size() > 2)
+				{
+					std::cout << "Error: Invalid number of arguments in \"return\" directive\n";
+					return (false);
+				}
+				else if (current_directive->parameters.size() > 0)
+				{
+					std::string		input_string = (*current_directive->parameters.begin());
+
+					if (input_string.length() != 0)
+					{
+						if (input_string.find_first_not_of("0123456789") == std::string::npos)
+						{	
+							context.setReturn(input_string);
+							if (current_directive->parameters.size() == 2)
+								context.setReturn(*(--current_directive->parameters.end()));
+						}
+						else
+						{
+							if (input_string.compare(0, 7, "http://") == 0 ||
+									input_string.compare(0, 8, "https://") == 0)
+								context.setReturn(input_string);
+							else
+							{
+								std::cout << "Error: Invalid return code \"" << input_string << "\".\n";
+								return (false);
+							}
+						}
+					}
+				}
 			}
 		}
 		return (true);
@@ -196,11 +221,36 @@ namespace ft
 				return (false);
 			if (current_directive->directive == RETURN)
 			{
-				std::vector<std::string>::iterator	current_parameter = current_directive->parameters.begin();
-				std::vector<std::string>::iterator	    end_parameter = current_directive->parameters.end();
-				for (; current_parameter != end_parameter; ++current_parameter)
-					context.setReturn(*current_parameter);
-				// return error code error handling
+				if (current_directive->parameters.size() > 2)
+				{
+					std::cout << "Error: Invalid number of arguments in \"return\" directive\n";
+					return (false);
+				}
+				else if (current_directive->parameters.size() > 0)
+				{
+					std::string		input_string = (*current_directive->parameters.begin());
+
+					if (input_string.length() != 0)
+					{
+						if (input_string.find_first_not_of("0123456789") == std::string::npos)
+						{	
+							context.setReturn(input_string);
+							if (current_directive->parameters.size() == 2)
+								context.setReturn(*(--current_directive->parameters.end()));
+						}
+						else
+						{
+							if (input_string.compare(0, 7, "http://") == 0 ||
+									input_string.compare(0, 8, "https://") == 0)
+								context.setReturn(input_string);
+							else
+							{
+								std::cout << "Error: Invalid return code \"" << input_string << "\".\n";
+								return (false);
+							}
+						}
+					}
+				}
 			}
 			else if (current_directive->directive == LIMIT_EXCEPT)
 			{

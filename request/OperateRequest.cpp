@@ -14,6 +14,10 @@ std::string	&OperateRequest::getHeaders(void) {
 
 //setter
 
+void	OperateRequest::setBody(std::string bodybuf_) {
+	body_ = bodybuf_;
+}
+
 void	OperateRequest::checkRequestMessage(Connection *c) {
 
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
@@ -38,8 +42,6 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	{
 		std::cout << "Parse Header" << std::endl;
 		parseHeaders(c);
-	// 	std::cout << "Header parse done" << std::endl;
-	// 	std::cout << "buffer check: " << c->getBuffer() << std::endl;
 		checkHeader(c);
 	}
 }
@@ -54,8 +56,8 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (split_start_line.size() != 3)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(HEADER_COMPLETE);
-		std::cout << "start line argument wrong request code : " <<  c->getReqStatusCode() <<  std::endl;
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	// for (size_t i = 0; i < split_start_line.size(); i++)
@@ -65,7 +67,8 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (!checkMethod(split_start_line[0]))
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	else
@@ -78,7 +81,8 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (parseUri(split_start_line[1], c) == PARSE_INVALID_URI)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 
@@ -89,14 +93,17 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	if (!checkVersion(version) || version.length() != 3 || cmp)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	cmp = version.compare(0, 2, "1.");
 	if (cmp)
 	{
+		std::cout << "hererkejflksdjflksdjf" << std::endl;
 		c->setReqStatusCode(HTTP_VERSION_NOT_SUPPORTED);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		// c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	c->getRequest().setVersion(http + version);
@@ -252,7 +259,7 @@ void	OperateRequest::parseHeaders(Connection *c) {
 		}
 		headers_ = headers_.substr(pos1 + LEN_CRLF, headers_.length());
 		// std::cout << "headers to parse line : " << std::endl;
-		std::cout << headers_ << std::endl;
+		// std::cout << headers_ << std::endl;
 		// std::cout << "header 길이: " << headers_.length() << std::endl;
 	}
 	// std::cout <<
@@ -289,52 +296,53 @@ void	OperateRequest::checkHeader(Connection *c) {
 		return ;
 	}
 
-	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
-	if (checkHostHeader(c) == false)
-	{
-		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(BODY_COMPLETE);
-		return ;
-	}
-
 	//check if host value is has host name and port at the same time. if so, parse.
 	//if host value doesn't exist, bad request.
-	if (setUriStructHostPort(c, c->getRequest().getHeaderValue("Host")) == false)
+	if (setUriStructHostPort(c, c->getRequest().getHeaderValue("Host")) == false && c->getRequest().getVersion().compare("HTTP/1.0"))
 	{
 		c->setReqStatusCode(BAD_REQUEST);
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
 	
-	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
-	
-	// c->setLocationBlock(c->getRequest().getPath());
-	// std::cout << "location return : " << c->getLocationBlock()->getReturn()[0] << std::endl;
-	
-	// test getLocationBlock
-	// std::pair<bool, LocationBlock> location_pair = c->getBlock().getLocationBlock(c->getRequest().getPath());
-	// if (!location_pair.first)
-	// 	std::cout << "Invalide" << std::endl;
-	// else
-	// 	std::cout << "location root: " << location_pair.second.getRoot() << std::cout;
+	//find right server block(with host name) and location block(request path) 
+	c->setServerBlockConfig(c->getRequest().getHost());
+	if (!c->checkLocationConfigExist(c->getRequest().getPath()))
+	{
+		// uri root == serverblock root
+		// index.html check -> index.html use
+		// if not -> autoindex check -> on => directory list / off => forbidden 403 
+		c->getRequest().setFilePath(c->getServerConfig().getRoot());
+		if (!checkIndex(c))
+		{
+			if (c->getServerConfig().getAutoindex() == false)
+			{
+				c->setReqStatusCode(NOT_FOUND);
+				c->setPhaseMsg(BODY_COMPLETE);
+				return ;
+			}
+		}
+	}
+	else //set path / file path / uri
+		setFilePathWithLocation(c->getLocationConfig(), c);
 
-	ServerBlock block = c->get_server_name_block("xxx");
-	std::vector<LocationBlock> tmp = block.getLocationBlock();
-	std::cout << GREEN <<  tmp.size() << FIN << std::endl;
+	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
+	// if (checkHostHeader(c) != NOT_DEFINE)
+	// {
+	// 	c->setReqStatusCode(checkHostHeader(c));
+	// 	c->setPhaseMsg(BODY_COMPLETE);
+	// 	return ;
+	// }
 
- 	// std::cout << block.getListen() << std::endl;
-
-	//set path / file path / uri
-	// setFilePathWithLocation(&location_pair.second, c);
 
 	//get Client_Max_Body_Size
-	c->client_max_body_size = c->getBlock()[0].getClientMaxBodySize();
+	c->client_max_body_size = c->getServerConfig().getClientMaxBodySize();
 
 	if ((c->getRequest().getRequestHeaders().count("Content-Length")) && !c->getRequest().getHeaderValue("Content-Length").empty())
 	{
-		c->content_length = fromString<int>((c->getRequest().getHeaderValue("Content-Length")));
-		// std::cout << "content-length in function:" << c->content_length << std::endl;
-		if (c->content_length > (c->client_max_body_size))
+		c->buffer_content_length = fromString<size_t>((c->getRequest().getHeaderValue("Content-Length")));
+		std::cout << "content-length in function:" << c->buffer_content_length << std::endl;
+		if ((size_t)c->buffer_content_length > (c->client_max_body_size))
 		{
 			c->setReqStatusCode(PAYLOAD_TOO_LARGE);
 			c->setPhaseMsg(BODY_COMPLETE);
@@ -342,50 +350,114 @@ void	OperateRequest::checkHeader(Connection *c) {
 		}
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
 		{
-			// body_ = c->getBuffer().substr(0, c->getBuffer().length());
-			std::cout << "////////////////body check: " << body_ << std::endl;
+			c->setBodyBuf(c->getBuffer());
+			// std::cout << "////////////////body buf check: " << c->getBodyBuf() << std::endl;
 			// c->getBuffer().erase(0, c->getBuffer().length());
-			c->getRequest().setBody(body_);
+			// c->getRequest().setBody(c->getBodyBuf());
+			// c->setBodyBuf(body_);
+			// c->getBuffer().erase(0, c->getBuffer().length());
 		}
-		else
-			std::cout << "///////////////////////////EMPTY////////////////////////" << std::endl;
+	}
+	else if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("chunked"))
+	{
+		c->is_chunk = true;
+		c->setPhaseMsg(BODY_CHUNKED);
 	}
 
 	// when file doesn't exist
-	// if (c->getRequest().getMethod() == "GET" && !isFileExist(c))
-	// {
-	// 	c->setReqStatusCode(NOT_FOUND);
-	// 	c->setPhaseMsg(BODY_COMPLETE);
-	// 	return ;
-	// }
+	if (c->getRequest().getMethod() != "POST" && !isFileExist(c))
+	{
+		c->setReqStatusCode(NOT_FOUND);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
 	
+	//Allow method check
+	if (checkAllowMethod(c) == false)
+	{
+		c->setReqStatusCode(METHOD_NOT_ALLOWED);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
+	//location config return value check
+	if (!c->getLocationConfig().getReturn().empty())
+	{
+		// std::cout << "/////////////// LOCATION RETURN EXIST //////////////" << std::endl;
+		checkLocationReturnAndApply(c->getLocationConfig().getReturn(), c);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+	
+	
+	if((isUriDirectory(c) == true) && (c->getRequest().getMethod() == "DELETE") && (c->getLocationConfig().getAutoindex() == false))
+	{
+		c->setReqStatusCode(MOVED_PERMANENTLY);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
+
+	if (c->getRequest().getMethod() == "DELETE")
+	{
+		struct stat stat_buffer;
+
+		stat(c->getRequest().getFilePath().c_str(), &stat_buffer);
+		if (S_ISDIR(stat_buffer.st_mode) && *(c->getRequest().getFilePath().rbegin()) != '/')
+		{
+			c->setReqStatusCode(CONFLICT);
+			c->setPhaseMsg(BODY_COMPLETE);
+			return ;
+		}
+		else if (c->getRequest().getPath() == "/")
+		{
+			c->setReqStatusCode(FORBIDDEN);
+			c->setPhaseMsg(BODY_COMPLETE);
+			return ;
+		}
+	}
+
 	//chunked message flag on/off
 	if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
 	{
 		c->is_chunk = false;
-		body_.clear();
-		c->content_length = 0;
+		c->getBodyBuf().clear();
+		c->buffer_content_length = -1;
 		c->setPhaseMsg(BODY_COMPLETE);
-	}
-	else if (c->getRequest().getRequestHeaders().count("Transfer-Encoding") && (c->getRequest().getHeaderValue("Transfer-Encoding") == "chunked"))
-	{
-		c->setPhaseMsg(BODY_CHUNKED);
-		c->is_chunk = true;
 	}
 	else if (c->is_chunk == true)
 		c->setPhaseMsg(BODY_COMPLETE);
+	else if (c->is_chunk == false && c->buffer_content_length != -1 && c->buffer_content_length <= (int)c->getBodyBuf().size())
+		c->setPhaseMsg(BODY_COMPLETE);
 	else
 		c->setPhaseMsg(BODY_INCOMPLETE);
-
-	//location config return value check
-	
-	//Allow method check
-
-	//directory exist check
-
-	//When Method is delete try to delete directory -> no no
 }
 
+void	OperateRequest::checkRequestBody(Connection *c) {
+	if (!c->is_chunk)
+	{
+		if (((ssize_t)c->buffer_content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_.c_str()))
+			return ;
+		else if ((size_t)c->buffer_content_length <= strlen(c->buffer_.c_str()))
+		{
+			c->body_buf.append(c->buffer_, c->buffer_content_length);
+			c->buffer_content_length = 0;
+			c->getRequest().setBody(c->body_buf);
+			c->setPhaseMsg(BODY_COMPLETE);
+		}
+		else
+		{
+			c->buffer_content_length = c->buffer_content_length - strlen(c->buffer_.c_str());
+			c->setBodyBuf(c->buffer_);
+		}
+	}
+	else
+		c->setPhaseMsg(BODY_COMPLETE);
+}
+
+void	OperateRequest::checkChunkedMessage(Connection *c) {
+	std::cout << "check CHUNCKED MESSAGE" << std::endl;
+	(void)c;
+}
 
 //utiles
 std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string delim) {
@@ -447,30 +519,30 @@ int			OperateRequest::checkHeaderKey(const std::string &s) {
 // 	return (str);
 // }
 
-int Stoi(const std::string &str, size_t *idx, int base) {
-  char *end;
-  const char *p = str.c_str();
-  long num = std::strtol(p, &end, base);
-  if (p == end) {
-    throw std::invalid_argument("Stoi");
-  }
-  if (num < std::numeric_limits<int>::min() ||
-      num > std::numeric_limits<int>::max() || errno == ERANGE) {
-    throw std::out_of_range("Stoi");
-  }
-  if (idx != NULL) {
-    *idx = static_cast<size_t>(end - p);
-  }
-  return static_cast<int>(num);
-}
+// int Stoi(const std::string &str, size_t *idx, int base) {
+//   char *end;
+//   const char *p = str.c_str();
+//   long num = std::strtol(p, &end, base);
+//   if (p == end) {
+//     throw std::invalid_argument("Stoi");
+//   }
+//   if (num < std::numeric_limits<int>::min() ||
+//       num > std::numeric_limits<int>::max() || errno == ERANGE) {
+//     throw std::out_of_range("Stoi");
+//   }
+//   if (idx != NULL) {
+//     *idx = static_cast<size_t>(end - p);
+//   }
+//   return static_cast<int>(num);
+// }
 
-bool	OperateRequest::checkHostHeader(Connection *c) {
-	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 7, "HTTP/1.") == 0))
-		return (true);
-	else if (c->getRequest().getVersion().compare("HTTP/1.0") == 0)
-		return (true);
-	return (false);
-}
+// int	OperateRequest::checkHostHeader(Connection *c) {
+// 	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 5, "HTTP/") != 0))
+// 		return (BAD_REQUEST);
+// 	else if (c->getRequest().getVersion().compare(5, 3, "1.0") || c->getRequest().getVersion().compare(5, 3, "1.1"))
+// 		return (NOT_DEFINE);
+// 	return (HTTP_VERSION_NOT_SUPPORTED);
+// }
 
 bool OperateRequest::isFileExist(Connection *c) {
 	struct stat stat_buf;
@@ -481,11 +553,11 @@ bool OperateRequest::isFileExist(Connection *c) {
 
 }
 
-void	OperateRequest::setFilePathWithLocation(LocationBlock *location, Connection *c) {
+void	OperateRequest::setFilePathWithLocation(LocationBlock location, Connection *c) {
 
 	//example: request path : /test/
 	std::string filepath;
-	filepath = location->getRoot(); //location root로 filepath init /var/www/html/cgi_tester
+	filepath = location.getRoot(); //location root로 filepath init /var/www/html/cgi_tester
 	// std::cout << "location root: " << filepath << std::endl;
 	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
 
@@ -495,16 +567,16 @@ void	OperateRequest::setFilePathWithLocation(LocationBlock *location, Connection
 				request path: /cgi_tester
 		case2)	location uri: /cgi_tester/
 				request path: /cgi_tester/test1		*/
-	if (location->getRoot() != c->getBlock()[0].getRoot())
+	if (location.getRoot() != c->getBlock()[0].getRoot())
 	{
-		if (c->getRequest().getPath().substr(location->getUriPath().length()).empty()) //case 1
+		if (c->getRequest().getPath().substr(location.getUriPath().length()).empty()) //case 1
 			filepath.append("/");
 		else // case 2
 		{
-			if (*(location->getUriPath().rbegin()) == '/') // /cgi_tester/
-				filepath.append(c->getRequest().getPath().substr(location->getUriPath().length() - 1));
+			if (*(location.getUriPath().rbegin()) == '/') // /cgi_tester/
+				filepath.append(c->getRequest().getPath().substr(location.getUriPath().length() - 1));
 			else // /cgi_tester
-				filepath.append(c->getRequest().getPath().substr(location->getUriPath().length()));
+				filepath.append(c->getRequest().getPath().substr(location.getUriPath().length()));
 		}
 	}
 	else
@@ -527,4 +599,72 @@ int	OperateRequest::setUriStructHostPort(Connection *c, std::string host_value) 
 	else
 		c->getRequest().setHost(host_value_parse[0]);
 	return (true);
+}
+
+bool	OperateRequest::checkIndex(Connection *c) {
+	std::vector<std::string> index = c->getServerConfig().getIndex();
+	struct stat stat_buf;
+	std::string index_path;
+
+	for (std::vector<std::string>::iterator it = index.begin(); it != index.end(); it++)
+	{
+		index_path = c->getRequest().getFilePath() + "/" + (*it);
+		if (stat(index_path.c_str(), &stat_buf) == 0)
+		{
+			c->getRequest().setFilePath(index_path);
+			return (true);
+		}
+		index_path.clear();
+	}
+	return (false);
+}
+
+bool	OperateRequest::checkAllowMethod(Connection *c) {
+	std::vector<std::string> limit_method = c->getLocationConfig().getLimitExcept();
+	if (limit_method.size() == 0)
+		return (true);
+	for(size_t i = 0; i < limit_method.size(); i++)
+	{
+		if (limit_method[i] == c->getRequest().getMethod())
+			return (true);
+	}
+	return (false);
+}
+
+void	OperateRequest::checkLocationReturnAndApply(std::vector<std::string> ret, Connection *c) {
+	(void)c;
+	size_t 		code = 0;
+	std::string str = "";
+	// std::string	str = "";
+
+	for(size_t i = 0; i < ret.size(); i++)
+	{
+		if (isdigit(*(ret[i].begin())))
+			code = fromString<size_t>(ret[i]);
+		// else if (!ret[i].compare(0, 7, "http://") || !ret[i].compare(0, 8, "https://"))
+			// uri = ret[i];
+		else
+			str = ret[i];
+	}
+	if (code == 301 || code == 302 || code == 303 || code == 307 || code == 308)
+	{
+		c->setReqStatusCode(code);
+		if (!str.empty())
+			c->getRequest().setHeader("Location", str);
+		else
+			c->getRequest().setHeader("Location", " ");
+		return ;
+	}
+	if (!str.empty())
+		c->setBodyBuf(str);
+	c->setReqStatusCode(code);
+}
+
+bool OperateRequest::isUriDirectory(Connection *c) {
+	struct stat stat_buffer;
+
+	stat(c->getRequest().getFilePath().c_str(), &stat_buffer);
+	if (S_ISDIR(stat_buffer.st_mode))
+		return (true);
+	return (false);
 }

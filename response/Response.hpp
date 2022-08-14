@@ -32,11 +32,9 @@ class Response
 		Response(Response const & copy);
 		Response &operator=(Response const & copy);
 		~Response();
+
 		typedef std::map<std::string, std::string> mapStatus;
-		
-		/*==============================*/
-		/* ========== header ========== */
-		/*==============================*/
+
 		std::string 	makeHeader();
 		void			appendHeader(std::string first, std::string second);
 		
@@ -54,14 +52,10 @@ class Response
 		void			initialMapStatusCode(void);
 		std::string		getStatusCode() const;
 		void			setStatusCode(std::string code);
-		// void			response_manager();
-	//
-		///*========================================*/
-		///* ========== execute function ========== */
-		///*========================================*/
-		//void			executeGet();
-		//void			executePost();
-		//void			executeDelete();
+
+		void			executeGet(void);
+		void			executePost(void);
+		void			executeDelete(void);
 
 	private:
 		std::map<std::string, std::string> Headers_;

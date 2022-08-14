@@ -32,6 +32,8 @@ class OperateRequest {
 		std::string body_;
 		size_t		tmp_;		//for stock end pos of buffer(from connection)
 
+		// ServerBlock	*serverConfig_;
+
 	public:
 		OperateRequest(void);
 		~OperateRequest(void);
@@ -39,27 +41,35 @@ class OperateRequest {
 		//getter
 		std::string	&getStartLine(void);
 		std::string	&getHeaders(void);
+		std::string	&getBody(void);
 
 		//setter
-
+		void	setFilePathWithLocation(LocationBlock location, Connection *c);
+		void	setServerConfig(std::string server_name);
+		void	setBody(std::string bodybuf_);
+		
 		void	checkRequestMessage(Connection *c);
 		void	parseStartLine(Connection *c);
 		void	parseHeaders(Connection *c);
 		int		parseHeaderLine(Connection *c, std::string headerline);
 		void	checkHeader(Connection *c);
 		int		parseUri(std::string uri, Connection *c);
-		void	setFilePathWithLocation(LocationBlock *location, Connection *c);
+		void	checkRequestBody(Connection *c);
+		bool	checkIndex(Connection *c);
+		void	checkChunkedMessage(Connection *c);
+		
 
 		//utiles
 		std::vector<std::string> splitDelim(std::string s, std::string delim);
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
 		int		checkHeaderKey(const std::string &s);
-		bool	checkHostHeader(Connection *c);
+		// int		checkHostHeader(Connection *c);
 		bool	isFileExist(Connection *c);
 		int		setUriStructHostPort(Connection *c, std::string host_value);
-		// void	getUriFromLocation(Connection *c);
-		// std::string	trimWhiteSpace(std::string &s);
+		bool	checkAllowMethod(Connection *c);
+		void	checkLocationReturnAndApply(std::vector<std::string> ret, Connection *c);
+		bool	isUriDirectory(Connection *c);
 
 		template<typename T>
 		std::string toString(const T& v)

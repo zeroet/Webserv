@@ -114,25 +114,29 @@ enum RequestStatusCode {
 	NOT_FOUND = 404,
 	METHOD_NOT_ALLOWED = 405,
 	REQUEST_TIMEOUT = 408,
+	CONFLICT = 409,
 	PAYLOAD_TOO_LARGE = 413,
 	SERVER_ERROR = 500,
 	BAD_GATEWAY = 502,
 	HTTP_VERSION_NOT_SUPPORTED = 505
 };
 
+enum ChunkedMessageStatus {
+  STR_SIZE = 0,
+  STR,
+  END
+};
+
 class Connection
 {
 	private:
-		int				clntFd_;
+		int							clntFd_;
 		std::vector<ServerBlock>  	block_;
-		std::string 	status_;
-		Epoll			*ep_;
+		std::string 				status_;
+		Epoll						*ep_;
+		ServerBlock					serverConfig_;
+		LocationBlock				locationConfig_;
 
-		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
-		std::string		buffer_;					//append buffer
-
-		// Request			request_;
-		// Response		response_;
 		Request		request_;
 		Response	response_;
 
@@ -140,8 +144,11 @@ class Connection
 		int				req_status_code_;
 
 	public:
+
+		char			buffer_char[BUFFER_SIZE]; 	//get char from recv
+		std::string		buffer_;					//append buffer
 		size_t			client_max_body_size;
-		size_t			content_length;
+		int				buffer_content_length;
 		int				is_chunk;
 		std::string		body_buf;
 		// res
@@ -152,38 +159,37 @@ class Connection
 		~Connection();
 		//getter
 		std::vector<ServerBlock>	&getBlock(void);
-		Request		&getRequest(void);
-		Response	&getResponse(void);
-		int			&getPhaseMsg(void);
-		std::string &getBuffer(void);
-		int			&getReqStatusCode(void);
-		// LocationBlock	*getLocationBlock(void) {
-		// 	return (location_);
-		// }
+		Request						&getRequest(void);
+		Response					&getResponse(void);
+		int							&getPhaseMsg(void);
+		std::string 				&getBuffer(void);
+		int							&getReqStatusCode(void);
+		std::string					&getBodyBuf(void);
+		ServerBlock					getServerConfig(void);
+		LocationBlock				getLocationConfig(void);
 
 		//setter
-		void	setPhaseMsg(int new_msg);
-		void	setReqStatusCode(int status_code);
-		// void	setLocationBlock(std::string uri) {
-		// 	std::pair<bool, LocationBlock> ret_location = getBlock().getLocationBlock(uri);
+		void		setPhaseMsg(int new_msg);
+		void		setReqStatusCode(int status_code);
+		void		setServerBlockConfig(std::string server_name);
+		bool		checkLocationConfigExist(std::string path);
+		void		setLocationConfig(LocationBlock locationblock);
+		void		setBodyBuf(std::string bodybuf);
 
-		// 	if (ret_location.first == false)
-		// 		return ;
-		// 	else
-		// 		location_ = &ret_location.second;
-		// }
-
-		void    processRequest();
-		void    processResponse();
+		//utils
+		ServerBlock 	getServerConfigByServerName(std::string server_name);
+		// LocationBlock	*getLocationConfigByPath(std::string path);
+		void    		processRequest(void);
+		void    		processResponse(void);
 
 		/* ****************************************** */
 		/* ************** execute function ********** */
 		/* ****************************************** */
 		void	executeGetMothod(void);
 
+		
 		//tmp
 		void	printRequestMsg(void);
-		ServerBlock get_server_name_block(std::string server_name);
 };
 
 }

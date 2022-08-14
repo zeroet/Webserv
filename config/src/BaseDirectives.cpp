@@ -8,7 +8,7 @@ namespace ft
 		this->client_max_body_size_ = 1000000;
 		this->keepalive_timeout_ = 75;
 		this->index_.push_back("index.html");
-		this->autoindex_ = "off";
+		this->autoindex_ = false;
 		this->error_page_ = "";
 	}
 
