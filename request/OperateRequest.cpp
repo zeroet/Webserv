@@ -326,7 +326,6 @@ void	OperateRequest::checkHeader(Connection *c) {
 	else //set path / file path / uri
 		setFilePathWithLocation(c->getLocationConfig(), c);
 
-
 	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
 	// if (checkHostHeader(c) != NOT_DEFINE)
 	// {
@@ -379,6 +378,13 @@ void	OperateRequest::checkHeader(Connection *c) {
 	}
 
 	//location config return value check
+	if (!c->getLocationConfig().getReturn().empty())
+	{
+		std::cout << "/////////////// LOCATION RETURN EXIST //////////////" << std::endl;
+		checkLocationReturnAndApply(c->getLocationConfig().getReturn(), c);
+		c->setPhaseMsg(BODY_COMPLETE);
+		return ;
+	}
 	
 	
 	//chunked message flag on/off
@@ -596,4 +602,38 @@ bool	OperateRequest::checkAllowMethod(Connection *c) {
 			return (true);
 	}
 	return (false);
+}
+
+void	OperateRequest::checkLocationReturnAndApply(std::vector<std::string> ret, Connection *c) {
+	(void)c;
+	size_t 		code = 0;
+	std::string str = "";
+	// std::string	str = "";
+
+	for(size_t i = 0; i < ret.size(); i++)
+	{
+		if (isdigit(*(ret[i].begin())))
+			code = fromString<size_t>(ret[i]);
+		// else if (!ret[i].compare(0, 7, "http://") || !ret[i].compare(0, 8, "https://"))
+			// uri = ret[i];
+		else
+			str = ret[i];
+	}
+	std::cout << "code: " << code << std::endl;
+	// std::cout << "uri: " << uri << std::endl;
+	std::cout << "str: " << str << std::endl;
+	if (code == 301 || code == 302 || code == 303 || code == 307 || code == 308)
+	{
+		c->setReqStatusCode(code);
+		if (!str.empty())
+			c->getRequest().setHeader("Location", str);
+		else
+			c->getRequest().setHeader("Location", " ");
+		return ;
+	}
+	if (!str.empty())
+		c->setBodyBuf(str);
+	// else if (!str)
+		// c->setBodyBuf(str);
+	c->setReqStatusCode(code);
 }

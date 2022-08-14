@@ -139,9 +139,11 @@ bool		Connection::checkLocationConfigExist(std::string path) {
 	std::pair<bool, LocationBlock> location_pair;
 
 	location_pair = serverConfig_.getLocationBlock(path);
+	// std::cout << "how many: " << serverConfig_.getLocationBlock().size() << std::endl;
 	if (location_pair.first == true)
 	{
 		setLocationConfig(location_pair.second);
+		// std::cout << "$$$$$" << location_pair.second.getUriPath() << std::endl;
 		return (true);
 	}
 	else
