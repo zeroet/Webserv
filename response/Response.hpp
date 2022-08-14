@@ -53,9 +53,9 @@ class Response
 		std::string		getStatusCode() const;
 		void			setStatusCode(std::string code);
 
-		void			executeGet(void);
-		void			executePost(void);
-		void			executeDelete(void);
+		//void			executeGet(void);
+		//void			executePost(void);
+		//void			executeDelete(void);
 
 	private:
 		std::map<std::string, std::string> Headers_;
