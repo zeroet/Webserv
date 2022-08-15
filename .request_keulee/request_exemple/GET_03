@@ -1,0 +1,6 @@
+GET /index.html HTTP/1.1
+User-Agent: MSIE 6.0; Window NT 5.0
+Accept: test/html; */* 
+Cookie:name=value
+Refere: http://abc.com
+Host: www.abc.com
