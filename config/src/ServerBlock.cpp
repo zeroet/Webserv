@@ -71,8 +71,11 @@ namespace ft
 
 		for (; current_location != end_location; ++current_location)
 		{
-			if (request_path.compare(0, current_location->getUriPath().length(), current_location->getUriPath()) == 0)
-				return (std::make_pair(true, *current_location));
+			if (current_location->getUriPath().length() <= request_path.length()) 
+			{
+				if (request_path.compare(0, current_location->getUriPath().length(), current_location->getUriPath()) == 0)
+					return (std::make_pair(true, *current_location));
+			}
 		}
 		return (std::make_pair(false, return_location));
 	}
