@@ -26,6 +26,7 @@ Transfer-Encoding
 User-Agent
 WWW-Authenticate */
 
+
 class Response
 {
 
@@ -34,10 +35,10 @@ class Response
 
 	private:
 		std::map<std::string, std::string> 	headers_;
-		std::string 						statusCode_;
-		std::string 						statusMessage_;
-		std::string 						body_;
 		mapStatus 							mapStatus_;
+		//std::string 						statusCode_;
+		//std::string 						statusMessage_;
+		//std::string 						body_;
 	
 	public:
 		Response();
@@ -46,6 +47,7 @@ class Response
 		~Response();
 
 		std::string			getBodyStr(std::string const &filePath) const;
+		void				executeGet(void);
 
 	private:
 		std::string			getExt(std::string const &filename) const;
@@ -66,10 +68,13 @@ class Response
 		void			initialMapStatusCode(void);
 		void			initialMapHeaders(void);
 		
+
+		/* ================================== */
+		/* ============== setter ============ */
+		/* ================================== */
 		//std::string		getStatusCode() const;
 		//void			setStatusCode(std::string code);
 
-		//void			executeGet(void);
 		//void			executePost(void);
 		//void			executeDelete(void);
 	};

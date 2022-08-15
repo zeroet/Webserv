@@ -75,11 +75,18 @@ void    Connection::processRequest()
 
 void    Connection::processResponse()
 {
-	std::string	bufForBody_;
+	std::string	currentMethod(this->request_.getMethod());
 
-	this->getLocationConfig().getCgi();
-	this->getLocationConfig().getCgiPath();
-	bufForBody_ = this->response_.getBodyStr(this->request_.getFilePath());
+	if (currentMethod == "GET")
+		this->response_.executeGet();
+	else
+		std::cout << "pas encore" << std::endl;
+	//std::string	bufForBody_;
+
+
+	//this->getLocationConfig().getCgi();
+	//this->getLocationConfig().getCgiPath();
+	//bufForBody_ = this->response_.getBodyStr(this->request_.getFilePath());
 	//std::cout << bufForBody_ << " is file path" << std::endl;
 	// file open
 	// html, ou cgi

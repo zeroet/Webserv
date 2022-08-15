@@ -95,13 +95,16 @@ std::string	Response::getBodyStr(std::string const &file_path) const
 
 	if (fileExtension == "html")
 		std::cout << "execute html for bodtstr" << std::endl;
-	
+	// else fileExtention == cgi, go cgi
 	
 
  	return bodyStr;
 }
 
-
+void	Response::executeGet(void)
+{
+	std::string	bufForBody_;
+}
 
 std::string	Response::getExt(std::string const &filename) const
 {
