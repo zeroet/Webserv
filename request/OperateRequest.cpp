@@ -326,15 +326,6 @@ void	OperateRequest::checkHeader(Connection *c) {
 	else //set path / file path / uri
 		setFilePathWithLocation(c->getLocationConfig(), c);
 
-	//host header must exist when HTTP/1.* (HTTP/1.0 header doesn't need)
-	// if (checkHostHeader(c) != NOT_DEFINE)
-	// {
-	// 	c->setReqStatusCode(checkHostHeader(c));
-	// 	c->setPhaseMsg(BODY_COMPLETE);
-	// 	return ;
-	// }
-
-
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getServerConfig().getClientMaxBodySize();
 
@@ -639,7 +630,7 @@ void	OperateRequest::checkLocationReturnAndApply(std::vector<std::string> ret, C
 
 	for(size_t i = 0; i < ret.size(); i++)
 	{
-		if (isdigit(*(ret[i].begin())))
+		if (isdigit(*(ret[i].begin()))) // fix with full check with digit
 			code = fromString<size_t>(ret[i]);
 		// else if (!ret[i].compare(0, 7, "http://") || !ret[i].compare(0, 8, "https://"))
 			// uri = ret[i];
