@@ -80,20 +80,26 @@ void    Connection::processResponse()
 
 	std::string		ret_buf;
 
-	// initial variable for html and cgi
-	if (this->checkCgi())
-		this->request_.setVariableForCgi();
-	this->request_.setVariableForHtml();
+	if (checkErrorCode())
+	{
+		ret_buf += makeErrorPage();
+	}
+	else 
+	{
+		// initial variable for html and cgi
+		if (this->checkCgi())
+			this->request_.setVariableForCgi();
+		this->request_.setVariableForHtml();
 
-	// execute function par rapport de method!
-	// ret_buf == header + body
-	if (this->request_.getMethod() == "GET")
-		ret_buf += this->reponse_.executeGet();
-	else if (this->request_.getMethod() == "POST")
-		ret_buf += this->response_.executePost();
-	else
-		ret_buf += this->reponse_.exectueDelete();
-
+		// execute function par rapport de method!
+		// ret_buf == header + body
+		if (this->request_.getMethod() == "GET")
+			ret_buf += this->reponse_.executeGet();
+		else if (this->request_.getMethod() == "POST")
+			ret_buf += this->response_.executePost();
+		else
+			ret_buf += this->reponse_.exectueDelete();
+	}
 	// send
 	char 	*send_buf = const_cast<char*>(ret_buf.c_str());
 	int		size_buf = ret_buf.size();
