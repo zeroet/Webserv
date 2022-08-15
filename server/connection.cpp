@@ -1,6 +1,6 @@
 #include "connection.hpp"
 
-RequestHandler requesthandler = RequestHandler();
+// RequestHandler requesthandler = RequestHandler();
 
 Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
 	// Ctl_mode_flag_ = false;
@@ -15,6 +15,7 @@ Connection::~Connection() { }
 
 void    Connection::processRequest()
 {
+	RequestHandler requesthandler;
 
     int n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0); //except \r
 
