@@ -172,7 +172,7 @@ void    Epoll::epoll_server_manager()
             {
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
-                it->second->response();
+                it->second->processResponse();
             }
         }
     }

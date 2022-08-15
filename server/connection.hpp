@@ -180,8 +180,14 @@ class Connection
 		ServerBlock 	getServerConfigByServerName(std::string server_name);
 		// LocationBlock	*getLocationConfigByPath(std::string path);
 		void    		processRequest(void);
-		void    		response(void);
+		void    		processResponse(void);
 
+		/* ****************************************** */
+		/* ************** execute function ********** */
+		/* ****************************************** */
+		void	executeGetMothod(void);
+
+		
 		//tmp
 		void	printRequestMsg(void);
 };

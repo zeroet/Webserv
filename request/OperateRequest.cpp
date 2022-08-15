@@ -447,6 +447,7 @@ void	OperateRequest::checkRequestBody(Connection *c) {
 
 void	OperateRequest::checkChunkedMessage(Connection *c) {
 	std::cout << "check CHUNCKED MESSAGE" << std::endl;
+	(void)c;
 }
 
 //utiles
