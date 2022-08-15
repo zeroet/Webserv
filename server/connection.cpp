@@ -75,21 +75,24 @@ void    Connection::processRequest()
 
 void    Connection::processResponse()
 {
-	//std::cout << "processResponse execute" << std::endl;
-	//std::cout << "method is " << this->request_->getMethod() << std::endl;
-	//std::cout << "path is " << this->request_->getPath() << std::endl;
-	//std::string current_method(this->request_.getMethod());
-	//if (current_method == "GET")
-	//	this->executeGetMothod();
-	//else if (current_method == "POST")
-	//	this->response_.executePost();
-	//else if (current_method == "DELETE")
-	//	this->response_.executeDelete();
-	//else
-	//	std::cout << "WTF! connard" << std::endl;
+	std::string	bufForBody_;
+
+	bufForBody_ = this->response_.getBodyStr(this->request_.getFilePath());
+	// file open
+	// html, ou cgi
+	// file save in buf_str;
+
+	// make header with size buf_str
+
+	// add in return buf
+	// header and buf_str
+
+	// send all
+	// close fd
+
 }
 
-void	Connection::executeGetMothod(void){
+//void	Connection::executeGetMothod(void){
 
 	//std::cout << "get" << std::endl;
 
@@ -128,7 +131,7 @@ void	Connection::executeGetMothod(void){
 //		else
 //			fd out!
 //	*/
-}
+//}
 
 //getter
 std::vector<ServerBlock>		&Connection::getBlock(void) {

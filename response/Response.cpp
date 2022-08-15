@@ -1,5 +1,20 @@
 #include "Response.hpp"
 
+void		Response::initialMapHeaders(void)
+{
+  this->headers_["Allow"] = "";
+  this->headers_["Content-Location"] = "";
+  this->headers_["Last-Modified"] = "";
+  this->headers_["Location"] = "";
+  this->headers_["Retry-After"] = "";
+  this->headers_["Server"] = "";
+  this->headers_["Transfer-Encoding"] = "";
+  this->headers_["WWW-Authenticate"] = "";
+  this->headers_["Content-Language"] = "";
+  this->headers_["Content-Length"] = "";
+  this->headers_["Content-Type"] = "";
+}
+
 void		Response::initialMapStatusCode()
 {
 	mapStatus_.insert(std::make_pair("100", "Continue"));
@@ -47,6 +62,7 @@ void		Response::initialMapStatusCode()
 Response::Response()
 {
 	initialMapStatusCode();
+	initialMapHeaders();
 }
 
 Response::Response(Response const & copy)
@@ -72,73 +88,84 @@ Response::~Response()
 {
 }
 
-std::string	Response::getStatusCode() const
+std::string	Response::getBodyStr(std::string const &file_path)
 {
-	return (this->StatusCode_);
+	std::string	ret;
+
+	//  extension est cgi, or html
+	ret += file_path;
+
+	return ret;
 }
 
-void	Response::setStatusCode(std::string code)
-{
-	this->StatusCode_ = code;
-}
 
-// void	Response::response_manager()
-// {
-// 	std::string str;
+//std::string	Response::getStatusCode() const
+//{
+//	return (this->StatusCode_);
+//}
 //
-// 	str = makeHeader();
-// 	std::cout << str << std::endl;
-// 	makeStatusBody();
-// 	std::cout << Body_ << std::endl;
-// }
-
-void Response::appendHeader(std::string first, std::string second)
-{
-	Headers_.insert(std::make_pair(first, second));
-}
-
-void Response::setBody(std::string & str)
-{
-	this->Body_ = str;
-}
-
-std::string Response::makeHeader()
-{
-	std::string outcome;
-	
-	outcome.append("HTTP/1.1 " + this->StatusCode_ + " " + this->StatusMessage_ + "\r\n");
-	for (std::map<std::string, std::string>::iterator it = Headers_.begin(); it != Headers_.end(); it++)
-		outcome.append((*it).first + ": " + (*it).second + "\r\n");
-	outcome.append("\r\n");
-	return outcome;
-}
-
-void Response::makeStatusBody()
-{
-	std::string outcome;
-	
-	outcome.append("<!DOCTYPEhtml><html><head><meta charset=\"UTF-8\"/><title>webserv</title></head>");
-	outcome.append("<Body_>");
-	outcome.append("<h1>" + StatusCode_ + "</h1>");
-	outcome.append("<h3>" + StatusMessage_ + "/h3>");
-	outcome.append("<p>Click <a href=\"/\">here</a> to return home.</p>");
-	outcome.append("</Body_></html>\r\n\r\n");
-	
-	Body_.clear();
-	Body_ = outcome;
-}
-
-void Response::makeStatusBody(std::string url)
-{
-	std::string outcome;
-	outcome.append(url);
-	Body_.clear();
-	Body_ = outcome;
-}
-
-
-
-///*========================================*/
+//void	Response::setStatusCode(std::string code)
+//{
+//	this->StatusCode_ = code;
+//}
+//
+//// void	Response::response_manager()
+//// {
+//// 	std::string str;
+////
+//// 	str = makeHeader();
+//// 	std::cout << str << std::endl;
+//// 	makeStatusBody();
+//// 	std::cout << Body_ << std::endl;
+//// }
+//
+//void Response::appendHeader(std::string first, std::string second)
+//{
+//	Headers_.insert(std::make_pair(first, second));
+//}
+//
+//void Response::setBody(std::string & str)
+//{
+//	this->Body_ = str;
+//}
+//
+//std::string Response::makeHeader()
+//{
+//	std::string outcome;
+//	
+//	outcome.append("HTTP/1.1 " + this->StatusCode_ + " " + this->StatusMessage_ + "\r\n");
+//	for (std::map<std::string, std::string>::iterator it = Headers_.begin(); it != Headers_.end(); it++)
+//		outcome.append((*it).first + ": " + (*it).second + "\r\n");
+//	outcome.append("\r\n");
+//	return outcome;
+//}
+//
+//void Response::makeStatusBody()
+//{
+//	std::string outcome;
+//	
+//	outcome.append("<!DOCTYPEhtml><html><head><meta charset=\"UTF-8\"/><title>webserv</title></head>");
+//	outcome.append("<Body_>");
+//	outcome.append("<h1>" + StatusCode_ + "</h1>");
+//	outcome.append("<h3>" + StatusMessage_ + "/h3>");
+//	outcome.append("<p>Click <a href=\"/\">here</a> to return home.</p>");
+//	outcome.append("</Body_></html>\r\n\r\n");
+//	
+//	Body_.clear();
+//	Body_ = outcome;
+//}
+//
+//void Response::makeStatusBody(std::string url)
+//{
+//	std::string outcome;
+//	outcome.append(url);
+//	Body_.clear();
+//	Body_ = outcome;
+//}
+//
+//
+//
+/////*========================================*/
 ///* ========== execute function ========== */
 ///*========================================*/
 
