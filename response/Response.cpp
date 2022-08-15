@@ -88,16 +88,35 @@ Response::~Response()
 {
 }
 
-std::string	Response::getBodyStr(std::string const &file_path)
+std::string	Response::getBodyStr(std::string const &file_path) const
 {
-	std::string	ret;
+	std::string	bodyStr("");
+	std::string	fileExtension(getExt(file_path));
 
-	//  extension est cgi, or html
-	ret += file_path;
+	if (fileExtension == "html")
+		std::cout << "execute html for bodtstr" << std::endl;
+	
+	
 
-	return ret;
+ 	return bodyStr;
 }
 
+
+
+std::string	Response::getExt(std::string const &filename) const
+{
+    char *buf = const_cast<char*>(filename.c_str());
+   // bool ret = false;
+    char* ptr = NULL;
+ 
+    ptr = strrchr(buf, '.');
+    if (ptr == NULL)
+        return NULL;
+ 
+    strcpy(buf, ptr + 1);
+	std::string ret(buf);
+    return ret;
+}
 
 //std::string	Response::getStatusCode() const
 //{

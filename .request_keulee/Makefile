@@ -1,6 +1,6 @@
 NAME = webserv
 
-SRCS = main.cpp request.cpp epoll.cpp socket.cpp connection.cpp OperateRequest.cpp ../response/Response.cpp
+SRCS = main.cpp request.cpp epoll.cpp socket.cpp connection.cpp RequestHandler.cpp ../response/Response.cpp
 
 CXX = c++
 

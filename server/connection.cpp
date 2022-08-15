@@ -1,6 +1,6 @@
 #include "connection.hpp"
 
-OperateRequest operateRequest = OperateRequest();
+RequestHandler operateRequest = RequestHandler();
 
 Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
 	// Ctl_mode_flag_ = false;
@@ -77,7 +77,10 @@ void    Connection::processResponse()
 {
 	std::string	bufForBody_;
 
+	this->getLocationConfig().getCgi();
+	this->getLocationConfig().getCgiPath();
 	bufForBody_ = this->response_.getBodyStr(this->request_.getFilePath());
+	//std::cout << bufForBody_ << " is file path" << std::endl;
 	// file open
 	// html, ou cgi
 	// file save in buf_str;

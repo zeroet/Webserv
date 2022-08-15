@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <cstring>
 
 /* Headers to manage
 Accept-Charsets
@@ -44,10 +45,10 @@ class Response
 		Response &operator=(Response const & copy);
 		~Response();
 
-		std::string			getBodyStr(std::string const &filePath);
+		std::string			getBodyStr(std::string const &filePath) const;
 
 	private:
-
+		std::string			getExt(std::string const &filename) const;
 		//std::string 	makeHeader();
 		//void			appendHeader(std::string first, std::string second);
 		
