@@ -1,6 +1,6 @@
 #include "connection.hpp"
 
-RequestHandler operateRequest = RequestHandler();
+//RequestHandle		requesthandler = RequestHandler();
 
 Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
 	// Ctl_mode_flag_ = false;
@@ -15,6 +15,7 @@ Connection::~Connection() { }
 
 void    Connection::processRequest()
 {
+	RequestHandler requesthandler;
 
     int n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0); //except \r
 
@@ -38,13 +39,13 @@ void    Connection::processRequest()
 		|| phase_msg_ == START_LINE_COMPLETE
 		|| phase_msg_ == HEADER_INCOMPLETE
 		|| phase_msg_ == HEADER_COMPLETE)
-		operateRequest.checkRequestMessage(this);
+		requesthandler.checkRequestMessage(this);
 	if (phase_msg_ == BODY_CHUNKED)
 	{
-		operateRequest.checkChunkedMessage(this);
+		requesthandler.checkChunkedMessage(this);
 	}
 	else if (phase_msg_ == BODY_INCOMPLETE)
-		operateRequest.checkRequestBody(this);
+		requesthandler.checkRequestBody(this);
 	if (phase_msg_ == BODY_COMPLETE)
 	{
 		std::cout << "************ Message body process **********" << std::endl;

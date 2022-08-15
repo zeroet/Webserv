@@ -104,6 +104,7 @@ std::string	Response::getBodyStr(std::string const &file_path) const
 void	Response::executeGet(void)
 {
 	std::string	bufForBody_;
+	std::cout << "here" << std::endl;
 }
 
 std::string	Response::getExt(std::string const &filename) const
