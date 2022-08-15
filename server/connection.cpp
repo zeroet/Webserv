@@ -1,6 +1,6 @@
 #include "connection.hpp"
 
-// RequestHandler requesthandler = RequestHandler();
+//RequestHandle		requesthandler = RequestHandler();
 
 Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
 	// Ctl_mode_flag_ = false;
@@ -74,6 +74,107 @@ void    Connection::processRequest()
 	memset(&buffer_char, 0, n);
 }
 
+void    Connection::processResponse()
+{
+	/*
+
+	std::string		ret_buf;
+
+	// initial variable for html and cgi
+	if (this->checkCgi())
+		this->request_.setVariableForCgi();
+	this->request_.setVariableForHtml();
+
+	// execute function par rapport de method!
+	// ret_buf == header + body
+	if (this->request_.getMethod() == "GET")
+		ret_buf += this->reponse_.executeGet();
+	else if (this->request_.getMethod() == "POST")
+		ret_buf += this->response_.executePost();
+	else
+		ret_buf += this->reponse_.exectueDelete();
+
+	// send
+	char 	*send_buf = const_cast<char*>(ret_buf.c_str());
+	int		size_buf = ret_buf.size();
+	send(this->clntFd_, &send_buf, size_buf, 0);
+
+	// gerer epoll
+	if (!keep_alive)
+		close(this->clnFd_);
+	else
+		epollin; 
+	*/
+
+
+	std::string	currentMethod(this->request_.getMethod());
+
+	if (currentMethod == "GET")
+		this->response_.executeGet();
+	else
+		std::cout << "pas encore" << std::endl;
+	//std::string	bufForBody_;
+
+
+	//this->getLocationConfig().getCgi();
+	//this->getLocationConfig().getCgiPath();
+	//bufForBody_ = this->response_.getBodyStr(this->request_.getFilePath());
+	//std::cout << bufForBody_ << " is file path" << std::endl;
+	// file open
+	// html, ou cgi
+	// file save in buf_str;
+
+	// make header with size buf_str
+
+	// add in return buf
+	// header and buf_str
+
+	// send all
+	// close fd
+
+}
+
+//void	Connection::executeGetMothod(void){
+
+	//std::cout << "get" << std::endl;
+
+	
+	//std::cout << this->request_.getBody() << std::endl;
+	//std::cout << this->request_.getFilePath() << std::endl;
+	////std::cout << this->request_.getHeaderValue() << std::endl;
+	//std::cout << this->request_.getHost() << std::endl;
+	//std::cout << this->request_.getMethod() << std::endl;
+	//std::cout << this->request_.getPath() << std::endl;
+	//std::cout << this->request_.getQueryString() << std::endl;
+	//std::cout << this->request_.getUri() << std::endl;
+//	// std::string	buf;
+//
+//	//header setting
+//	/*	
+//		buf += setHeader();
+//	*/
+//
+//	// execute html or cgi
+//	/*
+//		if (getFormat == "html")
+//			buf += getBufHTML();
+//		else (getFormat == cgi)
+//			buf += getBufCGI();
+//
+//	*/
+//	// envoyer par send
+//	/*
+//		send(this->clntFd_, &buf, sizeof(buf) - 1, 0); 
+//	*/
+//	// considerer EPOLLIN ou enlever fd de EPOLL
+//	/*
+//		if (keep_alive)
+//			ep_->epoll_Ctl_Mode(clnFd_, EPOLLIN);
+//		else
+//			fd out!
+//	*/
+//}
+
 //getter
 std::vector<ServerBlock>		&Connection::getBlock(void) {
 	return (block_);
@@ -121,9 +222,9 @@ void	Connection::setPhaseMsg(int new_msg) {
 	phase_msg_ = new_msg;
 }
 
-void    Connection::processResponse() {
-    std::cout <<"Response execute" <<std::endl;
-}
+//void    Connection::response() {
+//    std::cout <<"Response execute" <<std::endl;
+//}
 
 void	Connection::setServerBlockConfig(std::string server_name) {
 	serverConfig_ = getServerConfigByServerName(server_name);

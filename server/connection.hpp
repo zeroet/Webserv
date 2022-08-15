@@ -117,6 +117,7 @@ class Connection
 
 		//utils
 		ServerBlock 	getServerConfigByServerName(std::string server_name);
+		
 		// LocationBlock	*getLocationConfigByPath(std::string path);
 		void    		processRequest(void);
 		void    		processResponse(void);
@@ -124,7 +125,7 @@ class Connection
 		/* ****************************************** */
 		/* ************** execute function ********** */
 		/* ****************************************** */
-		void	executeGetMothod(void);
+		//void	executeGetMothod(void);
 
 		
 		//tmp
