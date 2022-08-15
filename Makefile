@@ -13,7 +13,7 @@ SERVER = connection.cpp \
 		 socket.cpp
 
 REQUEST = request.cpp \
-		  OperateRequest.cpp
+		  RequestHandler.cpp
 
 RESPONSE = Response.cpp
 

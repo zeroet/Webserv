@@ -1,6 +1,6 @@
 #include "connection.hpp"
 
-OperateRequest operateRequest = OperateRequest();
+RequestHandler requesthandler = RequestHandler();
 
 Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
 	// Ctl_mode_flag_ = false;
@@ -38,13 +38,13 @@ void    Connection::processRequest()
 		|| phase_msg_ == START_LINE_COMPLETE
 		|| phase_msg_ == HEADER_INCOMPLETE
 		|| phase_msg_ == HEADER_COMPLETE)
-		operateRequest.checkRequestMessage(this);
+		requesthandler.checkRequestMessage(this);
 	if (phase_msg_ == BODY_CHUNKED)
 	{
-		operateRequest.checkChunkedMessage(this);
+		requesthandler.checkChunkedMessage(this);
 	}
 	else if (phase_msg_ == BODY_INCOMPLETE)
-		operateRequest.checkRequestBody(this);
+		requesthandler.checkRequestBody(this);
 	if (phase_msg_ == BODY_COMPLETE)
 	{
 		std::cout << "************ Message body process **********" << std::endl;
@@ -71,63 +71,6 @@ void    Connection::processRequest()
 	
 	// if (n == 0 && buffer_.empty() && phase_msg_ == BODY_COMPLETE)
 	memset(&buffer_char, 0, n);
-}
-
-void    Connection::processResponse()
-{
-	//std::cout << "processResponse execute" << std::endl;
-	//std::cout << "method is " << this->request_->getMethod() << std::endl;
-	//std::cout << "path is " << this->request_->getPath() << std::endl;
-	//std::string current_method(this->request_.getMethod());
-	//if (current_method == "GET")
-	//	this->executeGetMothod();
-	//else if (current_method == "POST")
-	//	this->response_.executePost();
-	//else if (current_method == "DELETE")
-	//	this->response_.executeDelete();
-	//else
-	//	std::cout << "WTF! connard" << std::endl;
-}
-
-void	Connection::executeGetMothod(void){
-
-	//std::cout << "get" << std::endl;
-
-	
-	//std::cout << this->request_.getBody() << std::endl;
-	//std::cout << this->request_.getFilePath() << std::endl;
-	////std::cout << this->request_.getHeaderValue() << std::endl;
-	//std::cout << this->request_.getHost() << std::endl;
-	//std::cout << this->request_.getMethod() << std::endl;
-	//std::cout << this->request_.getPath() << std::endl;
-	//std::cout << this->request_.getQueryString() << std::endl;
-	//std::cout << this->request_.getUri() << std::endl;
-//	// std::string	buf;
-//
-//	//header setting
-//	/*	
-//		buf += setHeader();
-//	*/
-//
-//	// execute html or cgi
-//	/*
-//		if (getFormat == "html")
-//			buf += getBufHTML();
-//		else (getFormat == cgi)
-//			buf += getBufCGI();
-//
-//	*/
-//	// envoyer par send
-//	/*
-//		send(this->clntFd_, &buf, sizeof(buf) - 1, 0); 
-//	*/
-//	// considerer EPOLLIN ou enlever fd de EPOLL
-//	/*
-//		if (keep_alive)
-//			ep_->epoll_Ctl_Mode(clnFd_, EPOLLIN);
-//		else
-//			fd out!
-//	*/
 }
 
 //getter
@@ -177,9 +120,9 @@ void	Connection::setPhaseMsg(int new_msg) {
 	phase_msg_ = new_msg;
 }
 
-//void    Connection::response() {
-//    std::cout <<"Response execute" <<std::endl;
-//}
+void    Connection::processResponse() {
+    std::cout <<"Response execute" <<std::endl;
+}
 
 void	Connection::setServerBlockConfig(std::string server_name) {
 	serverConfig_ = getServerConfigByServerName(server_name);
