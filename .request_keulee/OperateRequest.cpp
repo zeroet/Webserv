@@ -1,20 +1,20 @@
-#include "OperateRequest.hpp"
+#include "RequestHandler.hpp"
 
-OperateRequest::OperateRequest(void) : startLine_(""), headers_(""), body_(""), tmp_(0) {}
+RequestHandler::RequestHandler(void) : startLine_(""), headers_(""), body_(""), tmp_(0) {}
 
-OperateRequest::~OperateRequest(void) {}
+RequestHandler::~RequestHandler(void) {}
 
 //getter
-std::string	&OperateRequest::getStartLine(void) {
+std::string	&RequestHandler::getStartLine(void) {
 	return (startLine_);
 }
-std::string	&OperateRequest::getHeaders(void) {
+std::string	&RequestHandler::getHeaders(void) {
 	return (headers_);
 }
 
 //setter
 
-void	OperateRequest::checkRequestMessage(Connection *c) {
+void	RequestHandler::checkRequestMessage(Connection *c) {
 
 	size_t pos = 0;
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
@@ -54,7 +54,7 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	checkRequestHeader(c);
 }
 
-void	OperateRequest::parseStartLine(Connection *c) {
+void	RequestHandler::parseStartLine(Connection *c) {
 
 	//method check : GET/POST/DELETE -> toupper / if not Error 400
 	std::vector<std::string> split_start_line = splitDelim(startLine_, " ");
@@ -103,7 +103,7 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	c->setPhaseMsg(HEADER_INCOMPLETE);
 }
 
-void	OperateRequest::parseHeaders(Connection *c) {
+void	RequestHandler::parseHeaders(Connection *c) {
 	(void)c;
 	std::cout << "headers" << std::endl;
 	std::cout << headers_ << std::endl;
@@ -133,7 +133,7 @@ void	OperateRequest::parseHeaders(Connection *c) {
 	// std::cout <<
 }
 
-int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
+int		RequestHandler::parseHeaderLine(Connection *c, std::string headerline) {
 	std::vector<std::string> header_line_parse = splitDelim(headerline, ":");
 	if (!checkHeaderValue(header_line_parse[0]) || header_line_parse.size() != 2)
 		return (BAD_REQUEST);
@@ -146,7 +146,7 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 }
 
 /* Set and check details along with header key and method of request message */
-void	OperateRequest::checkRequestHeader(Connection *c) {
+void	RequestHandler::checkRequestHeader(Connection *c) {
 	if (c->getReqStatusCode() != NOT_DEFINE) //if error code exist.
 	{
 		c->setPhaseMsg(BODY_COMPLETE);
@@ -178,7 +178,7 @@ void	OperateRequest::checkRequestHeader(Connection *c) {
 
 
 //utiles
-std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string delim) {
+std::vector<std::string> RequestHandler::splitDelim(std::string s, std::string delim) {
     size_t pos_start = 0, pos_end, delim_len = delim.length();
     std::string 		token;
     std::vector<std::string> res;
@@ -192,7 +192,7 @@ std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string d
     return res;
 }
 
-int		OperateRequest::checkMethod(const std::string &s) {
+int		RequestHandler::checkMethod(const std::string &s) {
 
 	for(size_t i = 0; i < s.length(); i++)
 	{
@@ -203,7 +203,7 @@ int		OperateRequest::checkMethod(const std::string &s) {
 	return (true);
 }
 
-int			OperateRequest::checkVersion(const std::string &s) {
+int			RequestHandler::checkVersion(const std::string &s) {
 	for (size_t i = 0; i < s.length(); i++)
 	{
 		char c = s[i];
@@ -215,7 +215,7 @@ int			OperateRequest::checkVersion(const std::string &s) {
 	return (true);
 }
 
-int			OperateRequest::checkHeaderValue(const std::string &s) {
+int			RequestHandler::checkHeaderValue(const std::string &s) {
 	for (size_t i = 0; i < s.length(); i++)
 	{
 		char c = s[i];
@@ -225,7 +225,7 @@ int			OperateRequest::checkHeaderValue(const std::string &s) {
 	return (true);
 }
 
-std::string	OperateRequest::trimWhiteSpace(std::string &s) {
+std::string	RequestHandler::trimWhiteSpace(std::string &s) {
 
 	std::string str;
 	std::string whitespace(" \n\r\t\f\v");

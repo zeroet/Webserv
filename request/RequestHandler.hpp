@@ -24,7 +24,7 @@ class Connection;
  * Class to operate the validation and the parsing of http request message
  * After this process, the result will be transfered and stocked into Request class which located in Connection class
  */
-class OperateRequest {
+class RequestHandler {
 
 	private:
 		std::string	startLine_;	//extract of start line from buffer
@@ -35,8 +35,8 @@ class OperateRequest {
 		// ServerBlock	*serverConfig_;
 
 	public:
-		OperateRequest(void);
-		~OperateRequest(void);
+		RequestHandler(void);
+		~RequestHandler(void);
 
 		//getter
 		std::string	&getStartLine(void);

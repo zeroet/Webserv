@@ -4,7 +4,7 @@
 #include "request.hpp"
 #include "../response/Response.hpp"
 #include "socket.hpp"
-#include "OperateRequest.hpp"
+#include "RequestHandler.hpp"
 #include "../config/src/ServerBlock.hpp"
 
 #include <iostream>
@@ -22,7 +22,7 @@
 //class Request;
 class Epoll;
 class Request;
-class OperateRequest;
+class RequestHandler;
 
 
 enum phaseMsg {

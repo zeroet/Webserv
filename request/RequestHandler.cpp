@@ -1,24 +1,24 @@
-#include "OperateRequest.hpp"
+#include "RequestHandler.hpp"
 
-OperateRequest::OperateRequest(void) {}
+RequestHandler::RequestHandler(void) {}
 
-OperateRequest::~OperateRequest(void) {}
+RequestHandler::~RequestHandler(void) {}
 
 //getter
-std::string	&OperateRequest::getStartLine(void) {
+std::string	&RequestHandler::getStartLine(void) {
 	return (startLine_);
 }
-std::string	&OperateRequest::getHeaders(void) {
+std::string	&RequestHandler::getHeaders(void) {
 	return (headers_);
 }
 
 //setter
 
-void	OperateRequest::setBody(std::string bodybuf_) {
+void	RequestHandler::setBody(std::string bodybuf_) {
 	body_ = bodybuf_;
 }
 
-void	OperateRequest::checkRequestMessage(Connection *c) {
+void	RequestHandler::checkRequestMessage(Connection *c) {
 
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
 	{
@@ -46,7 +46,7 @@ void	OperateRequest::checkRequestMessage(Connection *c) {
 	}
 }
 
-void	OperateRequest::parseStartLine(Connection *c) {
+void	RequestHandler::parseStartLine(Connection *c) {
 
 	size_t pos = c->getBuffer().find(CRLF);
 	startLine_ = c->getBuffer().substr(0, pos);
@@ -110,7 +110,7 @@ void	OperateRequest::parseStartLine(Connection *c) {
 	c->setPhaseMsg(HEADER_INCOMPLETE);
 }
 
-int OperateRequest::parseUri(std::string uri_str, Connection *c) {
+int RequestHandler::parseUri(std::string uri_str, Connection *c) {
   enum {
     schema = 0,
     host,
@@ -229,7 +229,7 @@ int OperateRequest::parseUri(std::string uri_str, Connection *c) {
   return (PARSE_VALID_URI);
 }
 
-void	OperateRequest::parseHeaders(Connection *c) {
+void	RequestHandler::parseHeaders(Connection *c) {
 
 	size_t pos = c->getBuffer().find(CRLFCRLF);
 	headers_ = c->getBuffer().substr(0, pos + LEN_CRLF);
@@ -265,7 +265,7 @@ void	OperateRequest::parseHeaders(Connection *c) {
 	// std::cout <<
 }
 
-int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
+int		RequestHandler::parseHeaderLine(Connection *c, std::string headerline) {
 	std::vector<std::string> header_line_parse = splitDelim(headerline, ": ");
 	if (header_line_parse.size() != 2)
 	{
@@ -287,7 +287,7 @@ int		OperateRequest::parseHeaderLine(Connection *c, std::string headerline) {
 }
 
 /* Set and check details along with header key and method of request message */
-void	OperateRequest::checkHeader(Connection *c) {
+void	RequestHandler::checkHeader(Connection *c) {
 
 	//if Request status code is set as error code, exit this function
 	if (c->getReqStatusCode() != NOT_DEFINE)
@@ -423,7 +423,7 @@ void	OperateRequest::checkHeader(Connection *c) {
 		c->setPhaseMsg(BODY_INCOMPLETE);
 }
 
-void	OperateRequest::checkRequestBody(Connection *c) {
+void	RequestHandler::checkRequestBody(Connection *c) {
 	if (!c->is_chunk)
 	{
 		if (((ssize_t)c->buffer_content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_.c_str()))
@@ -445,13 +445,13 @@ void	OperateRequest::checkRequestBody(Connection *c) {
 		c->setPhaseMsg(BODY_COMPLETE);
 }
 
-void	OperateRequest::checkChunkedMessage(Connection *c) {
+void	RequestHandler::checkChunkedMessage(Connection *c) {
 	std::cout << "check CHUNCKED MESSAGE" << std::endl;
 	(void)c;
 }
 
 //utiles
-std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string delim) {
+std::vector<std::string> RequestHandler::splitDelim(std::string s, std::string delim) {
     size_t pos_start = 0, pos_end, delim_len = delim.length();
     std::string 		token;
     std::vector<std::string> res;
@@ -465,7 +465,7 @@ std::vector<std::string> OperateRequest::splitDelim(std::string s, std::string d
     return res;
 }
 
-int		OperateRequest::checkMethod(const std::string &s) {
+int		RequestHandler::checkMethod(const std::string &s) {
 
 	for(size_t i = 0; i < s.length(); i++)
 	{
@@ -476,7 +476,7 @@ int		OperateRequest::checkMethod(const std::string &s) {
 	return (true);
 }
 
-int			OperateRequest::checkVersion(const std::string &s) {
+int			RequestHandler::checkVersion(const std::string &s) {
 	for (size_t i = 0; i < s.length(); i++)
 	{
 		char c = s[i];
@@ -488,7 +488,7 @@ int			OperateRequest::checkVersion(const std::string &s) {
 	return (true);
 }
 
-int			OperateRequest::checkHeaderKey(const std::string &s) {
+int			RequestHandler::checkHeaderKey(const std::string &s) {
 	for (size_t i = 0; i < s.length(); i++)
 	{
 		char c = s[i];
@@ -500,7 +500,7 @@ int			OperateRequest::checkHeaderKey(const std::string &s) {
 	return (true);
 }
 
-// std::string	OperateRequest::trimWhiteSpace(std::string &s) {
+// std::string	RequestHandler::trimWhiteSpace(std::string &s) {
 
 // 	std::string str;
 // 	std::string whitespace(" \n\r\t\f\v");
@@ -527,7 +527,7 @@ int			OperateRequest::checkHeaderKey(const std::string &s) {
 //   return static_cast<int>(num);
 // }
 
-// int	OperateRequest::checkHostHeader(Connection *c) {
+// int	RequestHandler::checkHostHeader(Connection *c) {
 // 	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 5, "HTTP/") != 0))
 // 		return (BAD_REQUEST);
 // 	else if (c->getRequest().getVersion().compare(5, 3, "1.0") || c->getRequest().getVersion().compare(5, 3, "1.1"))
@@ -535,7 +535,7 @@ int			OperateRequest::checkHeaderKey(const std::string &s) {
 // 	return (HTTP_VERSION_NOT_SUPPORTED);
 // }
 
-bool OperateRequest::isFileExist(Connection *c) {
+bool RequestHandler::isFileExist(Connection *c) {
 	struct stat stat_buf;
 
 	if (stat(c->getRequest().getFilePath().c_str(), &stat_buf) == -1)
@@ -544,7 +544,7 @@ bool OperateRequest::isFileExist(Connection *c) {
 
 }
 
-void	OperateRequest::setFilePathWithLocation(LocationBlock location, Connection *c) {
+void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection *c) {
 
 	//example: request path : /test/
 	std::string filepath;
@@ -577,7 +577,7 @@ void	OperateRequest::setFilePathWithLocation(LocationBlock location, Connection 
 	c->getRequest().setFilePath(filepath);
 }
 
-int	OperateRequest::setUriStructHostPort(Connection *c, std::string host_value) {
+int	RequestHandler::setUriStructHostPort(Connection *c, std::string host_value) {
 	std::vector<std::string> host_value_parse = splitDelim(host_value, ":");
 	
 	if (host_value.empty())
@@ -592,7 +592,7 @@ int	OperateRequest::setUriStructHostPort(Connection *c, std::string host_value) 
 	return (true);
 }
 
-bool	OperateRequest::checkIndex(Connection *c) {
+bool	RequestHandler::checkIndex(Connection *c) {
 	std::vector<std::string> index = c->getServerConfig().getIndex();
 	struct stat stat_buf;
 	std::string index_path;
@@ -610,7 +610,7 @@ bool	OperateRequest::checkIndex(Connection *c) {
 	return (false);
 }
 
-bool	OperateRequest::checkAllowMethod(Connection *c) {
+bool	RequestHandler::checkAllowMethod(Connection *c) {
 	std::vector<std::string> limit_method = c->getLocationConfig().getLimitExcept();
 	if (limit_method.size() == 0)
 		return (true);
@@ -622,7 +622,7 @@ bool	OperateRequest::checkAllowMethod(Connection *c) {
 	return (false);
 }
 
-void	OperateRequest::checkLocationReturnAndApply(std::vector<std::string> ret, Connection *c) {
+void	RequestHandler::checkLocationReturnAndApply(std::vector<std::string> ret, Connection *c) {
 	(void)c;
 	size_t 		code = 0;
 	std::string str = "";
@@ -651,7 +651,7 @@ void	OperateRequest::checkLocationReturnAndApply(std::vector<std::string> ret, C
 	c->setReqStatusCode(code);
 }
 
-bool OperateRequest::isUriDirectory(Connection *c) {
+bool RequestHandler::isUriDirectory(Connection *c) {
 	struct stat stat_buffer;
 
 	stat(c->getRequest().getFilePath().c_str(), &stat_buffer);

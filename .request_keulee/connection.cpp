@@ -1,6 +1,6 @@
 #include "connection.hpp"
 
-OperateRequest operateRequest = OperateRequest();
+RequestHandler RequestHandler = RequestHandler();
 
 Connection::Connection(int fd, Block block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
     std::cout << ep_->getepollfd() << std::endl;
@@ -35,8 +35,8 @@ void    Connection::processRequest()
 		|| phase_msg_ == START_LINE_COMPLETE
 		|| phase_msg_ == HEADER_INCOMPLETE
 		|| phase_msg_ == HEADER_COMPLETE)
-		// OperateRequest::checkRequestMessage(this);
-		operateRequest.checkRequestMessage(this);
+		// RequestHandler::checkRequestMessage(this);
+		RequestHandler.checkRequestMessage(this);
 
 	//tmp
 	printRequestMsg();
