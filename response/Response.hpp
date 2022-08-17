@@ -31,14 +31,11 @@ class Response
 {
 
 	public:
-		typedef std::map<std::string, std::string> mapStatus;
+		typedef std::map<std::string, std::string> map_;
 
 	private:
-		std::map<std::string, std::string> 	headers_;
-		mapStatus 							mapStatus_;
-		//std::string 						statusCode_;
-		//std::string 						statusMessage_;
-		//std::string 						body_;
+		map_ 							headers_;
+		map_ 							mapStatus_;
 	
 	public:
 		Response();
@@ -46,37 +43,12 @@ class Response
 		Response &operator=(Response const & copy);
 		~Response();
 
-		std::string			getBodyStr(std::string const &filePath) const;
-		void				executeGet(void);
-
 	private:
+		
+		void						initialMapStatusCode(void);
+		void						initialMapHeaders(void);
+		
 		std::string			getExt(std::string const &filename) const;
-		//std::string 	makeHeader();
-		//void			appendHeader(std::string first, std::string second);
-		
-		/*============================*/
-		/* ========== body ===========*/
-		/*============================*/
-		//void			setBody(std::string & str);
-		//void			makeStatusBody();
-		//void			makeStatusBody(std::string url);
-		//int				getBodySize() const;
-		
-		/*===================================*/
-		/* ========== status code ========== */
-		/*===================================*/
-		void			initialMapStatusCode(void);
-		void			initialMapHeaders(void);
-		
-
-		/* ================================== */
-		/* ============== setter ============ */
-		/* ================================== */
-		//std::string		getStatusCode() const;
-		//void			setStatusCode(std::string code);
-
-		//void			executePost(void);
-		//void			executeDelete(void);
 	};
 
 #endif

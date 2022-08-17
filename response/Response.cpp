@@ -49,13 +49,6 @@ void		Response::initialMapStatusCode()
 	mapStatus_.insert(std::make_pair("500", "Internal Server Error"));	
 	mapStatus_.insert(std::make_pair("502", "Bad Gateway"));	
 	mapStatus_.insert(std::make_pair("505", "HTTP Version Not Supported"));	
-
-	//std::map<std::string, std::string>::iterator it;
-	//it = this->mapStatus_.find(code);
-	//this->StatusCode_ = it->first;
-	//this->StatusMessage_ = it->second;	
-	//std::cout << StatusCode_ << std::endl;
-	//std::cout << StatusMessage_ << std::endl;
 }
 		
 
@@ -70,14 +63,6 @@ Response::Response(Response const & copy)
 	(*this) = copy;
 }
 
-/*Response::Response(const std::string &status)
-{
-	std::cout << this->StatusCode_ << std::endl;
-	std::cout << this->StatusMessage_ << std::endl;
-	MapStatusCode(this->StatusCode_);
-	response_manager();
-}*/
-
 Response & Response::operator=(Response const & copy)
 {
 	(void) copy;
@@ -86,25 +71,6 @@ Response & Response::operator=(Response const & copy)
 
 Response::~Response()
 {
-}
-
-std::string	Response::getBodyStr(std::string const &file_path) const
-{
-	std::string	bodyStr("");
-	std::string	fileExtension(getExt(file_path));
-
-	if (fileExtension == "html")
-		std::cout << "execute html for bodtstr" << std::endl;
-	// else fileExtention == cgi, go cgi
-	
-
- 	return bodyStr;
-}
-
-void	Response::executeGet(void)
-{
-	std::string	bufForBody_;
-	std::cout << "here" << std::endl;
 }
 
 std::string	Response::getExt(std::string const &filename) const
@@ -121,112 +87,3 @@ std::string	Response::getExt(std::string const &filename) const
 	std::string ret(buf);
     return ret;
 }
-
-//std::string	Response::getStatusCode() const
-//{
-//	return (this->StatusCode_);
-//}
-//
-//void	Response::setStatusCode(std::string code)
-//{
-//	this->StatusCode_ = code;
-//}
-//
-//// void	Response::response_manager()
-//// {
-//// 	std::string str;
-////
-//// 	str = makeHeader();
-//// 	std::cout << str << std::endl;
-//// 	makeStatusBody();
-//// 	std::cout << Body_ << std::endl;
-//// }
-//
-//void Response::appendHeader(std::string first, std::string second)
-//{
-//	Headers_.insert(std::make_pair(first, second));
-//}
-//
-//void Response::setBody(std::string & str)
-//{
-//	this->Body_ = str;
-//}
-//
-//std::string Response::makeHeader()
-//{
-//	std::string outcome;
-//	
-//	outcome.append("HTTP/1.1 " + this->StatusCode_ + " " + this->StatusMessage_ + "\r\n");
-//	for (std::map<std::string, std::string>::iterator it = Headers_.begin(); it != Headers_.end(); it++)
-//		outcome.append((*it).first + ": " + (*it).second + "\r\n");
-//	outcome.append("\r\n");
-//	return outcome;
-//}
-//
-//void Response::makeStatusBody()
-//{
-//	std::string outcome;
-//	
-//	outcome.append("<!DOCTYPEhtml><html><head><meta charset=\"UTF-8\"/><title>webserv</title></head>");
-//	outcome.append("<Body_>");
-//	outcome.append("<h1>" + StatusCode_ + "</h1>");
-//	outcome.append("<h3>" + StatusMessage_ + "/h3>");
-//	outcome.append("<p>Click <a href=\"/\">here</a> to return home.</p>");
-//	outcome.append("</Body_></html>\r\n\r\n");
-//	
-//	Body_.clear();
-//	Body_ = outcome;
-//}
-//
-//void Response::makeStatusBody(std::string url)
-//{
-//	std::string outcome;
-//	outcome.append(url);
-//	Body_.clear();
-//	Body_ = outcome;
-//}
-//
-//
-//
-/////*========================================*/
-///* ========== execute function ========== */
-///*========================================*/
-
-//void			Response::executeGet(){
-//	std::cout << "execute get" << std::endl;
-//	
-//	// std::string	buf;
-//
-//	//header setting
-//	/*	
-//		buf += setHeader();
-//	*/
-//
-//	// execute html or cgi
-//	/*
-//		if (getFormat == "html")
-//			buf += getBufHTML();
-//		else (getFormat == cgi)
-//			buf += getBufCGI();
-//
-//	*/
-//	// envoyer par send
-//	/*
-//		send(this->clntFd_, &buf, sizeof(buf) - 1, 0); 
-//	*/
-//	// considerer EPOLLIN ou enlever fd de EPOLL
-//	/*
-//		if (keep_alive)
-//			ep_->epoll_Ctl_Mode(clnFd_, EPOLLIN);
-//		else
-//			fd out!
-//	*/
-//}
-//
-//void			Response::executePost(){
-//	std::cout << "execute post" << std::endl;
-//}
-//
-//void			Response::executeDelete(){
-//	std::cout << "execute delete" << std::endl;
-//}
