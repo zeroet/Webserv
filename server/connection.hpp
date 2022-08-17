@@ -119,13 +119,14 @@ class Connection
 
 		//utils
 		ServerBlock 	getServerConfigByServerName(std::string server_name);
+    
 		void    		processRequest(void);
 		void    		processResponse(void);
 
 		/* ****************************************** */
 		/* ************** execute function ********** */
 		/* ****************************************** */
-		void	executeGetMothod(void);
+		//void	executeGetMothod(void);
 
 		
 		//tmp

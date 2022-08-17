@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <cstring>
 
 /* Headers to manage
 Accept-Charsets
@@ -25,44 +26,57 @@ Transfer-Encoding
 User-Agent
 WWW-Authenticate */
 
+
 class Response
 {
+
+	public:
+		typedef std::map<std::string, std::string> mapStatus;
+
+	private:
+		std::map<std::string, std::string> 	headers_;
+		mapStatus 							mapStatus_;
+		//std::string 						statusCode_;
+		//std::string 						statusMessage_;
+		//std::string 						body_;
+	
 	public:
 		Response();
 		Response(Response const & copy);
 		Response &operator=(Response const & copy);
 		~Response();
 
-		typedef std::map<std::string, std::string> mapStatus;
+		std::string			getBodyStr(std::string const &filePath) const;
+		void				executeGet(void);
 
-		std::string 	makeHeader();
-		void			appendHeader(std::string first, std::string second);
+	private:
+		std::string			getExt(std::string const &filename) const;
+		//std::string 	makeHeader();
+		//void			appendHeader(std::string first, std::string second);
 		
 		/*============================*/
 		/* ========== body ===========*/
 		/*============================*/
-		void			setBody(std::string & str);
-		void			makeStatusBody();
-		void			makeStatusBody(std::string url);
-		int				getBodySize() const;
+		//void			setBody(std::string & str);
+		//void			makeStatusBody();
+		//void			makeStatusBody(std::string url);
+		//int				getBodySize() const;
 		
 		/*===================================*/
 		/* ========== status code ========== */
 		/*===================================*/
 		void			initialMapStatusCode(void);
-		std::string		getStatusCode() const;
-		void			setStatusCode(std::string code);
+		void			initialMapHeaders(void);
+		
 
-		//void			executeGet(void);
+		/* ================================== */
+		/* ============== setter ============ */
+		/* ================================== */
+		//std::string		getStatusCode() const;
+		//void			setStatusCode(std::string code);
+
 		//void			executePost(void);
 		//void			executeDelete(void);
-
-	private:
-		std::map<std::string, std::string> Headers_;
-		std::string StatusCode_;
-		std::string StatusMessage_;
-		std::string Body_;
-		mapStatus mapStatus_;
 	};
 
 #endif
