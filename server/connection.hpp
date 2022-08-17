@@ -89,6 +89,8 @@ class Connection
 		size_t			client_max_body_size;
 		int				buffer_content_length;
 		int				is_chunk;
+		int				chunked_msg_checker;
+		size_t			chunked_msg_size;
 		std::string		body_buf;
 		// res
 		// exe
@@ -117,7 +119,6 @@ class Connection
 
 		//utils
 		ServerBlock 	getServerConfigByServerName(std::string server_name);
-		// LocationBlock	*getLocationConfigByPath(std::string path);
 		void    		processRequest(void);
 		void    		processResponse(void);
 

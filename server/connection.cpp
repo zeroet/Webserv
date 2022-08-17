@@ -8,6 +8,8 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	req_status_code_ = NOT_DEFINE;
 	buffer_content_length = -1;
 	client_max_body_size = 0;
+	chunked_msg_checker = STR_SIZE;
+	chunked_msg_size = 0;
 	is_chunk = false;
 }
 
@@ -19,7 +21,7 @@ void    Connection::processRequest()
 
     int n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0); //except \r
 
-	/* protection to disconnect
+	// /* protection to disconnect
 	if (n < 0 || strchr(buffer_char, 0xff))
 	{
 		//close connection
@@ -27,7 +29,7 @@ void    Connection::processRequest()
 		return ;
 		//need function to close connection
 		//return (Error); or return (-1);
-	}*/
+	}
 	// std::cout << "n: " << n << std::endl;
 	// std::cout << "buffer_char: " << buffer_char << std::endl;
 	// std::cout << "buffer_char + n: " << buffer_char + n << std::endl;
@@ -42,7 +44,8 @@ void    Connection::processRequest()
 		requesthandler.checkRequestMessage(this);
 	if (phase_msg_ == BODY_CHUNKED)
 	{
-		requesthandler.checkChunkedMessage(this);
+		if (!requesthandler.checkChunkedMessage(this))
+			std::cout << "CHUNKED MESSAGE ERROR. CLOSE CONNECTION" << std::endl;
 	}
 	else if (phase_msg_ == BODY_INCOMPLETE)
 		requesthandler.checkRequestBody(this);
