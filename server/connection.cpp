@@ -280,8 +280,8 @@ void	Connection::printRequestMsg(void) {
 	std::cout << std::endl;
 	printf("=====================\n");
 	printf("body:\n");
-	printf("%s\n", getRequest().getBody().c_str());
-	// printf("%s\n", getBodyBuf().c_str());
+	// printf("%s\n", getRequest().getBody().c_str());
+	printf("%s\n", getBodyBuf().c_str());
 	printf("=====================\n");
 	std::cout << "content_length: " << getRequest().getHeaderValue("Content-Length") << std::endl;
 	std::cout << "client_max_body_size: " << client_max_body_size << std::endl;

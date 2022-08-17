@@ -342,11 +342,11 @@ void	RequestHandler::checkHeader(Connection *c) {
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
 			c->setBodyBuf(c->getBuffer());
 	}
-	else if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("chunked"))
-	{
-		c->is_chunk = true;
-		c->setPhaseMsg(BODY_CHUNKED);
-	}
+	// else if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("chunked"))
+	// {
+	// 	c->is_chunk = true;
+	// 	c->setPhaseMsg(BODY_CHUNKED);
+	// }
 
 	// when file doesn't exist
 	if (c->getRequest().getMethod() != "POST" && !isFileExist(c))
@@ -401,7 +401,12 @@ void	RequestHandler::checkHeader(Connection *c) {
 	}
 
 	//chunked message flag on/off
-	if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
+	if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("chunked"))
+	{
+		c->is_chunk = true;
+		c->setPhaseMsg(BODY_CHUNKED);
+	}
+	else if (c->getRequest().getMethod() == "GET" || c->getRequest().getMethod() == "DELETE")
 	{
 		c->is_chunk = false;
 		c->getBodyBuf().clear();
@@ -440,15 +445,16 @@ void	RequestHandler::checkRequestBody(Connection *c) {
 
 bool	RequestHandler::checkChunkedMessage(Connection *c) {
 	std::cout << "check CHUNCKED MESSAGE" << std::endl;
-	(void)c;
+
 	size_t pos;
 	while ((pos = c->getBuffer().find(CRLF)) != std::string::npos) //buffer안에 CRLF가 있을때 계속 loop
 	{
-		if (c->chunked_msg_checker == STR_SIZE) 
+		if (c->chunked_msg_checker == STR_SIZE) //STR SIZE 일때 
 		{
 			if ((pos = c->getBuffer().find(CRLF)) != std::string::npos)
 			{
-				if (c->client_max_body_size < c->getBodyBuf().length()) {
+				if (c->client_max_body_size < c->getBodyBuf().length()) 
+				{
 					c->getBodyBuf().clear();
 					c->setReqStatusCode(PAYLOAD_TOO_LARGE);
 					c->setPhaseMsg(BODY_COMPLETE);
@@ -460,14 +466,66 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 			c->chunked_msg_size = (size_t)strtoul(c->getBuffer().substr(0, pos).c_str(), NULL, 16);
 			if (c->getReqStatusCode() != NOT_DEFINE && c->chunked_msg_size != 0)
 				return (false);
+			if (c->chunked_msg_size == 0)
+			{
+				for (size_t i = 0; i < pos; ++i)
+				{
+					if (c->getBuffer()[i] != '0')
+					{
+						if (c->getReqStatusCode() == NOT_DEFINE)
+						{
+							c->getBodyBuf().clear();
+							c->setReqStatusCode(BAD_REQUEST);
+							c->setPhaseMsg(BODY_COMPLETE);
+							c->is_chunk = false;
+							return (true);
+						}
+						else
+							return (false);
+					}
+				}
+			}
+			c->getBuffer().erase(0, pos + 2);
+			if (c->chunked_msg_size == 0)
+				c->chunked_msg_checker = END;
+			else
+				c->chunked_msg_checker = STR;
 		}
-		if (c->chunked_msg_checker == STR)
+		if (c->chunked_msg_checker == STR) // string 일때
 		{
-
+			if ((c->getBuffer().size() >= (c->chunked_msg_size + 2)) && !(c->getBuffer().compare(c->chunked_msg_size, 2, CRLF)))
+			{
+				c->body_buf.append((char *)c->getBuffer().c_str(), c->chunked_msg_size);
+				c->getBuffer().erase(0, c->chunked_msg_size + LEN_CRLF);
+				c->chunked_msg_checker = STR_SIZE;
+			}
+			if (c->getBuffer().size() >= c->chunked_msg_size + 4)
+			{
+				c->getBodyBuf().clear();
+				c->setReqStatusCode(BAD_REQUEST);
+				c->setPhaseMsg(BODY_COMPLETE);
+				return (true);
+			}
 		}
-		if (c->chunked_msg_checker == END)
+		if (c->chunked_msg_checker == END) // chunked message 끝일때
 		{
-
+			if ((pos = c->getBuffer().find(CRLF)) == 0)
+			{
+				c->getBuffer().clear();
+				if (c->getReqStatusCode() != NOT_DEFINE)
+				{
+					c->setPhaseMsg(START_LINE_INCOMPLETE);
+					c->setReqStatusCode(NOT_DEFINE);
+				}
+				else
+				{
+					c->setPhaseMsg(BODY_COMPLETE);
+				}
+				c->is_chunk = false;
+				c->chunked_msg_checker = STR_SIZE;
+			}
+			else if (pos != std::string::npos)
+				c->getBuffer().erase(0, pos + LEN_CRLF);
 		}
 	}
 	return (true);
