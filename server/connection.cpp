@@ -41,11 +41,17 @@ void    Connection::processRequest()
 		|| phase_msg_ == START_LINE_COMPLETE
 		|| phase_msg_ == HEADER_INCOMPLETE
 		|| phase_msg_ == HEADER_COMPLETE)
+		// || phase_msg_ == BODY_CHUNKED)
 		requesthandler.checkRequestMessage(this);
 	if (phase_msg_ == BODY_CHUNKED)
 	{
 		if (!requesthandler.checkChunkedMessage(this))
+		{
 			std::cout << "CHUNKED MESSAGE ERROR. CLOSE CONNECTION" << std::endl;
+			return ;
+		}
+		else
+			std::cout << "check CHUNCKED MESSAGE" << std::endl;
 	}
 	else if (phase_msg_ == BODY_INCOMPLETE)
 		requesthandler.checkRequestBody(this);
@@ -53,27 +59,9 @@ void    Connection::processRequest()
 	{
 		std::cout << "************ Message body process **********" << std::endl;
 		size_t pos = 0;
-		if ((pos = buffer_.find(CRLF)) != std::string::npos) 
+		if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos) 
 			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 	}
-
-
-	// std::vector<std::string> ret = getBlock().locationList[0].getReturn();
-
-	// for (size_t i = 0; i < ret.size(); i++)
-	// 	std::cout << "///////////////////////////////////////////vector value: " << ret[i] << std::endl;
-
-	////////////
-	// if (phase_msg_ == BODY_COMPLETE)
-	// {
-	// 	std::cout << "CGI / EXECUTE / RESPONSE NEED TO BE DEAL" << std::endl;
-	// 	// ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
-	// }
-	////////////
-
-	//to change Ctl Mode when message is done with CRLFCRLF
-	
-	// if (n == 0 && buffer_.empty() && phase_msg_ == BODY_COMPLETE)
 	memset(&buffer_char, 0, n);
 }
 
@@ -252,11 +240,9 @@ bool		Connection::checkLocationConfigExist(std::string path) {
 	std::pair<bool, LocationBlock> location_pair;
 
 	location_pair = serverConfig_.getLocationBlock(path);
-	// std::cout << "how many: " << serverConfig_.getLocationBlock().size() << std::endl;
 	if (location_pair.first == true)
 	{
 		setLocationConfig(location_pair.second);
-		// std::cout << "$$$$$" << location_pair.second.getUriPath() << std::endl;
 		return (true);
 	}
 	else
@@ -280,7 +266,6 @@ void	Connection::printRequestMsg(void) {
 	std::cout << std::endl;
 	printf("=====================\n");
 	printf("body:\n");
-	// printf("%s\n", getRequest().getBody().c_str());
 	printf("%s\n", getBodyBuf().c_str());
 	printf("=====================\n");
 	std::cout << "content_length: " << getRequest().getHeaderValue("Content-Length") << std::endl;

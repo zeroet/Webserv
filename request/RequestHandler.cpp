@@ -444,11 +444,11 @@ void	RequestHandler::checkRequestBody(Connection *c) {
 }
 
 bool	RequestHandler::checkChunkedMessage(Connection *c) {
-	std::cout << "check CHUNCKED MESSAGE" << std::endl;
-
 	size_t pos;
+
 	while ((pos = c->getBuffer().find(CRLF)) != std::string::npos) //buffer안에 CRLF가 있을때 계속 loop
 	{
+		std::cout << "/////BUFFER CHECK/////" << c->getBuffer() << std::endl;
 		if (c->chunked_msg_checker == STR_SIZE) //STR SIZE 일때 
 		{
 			if ((pos = c->getBuffer().find(CRLF)) != std::string::npos)
@@ -464,6 +464,7 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 			}
 			//문자열을 unsigned long 값으로 변환(str to unsigned long)
 			c->chunked_msg_size = (size_t)strtoul(c->getBuffer().substr(0, pos).c_str(), NULL, 16);
+			// std::cout << "////////////CHUNKED MESSAGE SIZE/////////" << c->chunked_msg_size << std::endl;
 			if (c->getReqStatusCode() != NOT_DEFINE && c->chunked_msg_size != 0)
 				return (false);
 			if (c->chunked_msg_size == 0)
@@ -493,7 +494,7 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 		}
 		if (c->chunked_msg_checker == STR) // string 일때
 		{
-			if ((c->getBuffer().size() >= (c->chunked_msg_size + 2)) && !(c->getBuffer().compare(c->chunked_msg_size, 2, CRLF)))
+			if (c->getBuffer().size() >= (c->chunked_msg_size + 2) && !(c->getBuffer().compare(c->chunked_msg_size, 2, CRLF)))
 			{
 				c->body_buf.append((char *)c->getBuffer().c_str(), c->chunked_msg_size);
 				c->getBuffer().erase(0, c->chunked_msg_size + LEN_CRLF);
@@ -504,6 +505,11 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 				c->getBodyBuf().clear();
 				c->setReqStatusCode(BAD_REQUEST);
 				c->setPhaseMsg(BODY_COMPLETE);
+				return (true);
+			}
+			else //problem
+			{
+				c->setPhaseMsg(BODY_CHUNKED);
 				return (true);
 			}
 		}
@@ -518,9 +524,7 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 					c->setReqStatusCode(NOT_DEFINE);
 				}
 				else
-				{
 					c->setPhaseMsg(BODY_COMPLETE);
-				}
 				c->is_chunk = false;
 				c->chunked_msg_checker = STR_SIZE;
 			}
@@ -528,6 +532,7 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 				c->getBuffer().erase(0, pos + LEN_CRLF);
 		}
 	}
+	std::cout << ">>>>>>>>>>>> CHUNKED MSG STATUS <<<<<<<<<<<" << c->chunked_msg_checker << std::endl;
 	return (true);
 }
 
