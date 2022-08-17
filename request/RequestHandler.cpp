@@ -23,7 +23,7 @@ void	RequestHandler::checkRequestMessage(Connection *c) {
 	if (c->getPhaseMsg() == START_LINE_INCOMPLETE)
 	{
 		size_t pos;
-		if ((pos = c->getBuffer().find(CRLF))!= std::string::npos)
+		if ((pos = c->getBuffer().find(CRLF)) != std::string::npos)
 			c->setPhaseMsg(START_LINE_COMPLETE);
 	}
 	if (c->getPhaseMsg() == START_LINE_COMPLETE)
@@ -340,14 +340,7 @@ void	RequestHandler::checkHeader(Connection *c) {
 			return ;
 		}
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
-		{
 			c->setBodyBuf(c->getBuffer());
-			// std::cout << "////////////////body buf check: " << c->getBodyBuf() << std::endl;
-			// c->getBuffer().erase(0, c->getBuffer().length());
-			// c->getRequest().setBody(c->getBodyBuf());
-			// c->setBodyBuf(body_);
-			// c->getBuffer().erase(0, c->getBuffer().length());
-		}
 	}
 	else if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("chunked"))
 	{
@@ -445,9 +438,39 @@ void	RequestHandler::checkRequestBody(Connection *c) {
 		c->setPhaseMsg(BODY_COMPLETE);
 }
 
-void	RequestHandler::checkChunkedMessage(Connection *c) {
+bool	RequestHandler::checkChunkedMessage(Connection *c) {
 	std::cout << "check CHUNCKED MESSAGE" << std::endl;
 	(void)c;
+	size_t pos;
+	while ((pos = c->getBuffer().find(CRLF)) != std::string::npos) //buffer안에 CRLF가 있을때 계속 loop
+	{
+		if (c->chunked_msg_checker == STR_SIZE) 
+		{
+			if ((pos = c->getBuffer().find(CRLF)) != std::string::npos)
+			{
+				if (c->client_max_body_size < c->getBodyBuf().length()) {
+					c->getBodyBuf().clear();
+					c->setReqStatusCode(PAYLOAD_TOO_LARGE);
+					c->setPhaseMsg(BODY_COMPLETE);
+					c->is_chunk = false;
+					return (true);
+				}
+			}
+			//문자열을 unsigned long 값으로 변환(str to unsigned long)
+			c->chunked_msg_size = (size_t)strtoul(c->getBuffer().substr(0, pos).c_str(), NULL, 16);
+			if (c->getReqStatusCode() != NOT_DEFINE && c->chunked_msg_size != 0)
+				return (false);
+		}
+		if (c->chunked_msg_checker == STR)
+		{
+
+		}
+		if (c->chunked_msg_checker == END)
+		{
+
+		}
+	}
+	return (true);
 }
 
 //utiles
@@ -499,33 +522,6 @@ int			RequestHandler::checkHeaderKey(const std::string &s) {
 	}
 	return (true);
 }
-
-// std::string	RequestHandler::trimWhiteSpace(std::string &s) {
-
-// 	std::string str;
-// 	std::string whitespace(" \n\r\t\f\v");
-// 	size_t found1 = s.find_first_not_of(whitespace);
-// 	size_t found2 = s.find_last_not_of(whitespace);
-// 	str = s.substr(found1, found2 - found1 + 1);
-// 	return (str);
-// }
-
-// int Stoi(const std::string &str, size_t *idx, int base) {
-//   char *end;
-//   const char *p = str.c_str();
-//   long num = std::strtol(p, &end, base);
-//   if (p == end) {
-//     throw std::invalid_argument("Stoi");
-//   }
-//   if (num < std::numeric_limits<int>::min() ||
-//       num > std::numeric_limits<int>::max() || errno == ERANGE) {
-//     throw std::out_of_range("Stoi");
-//   }
-//   if (idx != NULL) {
-//     *idx = static_cast<size_t>(end - p);
-//   }
-//   return static_cast<int>(num);
-// }
 
 // int	RequestHandler::checkHostHeader(Connection *c) {
 // 	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 5, "HTTP/") != 0))
@@ -626,14 +622,11 @@ void	RequestHandler::checkLocationReturnAndApply(std::vector<std::string> ret, C
 	(void)c;
 	size_t 		code = 0;
 	std::string str = "";
-	// std::string	str = "";
 
 	for(size_t i = 0; i < ret.size(); i++)
 	{
 		if (isdigit(*(ret[i].begin()))) // fix with full check with digit
 			code = fromString<size_t>(ret[i]);
-		// else if (!ret[i].compare(0, 7, "http://") || !ret[i].compare(0, 8, "https://"))
-			// uri = ret[i];
 		else
 			str = ret[i];
 	}

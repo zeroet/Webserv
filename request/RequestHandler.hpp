@@ -56,7 +56,7 @@ class RequestHandler {
 		int		parseUri(std::string uri, Connection *c);
 		void	checkRequestBody(Connection *c);
 		bool	checkIndex(Connection *c);
-		void	checkChunkedMessage(Connection *c);
+		bool	checkChunkedMessage(Connection *c);
 		
 
 		//utiles
