@@ -89,10 +89,14 @@ void    Connection::processResponse()
 
 	// body_
 	// si code status est entre 300 ~ 400, envoyer error page
-	//if (this->req_status_code_ >= 300)
-	//	body_ += this->response_.makeErrorPage(this->req_status_code_);
-	//else
+	if (this->req_status_code_ >= 300)
+	{
+		body_ += this->response_.makeErrorPage(this->req_status_code_);
+	}
+	else {
 		std::cout << "not error" << std::endl;
+	
+	}
 	// envoyer code de error page
 
 	std::cout << body_ << std::endl;

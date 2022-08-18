@@ -1,4 +1,6 @@
 #include "Response.hpp"
+namespace ft
+{
 
 void		Response::initialMapHeaders(void)
 {
@@ -101,10 +103,19 @@ std::string		Response::makeErrorPage(int	status_code) {
 	return errorBody_;
 }
 
+std::string		Response::makeBodyPage(Request const &Request) {
+	std::string	body_;
+	
+	Request.getBody();
+	return body_;
+	// Ext;
+	// cgi, or html
+}
+
 /* ********************************************************************************* */
 /* ****************************************** setter ******************************* */
 /* ********************************************************************************* */
-void			Response::setRequestValue(ft::Request &request){
+void			Response::setRequestValue(ft::Request const &request){
 	// set value from request class
 	this->setValueFromRequest(request);
 	// content-type : mime
@@ -118,8 +129,9 @@ void			Response::setRequestValue(ft::Request &request){
 /* ****************************************** utils ******************************** */
 /* ********************************************************************************* */
 void		Response::setContentType(ft::Request const &request) {
+	if (request.getFilePath().empty())
+		return ;
 	std::string	ExtFile(getExt(request.getFilePath()));
-	MimeType mimeType_;
 	this->headers_["Content-Type"] = mimeType_.getMIMEType(ExtFile);
 }
 
@@ -181,4 +193,6 @@ void				Response::printMapHeader(ft::mapHeader	mapHeader_) const{
 		std::cout << "key == [" << iter_begin->first << "], value == [" \
 		<< iter_begin->second << "]" << std::endl;
 	}
+}
+
 }

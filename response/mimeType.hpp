@@ -1,8 +1,15 @@
 #ifndef MIMETYPE_HPP
 # define MIMETYPE_HPP
 
+#include <string>
+#include <iostream>
 #include <map>
-#include "Response.hpp"
+#include <cstring>
+#include <string>
+#include <sstream>
+
+namespace ft
+{
 
 class MimeType
 {
@@ -29,4 +36,5 @@ private:
     void        setMIMETypeTable(void);
 };
 
+}
 #endif

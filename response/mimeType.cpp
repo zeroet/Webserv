@@ -1,5 +1,8 @@
 #include "mimeType.hpp"
 
+namespace ft
+{
+
 MimeType::MimeType()
 {
     setMIMETypeTable();
@@ -49,4 +52,6 @@ void MimeType::setMIMETypeTable(void)
     this->MIMEMap_.insert(std::make_pair("png", "image/png"));
     this->MIMEMap_.insert(std::make_pair("php", "application/x-httpd-php"));
     this->MIMEMap_.insert(std::make_pair("txt", "text/plain"));
+}
+
 }
