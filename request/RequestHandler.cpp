@@ -428,8 +428,8 @@ void	RequestHandler::checkRequestBody(Connection *c) {
 			return ;
 		else if ((size_t)c->buffer_content_length <= strlen(c->buffer_.c_str()))
 		{
-			c->body_buf.append(c->buffer_, c->buffer_content_length);
-			c->buffer_content_length = 0;
+			c->body_buf.append(c->buffer_.c_str(), c->buffer_content_length);
+			c->buffer_content_length = -1;
 			c->getRequest().setBody(c->body_buf);
 			c->setPhaseMsg(BODY_COMPLETE);
 		}
