@@ -117,7 +117,7 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 	std::string		filePath_;
 	std::ifstream 	ifs;
 	
-	filePath_ = "../" + filePath;
+	filePath_ = "./" + filePath;
 
 	std::cout << filePath_ << std::endl;
 	ifs.open(const_cast<char*>(filePath_.c_str()));
@@ -126,11 +126,12 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 		std::cout << "error for open" << std::endl;
 		return makeErrorPage(404);
 	}
+
 	std::string	str;
 	while (std::getline(ifs, str))
 	{
-		ret += str;
 		ret += "\r\n";
+		ret += str;
 	}
 
 	return (ret);
