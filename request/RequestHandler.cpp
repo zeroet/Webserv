@@ -507,11 +507,8 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 				c->setPhaseMsg(BODY_COMPLETE);
 				return (true);
 			}
-			else //problem
-			{
-				c->setPhaseMsg(BODY_CHUNKED);
+			else 
 				return (true);
-			}
 		}
 		if (c->chunked_msg_checker == END) // chunked message 끝일때
 		{
