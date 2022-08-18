@@ -11,6 +11,7 @@
 #include <fstream>
 #include "../request/request.hpp"
 #include "mimeType.hpp"
+#include <time.h>
 
 /* Headers to manage
 Accept-Charsets
@@ -42,10 +43,10 @@ class Response
 {
 
 private:
-	mapHeader 								headers_;
 	mapHeader 								mapStatus_;
-	MimeType								mimeType_;
+	mapHeader 								headers_;
 	Request									request_;
+	MimeType								mimeType_;
 
 public:
 	Response();
@@ -57,33 +58,36 @@ public:
 	/* ************** setter ************** */
 	/* ************************************ */
 	void						setRequest(Request const &request);
+	void						setRequestValue(void);
 	
 	/* ************************************ */
 	/* ************** getter ************** */
 	/* ************************************ */
-	
-	std::string					makeBodyPage(Request const &Request);
 	std::string					makeErrorPage(int status_code);
 	std::string					makeBodyHtml(std::string const &filePath);				
-	std::string					makeHeader(int bodySize);
+	std::string					makeHeader(int bodySize, int statusCode);
 	std::string					getExt(std::string const &filename) const;
+
 private:
-	
 	/* ************************************ */
 	/* ************** utils *************** */
 	/* ************************************ */
-	void						setRequestValue(void);
+	std::string					makeTimeLine(void);
 	void						initialMapHeaders(void);
 	void						initialMapStatusCode(void);
 	void						setValueFromRequest(void);
 	void						setContentType(void);
 	std::string 				toString(const int& v);
-		
+	void						setContentLengh(int bodySize);
+	std::string					makeStartLine(int statusCode);
+	std::string					appendMapHeaders();
+
 	/* ************************************ */
 	/* ************** tester ************** */
 	/* ************************************ */
 	void						printMapHeader(ft::mapHeader	mapHeader) const;
 };
 
-}
+} // namespace ft
+
 #endif

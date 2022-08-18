@@ -103,15 +103,6 @@ std::string		Response::makeErrorPage(int	status_code) {
 	return errorBody_;
 }
 
-std::string		Response::makeBodyPage(Request const &Request) {
-	std::string	body_;
-	
-	Request.getBody();
-	return body_;
-	// Ext;
-	// cgi, or html
-}
-
 std::string		Response::makeBodyHtml(std::string const &filePath) {
 	std::string		ret;
 	std::string		filePath_;
@@ -119,11 +110,10 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 	
 	filePath_ = "./" + filePath;
 
-	std::cout << filePath_ << std::endl;
 	ifs.open(const_cast<char*>(filePath_.c_str()));
 	if (ifs.fail())
 	{
-		std::cout << "error for open" << std::endl;
+		// std::cout << "error for open" << std::endl;
 		return makeErrorPage(404);
 	}
 
@@ -137,12 +127,59 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 	return (ret);
 }
 
-std::string		Response::makeHeader(int bodySize) {
+/*
+Referrer-Policy: no-referrer
+Content-Length: 1555
+Date: Thu, 18 Aug 2022 02:34:57 GMT
+
+*/
+std::string		Response::makeHeader(int bodySize, int statusCode) {
 	std::string	header_;
 
-	(void)bodySize;
-	//header_ += makeStartLine()
+	// body size -> Content-Length
+	// append "Content-Lengh" to headers_
+	setContentLengh(bodySize);
+	// make start line
+	header_ += makeStartLine(statusCode);
+	// append headers value!
+	header_ += appendMapHeaders();
+	// time
+	header_ += makeTimeLine();
+
 	return header_;
+}
+
+std::string		Response::appendMapHeaders(void) {
+	std::string	mapHeader_;
+
+	for (ft::mapHeader::iterator it=headers_.begin(); it!=headers_.end(); ++it) {
+		if ( !(it->second.empty()) ) {
+			mapHeader_ += it->first;
+			mapHeader_ += ": ";
+			mapHeader_ += it->second;
+			mapHeader_ += "\r\n";
+		}
+	}
+
+	return mapHeader_;
+}
+
+/* Date: Thu, 18 Aug 2022 11:02:41 GMT */
+std::string		Response::makeTimeLine(void) {
+	std::string	timeLine;
+	timeLine += "Date: ";
+	
+  	time_t rawtime;
+  	struct tm* timeinfo;
+  	char buffer[80];
+  	time(&rawtime);
+  	timeinfo = localtime(&rawtime);
+
+  	strftime(buffer, 80, "%a, %d %b %Y %T GMT", timeinfo);
+
+	timeLine += buffer;
+	timeLine += "\r\n";
+	return (timeLine);
 }
 
 /* ********************************************************************************* */
@@ -150,26 +187,43 @@ std::string		Response::makeHeader(int bodySize) {
 /* ********************************************************************************* */
 void			Response::setRequest(Request const &request) {
 	this->request_ = request;
-	setRequestValue();
 }
 
-
-/* ********************************************************************************* */
-/* ****************************************** utils ******************************** */
-/* ********************************************************************************* */
 void			Response::setRequestValue(void){
 	// set value from request class
 	this->setValueFromRequest();
 	// content-type : mime
 	this->setContentType(); 
-	//printMapHeader(headers_);
+	// printMapHeader(headers_);
+}
+
+/* ********************************************************************************* */
+/* ****************************************** utils ******************************** */
+/* ********************************************************************************* */
+
+/* HTTP/1.0 400 Bad Request */
+std::string		Response::makeStartLine(int statusCode) {
+	std::string	startLine;
+	std::string	statusCode_ = toString(statusCode);
+	std::string	statusMessage_ = mapStatus_[statusCode_];
+
+	startLine += request_.getVersion();
+	startLine += " ";
+	startLine += statusCode_;
+	startLine += " ";
+	startLine += statusMessage_;
+	startLine += "\r\n";	
+	return startLine;
+}
+
+void			Response::setContentLengh(int bodySize) {
+	this->headers_["Content-Length"] = toString(bodySize);
 }
 
 void		Response::setContentType(void) {
-	if (request_.getFilePath().empty())
-		return ;
 	std::string	ExtFile(getExt(request_.getFilePath()));
 	this->headers_["Content-Type"] = mimeType_.getMIMEType(ExtFile);
+	this->headers_["Content-Type"] += "; charset=UTF-8";
 }
 
 std::string 	Response::toString(const int& v)
@@ -181,10 +235,15 @@ std::string 	Response::toString(const int& v)
 
 std::string	Response::getExt(std::string const &filename) const
 {
-	std::string	ret(filename);
-	std::string fn(filename);
-	fn =	ret.substr(ret.find_last_of(".") + 1);
-    return fn;
+	std::string	ext;
+	std::string::size_type	idx;
+	idx = filename.rfind(".");
+	if (idx != std::string::npos) {
+		ext = filename.substr(idx + 1);
+	}
+	//std::cout << ext << " is ext" << std::endl;
+	//std::cout << filename << " is filename" << std::endl;
+    return ext;
 }
 
 void			Response::setValueFromRequest(void){
@@ -199,14 +258,6 @@ void			Response::setValueFromRequest(void){
 		}
 	}
 }
-
-
-
-
-
-
-
-
 
 
 /* ********************************************************************************* */
@@ -225,4 +276,4 @@ void				Response::printMapHeader(ft::mapHeader	mapHeader_) const{
 	}
 }
 
-}
+} // namespace ft
