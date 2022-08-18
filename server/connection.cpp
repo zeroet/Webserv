@@ -67,7 +67,7 @@ void    Connection::processRequest()
 
 void    Connection::processResponse()
 {
-	std::string	retrunBuffer_;
+	std::string	returnBuffer_;
 	std::string	header_;
 	std::string	body_;
 	
@@ -105,13 +105,13 @@ void    Connection::processResponse()
 	// make header_
 	header_ += response_.makeHeader(body_.size(), req_status_code_);
 	// make return buffer
-	retrunBuffer_ = header_ + body_ ; //+ "\r\n";
+	returnBuffer_ = header_ + body_ ; //+ "\r\n";
 
 	// send return buffer
-	send(clntFd_, const_cast<char*>(retrunBuffer_.c_str()), retrunBuffer_.size(), 0);
+	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
 
 	// epollout, close fd
-	close(clntFd_);
+	ep_->end_connection(clntFd_);
 }
 
 //getter
