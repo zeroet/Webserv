@@ -187,6 +187,7 @@ std::string		Response::makeTimeLine(void) {
 /* ********************************************************************************* */
 void			Response::setRequest(Request const &request) {
 	this->request_ = request;
+	this->request_.setFilePath(request.getFilePath());
 }
 
 void			Response::setRequestValue(void){
@@ -221,7 +222,10 @@ void			Response::setContentLengh(int bodySize) {
 }
 
 void		Response::setContentType(void) {
-	std::string	ExtFile(getExt(request_.getFilePath()));
+
+	// there is no file path
+	std::string	file_path(request_.getFilePath());
+	std::string	ExtFile(getExt(file_path));
 	this->headers_["Content-Type"] = mimeType_.getMIMEType(ExtFile);
 	this->headers_["Content-Type"] += "; charset=UTF-8";
 }
@@ -241,8 +245,8 @@ std::string	Response::getExt(std::string const &filename) const
 	if (idx != std::string::npos) {
 		ext = filename.substr(idx + 1);
 	}
-	//std::cout << ext << " is ext" << std::endl;
-	//std::cout << filename << " is filename" << std::endl;
+	//std::cout << ext << " is ext in getExit" << std::endl;
+	//std::cout << filename << " is filename in getExt"  << std::endl;
     return ext;
 }
 

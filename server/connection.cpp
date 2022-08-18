@@ -79,7 +79,6 @@ void    Connection::processRequest()
 
 void    Connection::processResponse()
 {
-	 
 	std::string	retrunBuffer_;
 	std::string	header_;
 	std::string	body_;
