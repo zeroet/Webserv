@@ -85,17 +85,31 @@ void    Connection::processResponse()
 	std::string	body_;
 	
 	// intializer les valeurs de Request class
-	this->response_.setRequestValue(this->request_);
+	response_.setRequestValue(request_);
 
 	// body_
 	// si code status est entre 300 ~ 400, envoyer error page
-	if (this->req_status_code_ >= 300)
+	if (req_status_code_ >= 300)
 	{
-		body_ += this->response_.makeErrorPage(this->req_status_code_);
+		body_ += response_.makeErrorPage(req_status_code_);
 	}
 	else {
-		std::cout << "not error" << std::endl;
-	
+		std::string	currentMethod_(request_.getMethod());
+		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
+				std::string	Ext_(response_.getExt(request_.getFilePath()));
+				if (currentMethod_ == "GET" && Ext_ == "html") {
+					// file path
+					body_ = response_.makeBodyHtml(request_.getFilePath());
+				}
+				//else {
+				//	// location and request
+				//	// cgi, if method == get, ne pas mettre body pour child process
+				//	std::cout << "get,post and cgi" << std::endl;
+				//}
+		}
+		else if (currentMethod_ == "DELETE") {
+			std::cout << "delete, pas encore" << std::endl;
+		}
 	}
 	// envoyer code de error page
 
