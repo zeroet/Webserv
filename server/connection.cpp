@@ -81,11 +81,11 @@ void    Connection::processResponse()
 {
 	 
 	//std::string	retrunBuffer_;
-	//std::string	header_;
+	std::string	header_;
 	std::string	body_;
 	
 	// intializer les valeurs de Request class
-	response_.setRequestValue(request_);
+	response_.setRequest(request_);
 
 	// body_
 	// si code status est entre 300 ~ 400, envoyer error page
@@ -111,12 +111,9 @@ void    Connection::processResponse()
 			std::cout << "delete, pas encore" << std::endl;
 		}
 	}
-	// envoyer code de error page
-
-	std::cout << body_ << std::endl;
 
 	// make header
-
+	header_ += response_.makeHeader(body_.size());
 
 
 }

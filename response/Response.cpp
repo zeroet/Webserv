@@ -137,26 +137,38 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 	return (ret);
 }
 
+std::string		Response::makeHeader(int bodySize) {
+	std::string	header_;
+
+	(void)bodySize;
+	//header_ += makeStartLine()
+	return header_;
+}
+
 /* ********************************************************************************* */
 /* ****************************************** setter ******************************* */
 /* ********************************************************************************* */
-void			Response::setRequestValue(ft::Request const &request){
-	// set value from request class
-	this->setValueFromRequest(request);
-	// content-type : mime
-	this->setContentType(request); 
-	//printMapHeader(headers_);
+void			Response::setRequest(Request const &request) {
+	this->request_ = request;
+	setRequestValue();
 }
-
 
 
 /* ********************************************************************************* */
 /* ****************************************** utils ******************************** */
 /* ********************************************************************************* */
-void		Response::setContentType(ft::Request const &request) {
-	if (request.getFilePath().empty())
+void			Response::setRequestValue(void){
+	// set value from request class
+	this->setValueFromRequest();
+	// content-type : mime
+	this->setContentType(); 
+	//printMapHeader(headers_);
+}
+
+void		Response::setContentType(void) {
+	if (request_.getFilePath().empty())
 		return ;
-	std::string	ExtFile(getExt(request.getFilePath()));
+	std::string	ExtFile(getExt(request_.getFilePath()));
 	this->headers_["Content-Type"] = mimeType_.getMIMEType(ExtFile);
 }
 
@@ -175,8 +187,8 @@ std::string	Response::getExt(std::string const &filename) const
     return fn;
 }
 
-void			Response::setValueFromRequest(ft::Request const &request){
-	ft::mapHeader mapRequest(request.getRequestHeaders());
+void			Response::setValueFromRequest(void){
+	ft::mapHeader mapRequest(request_.getRequestHeaders());
 
 	ft::mapHeader::iterator	itForHeader;
 	for (ft::mapHeader::iterator it=mapRequest.begin(); it!=mapRequest.end(); ++it) {
