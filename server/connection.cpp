@@ -59,8 +59,20 @@ void    Connection::processRequest()
 	{
 		std::cout << "************ Message body process **********" << std::endl;
 		size_t pos = 0;
-		if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos) 
-			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+		if (getRequest().getMethod() == "GET" || getRequest().getMethod() == "DELETE")
+		{
+			// if ((pos = buffer_.find(CRLF)) != std::string::npos)
+			if (buffer_.empty())
+			{
+				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+				// std::cout << "HERE" << std::endl;
+			}
+		}
+		else
+		{
+			if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
+				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+		}
 	}
 	memset(&buffer_char, 0, n);
 }

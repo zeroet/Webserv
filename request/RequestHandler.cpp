@@ -57,7 +57,7 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	{
 		c->setReqStatusCode(BAD_REQUEST);
 		// c->setPhaseMsg(HEADER_COMPLETE);
-		c->setPhaseMsg(BODY_COMPLETE);
+		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
 	// for (size_t i = 0; i < split_start_line.size(); i++)
@@ -68,7 +68,7 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	{
 		c->setReqStatusCode(BAD_REQUEST);
 		// c->setPhaseMsg(HEADER_COMPLETE);
-		c->setPhaseMsg(BODY_COMPLETE);
+		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
 	else
@@ -82,7 +82,7 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	{
 		c->setReqStatusCode(BAD_REQUEST);
 		// c->setPhaseMsg(HEADER_COMPLETE);
-		c->setPhaseMsg(BODY_COMPLETE);
+		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
 
@@ -94,7 +94,7 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	{
 		c->setReqStatusCode(BAD_REQUEST);
 		// c->setPhaseMsg(HEADER_COMPLETE);
-		c->setPhaseMsg(BODY_COMPLETE);
+		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
 	cmp = version.compare(0, 2, "1.");
@@ -103,7 +103,7 @@ void	RequestHandler::parseStartLine(Connection *c) {
 		std::cout << "hererkejflksdjflksdjf" << std::endl;
 		c->setReqStatusCode(HTTP_VERSION_NOT_SUPPORTED);
 		// c->setPhaseMsg(HEADER_COMPLETE);
-		c->setPhaseMsg(BODY_COMPLETE);
+		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
 	c->getRequest().setVersion(http + version);
