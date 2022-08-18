@@ -7,6 +7,8 @@
 #include <cstring>
 #include <string>
 #include <sstream>
+#include <filesystem>
+#include <fstream>
 #include "../request/request.hpp"
 #include "mimeType.hpp"
 
@@ -57,8 +59,9 @@ public:
 	/* ************** getter ************** */
 	/* ************************************ */
 	
-	std::string					makeErrorPage(int status_code);
 	std::string					makeBodyPage(Request const &Request);
+	std::string					makeErrorPage(int status_code);
+	std::string					makeBodyHtml(std::string const &filePath);				
 	std::string					getExt(std::string const &filename) const;
 
 private:

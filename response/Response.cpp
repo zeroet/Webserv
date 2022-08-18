@@ -80,7 +80,7 @@ Response::~Response()
 /* ********************************************************************************* */
 std::string		Response::makeErrorPage(int	status_code) {
 	std::string	errorCode_ = toString(status_code);
-	std::string	errorMessage_ = this->headers_[errorCode_];
+	std::string	errorMessage_(this->mapStatus_[errorCode_]);
 	std::string	errorBody_;
 
 	errorBody_ += "<!DOCTYPE html>\r\n";
@@ -110,6 +110,30 @@ std::string		Response::makeBodyPage(Request const &Request) {
 	return body_;
 	// Ext;
 	// cgi, or html
+}
+
+std::string		Response::makeBodyHtml(std::string const &filePath) {
+	std::string		ret;
+	std::string		filePath_;
+	std::ifstream 	ifs;
+	
+	filePath_ = "../" + filePath;
+
+	std::cout << filePath_ << std::endl;
+	ifs.open(const_cast<char*>(filePath_.c_str()));
+	if (ifs.fail())
+	{
+		std::cout << "error for open" << std::endl;
+		return makeErrorPage(404);
+	}
+	std::string	str;
+	while (std::getline(ifs, str))
+	{
+		ret += str;
+		ret += "\r\n";
+	}
+
+	return (ret);
 }
 
 /* ********************************************************************************* */
@@ -144,17 +168,10 @@ std::string 	Response::toString(const int& v)
 
 std::string	Response::getExt(std::string const &filename) const
 {
-    char *buf = const_cast<char*>(filename.c_str());
-   // bool ret = false;
-    char* ptr = NULL;
- 
-    ptr = strrchr(buf, '.');
-    if (ptr == NULL)
-        return NULL;
- 
-    strcpy(buf, ptr + 1);
-	std::string ret(buf);
-    return ret;
+	std::string	ret(filename);
+	std::string fn(filename);
+	fn =	ret.substr(ret.find_last_of(".") + 1);
+    return fn;
 }
 
 void			Response::setValueFromRequest(ft::Request const &request){
