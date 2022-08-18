@@ -1,4 +1,6 @@
 #include "Response.hpp"
+namespace ft
+{
 
 void		Response::initialMapHeaders(void)
 {
@@ -17,45 +19,38 @@ void		Response::initialMapHeaders(void)
 
 void		Response::initialMapStatusCode()
 {
-	mapStatus_.insert(std::make_pair("100", "Continue"));
-	mapStatus_.insert(std::make_pair("101", "Switching Protocols"));
-	mapStatus_.insert(std::make_pair("103", "Early Hints"));
-	mapStatus_.insert(std::make_pair("200", "OK"));
-	mapStatus_.insert(std::make_pair("201", "Created"));
-	mapStatus_.insert(std::make_pair("202", "Accepted"));
-	mapStatus_.insert(std::make_pair("203", "Non-Authoritative Information"));
-	mapStatus_.insert(std::make_pair("204", "No Content"));
-	mapStatus_.insert(std::make_pair("205", "Reset Content"));
-	mapStatus_.insert(std::make_pair("206", "Partial Content"));
-	mapStatus_.insert(std::make_pair("300", "Multiple Choices"));
-	mapStatus_.insert(std::make_pair("301", "Moved Permanently"));
-	mapStatus_.insert(std::make_pair("302", "Found"));
-	mapStatus_.insert(std::make_pair("303", "See Other"));
-	mapStatus_.insert(std::make_pair("304", "Not Modified"));
-	mapStatus_.insert(std::make_pair("305", "Use Proxy"));
-	mapStatus_.insert(std::make_pair("306", "unsued"));
-	mapStatus_.insert(std::make_pair("307", "Temporary Redirect"));
-	mapStatus_.insert(std::make_pair("308", "Permanent Redirect"));
-	mapStatus_.insert(std::make_pair("400", "Bad Request"));
-	mapStatus_.insert(std::make_pair("401", "Unauthorized"));
-	mapStatus_.insert(std::make_pair("402", "Payment Required"));
-	mapStatus_.insert(std::make_pair("403", "Forbidden"));
-	mapStatus_.insert(std::make_pair("404", "Not Found"));
-	mapStatus_.insert(std::make_pair("405", "Method Not Allowed"));	
-	mapStatus_.insert(std::make_pair("408", "Request Timeout"));	
-	mapStatus_.insert(std::make_pair("411", "Length Required"));	
-	mapStatus_.insert(std::make_pair("413", "Payload Too Large"));	
-	mapStatus_.insert(std::make_pair("414", "URI Too Long"));	
-	mapStatus_.insert(std::make_pair("500", "Internal Server Error"));	
-	mapStatus_.insert(std::make_pair("502", "Bad Gateway"));	
-	mapStatus_.insert(std::make_pair("505", "HTTP Version Not Supported"));	
-
-	//std::map<std::string, std::string>::iterator it;
-	//it = this->mapStatus_.find(code);
-	//this->StatusCode_ = it->first;
-	//this->StatusMessage_ = it->second;	
-	//std::cout << StatusCode_ << std::endl;
-	//std::cout << StatusMessage_ << std::endl;
+	this->mapStatus_.insert(std::make_pair("100", "Continue"));
+	this->mapStatus_.insert(std::make_pair("101", "Switching Protocols"));
+	this->mapStatus_.insert(std::make_pair("103", "Early Hints"));
+	this->mapStatus_.insert(std::make_pair("200", "OK"));
+	this->mapStatus_.insert(std::make_pair("201", "Created"));
+	this->mapStatus_.insert(std::make_pair("202", "Accepted"));
+	this->mapStatus_.insert(std::make_pair("203", "Non-Authoritative Information"));
+	this->mapStatus_.insert(std::make_pair("204", "No Content"));
+	this->mapStatus_.insert(std::make_pair("205", "Reset Content"));
+	this->mapStatus_.insert(std::make_pair("206", "Partial Content"));
+	this->mapStatus_.insert(std::make_pair("300", "Multiple Choices"));
+	this->mapStatus_.insert(std::make_pair("301", "Moved Permanently"));
+	this->mapStatus_.insert(std::make_pair("302", "Found"));
+	this->mapStatus_.insert(std::make_pair("303", "See Other"));
+	this->mapStatus_.insert(std::make_pair("304", "Not Modified"));
+	this->mapStatus_.insert(std::make_pair("305", "Use Proxy"));
+	this->mapStatus_.insert(std::make_pair("306", "unsued"));
+	this->mapStatus_.insert(std::make_pair("307", "Temporary Redirect"));
+	this->mapStatus_.insert(std::make_pair("308", "Permanent Redirect"));
+	this->mapStatus_.insert(std::make_pair("400", "Bad Request"));
+	this->mapStatus_.insert(std::make_pair("401", "Unauthorized"));
+	this->mapStatus_.insert(std::make_pair("402", "Payment Required"));
+	this->mapStatus_.insert(std::make_pair("403", "Forbidden"));
+	this->mapStatus_.insert(std::make_pair("404", "Not Found"));
+	this->mapStatus_.insert(std::make_pair("405", "Method Not Allowed"));	
+	this->mapStatus_.insert(std::make_pair("408", "Request Timeout"));	
+	this->mapStatus_.insert(std::make_pair("411", "Length Required"));	
+	this->mapStatus_.insert(std::make_pair("413", "Payload Too Large"));	
+	this->mapStatus_.insert(std::make_pair("414", "URI Too Long"));	
+	this->mapStatus_.insert(std::make_pair("500", "Internal Server Error"));	
+	this->mapStatus_.insert(std::make_pair("502", "Bad Gateway"));	
+	this->mapStatus_.insert(std::make_pair("505", "HTTP Version Not Supported"));	
 }
 		
 
@@ -70,14 +65,6 @@ Response::Response(Response const & copy)
 	(*this) = copy;
 }
 
-/*Response::Response(const std::string &status)
-{
-	std::cout << this->StatusCode_ << std::endl;
-	std::cout << this->StatusMessage_ << std::endl;
-	MapStatusCode(this->StatusCode_);
-	response_manager();
-}*/
-
 Response & Response::operator=(Response const & copy)
 {
 	(void) copy;
@@ -88,145 +75,211 @@ Response::~Response()
 {
 }
 
-std::string	Response::getBodyStr(std::string const &file_path) const
-{
-	std::string	bodyStr("");
-	std::string	fileExtension(getExt(file_path));
+/* ********************************************************************************* */
+/* ****************************************** getter ******************************* */
+/* ********************************************************************************* */
+std::string		Response::makeErrorPage(int	status_code) {
+	std::string	errorCode_ = toString(status_code);
+	std::string	errorMessage_(this->mapStatus_[errorCode_]);
+	std::string	errorBody_;
 
-	if (fileExtension == "html")
-		std::cout << "execute html for bodtstr" << std::endl;
-	// else fileExtention == cgi, go cgi
+	errorBody_ += "\r\n";
+	errorBody_ += "<!DOCTYPE html>\r\n";
+	errorBody_ += "<html lang=\"en\">\r\n";
+	errorBody_ += "<head>\r\n";
+	errorBody_ += "	<meta charset=\"UTF-8\">\r\n";
+	errorBody_ += "	<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n";
+	errorBody_ += "	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n";
+	errorBody_ += "	<title>";
+	errorBody_ += errorCode_;
+	errorBody_ += "</title>\r\n";
+	errorBody_ += "</head>\r\n";
+	errorBody_ += "<body>\r\n";
+	errorBody_ += "	<h1>";
+	errorBody_ += errorMessage_;
+	errorBody_ += "</h1>\r\n";
+	errorBody_ += "</body>\r\n";
+	errorBody_ += "</html>";
 	
-
- 	return bodyStr;
+	return errorBody_;
 }
 
-void	Response::executeGet(void)
+std::string		Response::makeBodyHtml(std::string const &filePath) {
+	std::string		ret;
+	std::string		filePath_;
+	std::ifstream 	ifs;
+	
+	filePath_ = "./" + filePath;
+
+	//std::cout << filePath_ << std::endl;
+	ifs.open(const_cast<char*>(filePath_.c_str()));
+	if (ifs.fail())
+	{
+		//std::cout << "error for open" << std::endl;
+		return makeErrorPage(404);
+	}
+
+	std::string	str;
+	while (std::getline(ifs, str))
+	{
+		ret += "\r\n";
+		ret += str;
+	}
+
+	return (ret);
+}
+
+/*
+Referrer-Policy: no-referrer
+Content-Length: 1555
+Date: Thu, 18 Aug 2022 02:34:57 GMT
+
+*/
+std::string		Response::makeHeader(int bodySize, int statusCode) {
+	std::string	header_;
+
+	// body size -> Content-Length
+	// append "Content-Lengh" to headers_
+	setContentLengh(bodySize);
+	// make start line
+	header_ += makeStartLine(statusCode);
+	// append headers value!
+	header_ += appendMapHeaders();
+	// time
+	header_ += makeTimeLine();
+
+	return header_;
+}
+
+std::string		Response::appendMapHeaders(void) {
+	std::string	mapHeader_;
+
+	for (ft::mapHeader::iterator it=headers_.begin(); it!=headers_.end(); ++it) {
+		if ( !(it->second.empty()) ) {
+			mapHeader_ += it->first;
+			mapHeader_ += ": ";
+			mapHeader_ += it->second;
+			mapHeader_ += "\r\n";
+		}
+	}
+
+	return mapHeader_;
+}
+
+/* Date: Thu, 18 Aug 2022 11:02:41 GMT */
+std::string		Response::makeTimeLine(void) {
+	std::string	timeLine;
+	timeLine += "Date: ";
+	
+  	time_t rawtime;
+  	struct tm* timeinfo;
+  	char buffer[80];
+  	time(&rawtime);
+  	timeinfo = localtime(&rawtime);
+
+  	strftime(buffer, 80, "%a, %d %b %Y %T GMT", timeinfo);
+
+	timeLine += buffer;
+	timeLine += "\r\n";
+	return (timeLine);
+}
+
+/* ********************************************************************************* */
+/* ****************************************** setter ******************************* */
+/* ********************************************************************************* */
+void			Response::setRequest(Request const &request) {
+	this->request_ = request;
+	this->request_.setFilePath(request.getFilePath());
+}
+
+void			Response::setRequestValue(void){
+	// set value from request class
+	this->setValueFromRequest();
+	// content-type : mime
+	this->setContentType(); 
+	// printMapHeader(headers_);
+}
+
+/* ********************************************************************************* */
+/* ****************************************** utils ******************************** */
+/* ********************************************************************************* */
+
+/* HTTP/1.0 400 Bad Request */
+std::string		Response::makeStartLine(int statusCode) {
+	std::string	startLine;
+	std::string	statusCode_ = toString(statusCode);
+	std::string	statusMessage_ = mapStatus_[statusCode_];
+
+	startLine += "HTTP/1.1";
+	startLine += " ";
+	startLine += statusCode_;
+	startLine += " ";
+	startLine += statusMessage_;
+	startLine += "\r\n";	
+	return startLine;
+}
+
+void			Response::setContentLengh(int bodySize) {
+	this->headers_["Content-Length"] = toString(bodySize);
+}
+
+void		Response::setContentType(void) {
+
+	// there is no file path
+	std::string	file_path(request_.getFilePath());
+	std::string	ExtFile(getExt(file_path));
+	this->headers_["Content-Type"] = mimeType_.getMIMEType(ExtFile);
+	this->headers_["Content-Type"] += "; charset=UTF-8";
+}
+
+std::string 	Response::toString(const int& v)
 {
-	std::string	bufForBody_;
-	std::cout << "here" << std::endl;
+	std::ostringstream ss;
+	ss << v;
+	return (ss.str());
 }
 
 std::string	Response::getExt(std::string const &filename) const
 {
-    char *buf = const_cast<char*>(filename.c_str());
-   // bool ret = false;
-    char* ptr = NULL;
- 
-    ptr = strrchr(buf, '.');
-    if (ptr == NULL)
-        return NULL;
- 
-    strcpy(buf, ptr + 1);
-	std::string ret(buf);
-    return ret;
+	std::string	ext;
+	std::string::size_type	idx;
+	idx = filename.rfind(".");
+	if (idx != std::string::npos) {
+		ext = filename.substr(idx + 1);
+	}
+	//std::cout << ext << " is ext in getExit" << std::endl;
+	//std::cout << filename << " is filename in getExt"  << std::endl;
+    return ext;
 }
 
-//std::string	Response::getStatusCode() const
-//{
-//	return (this->StatusCode_);
-//}
-//
-//void	Response::setStatusCode(std::string code)
-//{
-//	this->StatusCode_ = code;
-//}
-//
-//// void	Response::response_manager()
-//// {
-//// 	std::string str;
-////
-//// 	str = makeHeader();
-//// 	std::cout << str << std::endl;
-//// 	makeStatusBody();
-//// 	std::cout << Body_ << std::endl;
-//// }
-//
-//void Response::appendHeader(std::string first, std::string second)
-//{
-//	Headers_.insert(std::make_pair(first, second));
-//}
-//
-//void Response::setBody(std::string & str)
-//{
-//	this->Body_ = str;
-//}
-//
-//std::string Response::makeHeader()
-//{
-//	std::string outcome;
-//	
-//	outcome.append("HTTP/1.1 " + this->StatusCode_ + " " + this->StatusMessage_ + "\r\n");
-//	for (std::map<std::string, std::string>::iterator it = Headers_.begin(); it != Headers_.end(); it++)
-//		outcome.append((*it).first + ": " + (*it).second + "\r\n");
-//	outcome.append("\r\n");
-//	return outcome;
-//}
-//
-//void Response::makeStatusBody()
-//{
-//	std::string outcome;
-//	
-//	outcome.append("<!DOCTYPEhtml><html><head><meta charset=\"UTF-8\"/><title>webserv</title></head>");
-//	outcome.append("<Body_>");
-//	outcome.append("<h1>" + StatusCode_ + "</h1>");
-//	outcome.append("<h3>" + StatusMessage_ + "/h3>");
-//	outcome.append("<p>Click <a href=\"/\">here</a> to return home.</p>");
-//	outcome.append("</Body_></html>\r\n\r\n");
-//	
-//	Body_.clear();
-//	Body_ = outcome;
-//}
-//
-//void Response::makeStatusBody(std::string url)
-//{
-//	std::string outcome;
-//	outcome.append(url);
-//	Body_.clear();
-//	Body_ = outcome;
-//}
-//
-//
-//
-/////*========================================*/
-///* ========== execute function ========== */
-///*========================================*/
+void			Response::setValueFromRequest(void){
+	ft::mapHeader mapRequest(request_.getRequestHeaders());
 
-//void			Response::executeGet(){
-//	std::cout << "execute get" << std::endl;
-//	
-//	// std::string	buf;
-//
-//	//header setting
-//	/*	
-//		buf += setHeader();
-//	*/
-//
-//	// execute html or cgi
-//	/*
-//		if (getFormat == "html")
-//			buf += getBufHTML();
-//		else (getFormat == cgi)
-//			buf += getBufCGI();
-//
-//	*/
-//	// envoyer par send
-//	/*
-//		send(this->clntFd_, &buf, sizeof(buf) - 1, 0); 
-//	*/
-//	// considerer EPOLLIN ou enlever fd de EPOLL
-//	/*
-//		if (keep_alive)
-//			ep_->epoll_Ctl_Mode(clnFd_, EPOLLIN);
-//		else
-//			fd out!
-//	*/
-//}
-//
-//void			Response::executePost(){
-//	std::cout << "execute post" << std::endl;
-//}
-//
-//void			Response::executeDelete(){
-//	std::cout << "execute delete" << std::endl;
-//}
+	ft::mapHeader::iterator	itForHeader;
+	for (ft::mapHeader::iterator it=mapRequest.begin(); it!=mapRequest.end(); ++it) {
+		itForHeader = headers_.find(it->first);
+		if (itForHeader != headers_.end()
+			&& itForHeader->first != "Content-Length") {
+ 				headers_[itForHeader->first] = it->second;
+		}
+	}
+}
+
+
+/* ********************************************************************************* */
+/* ****************************************** tester ******************************* */
+/* ********************************************************************************* */
+void				Response::printMapHeader(ft::mapHeader	mapHeader_) const{
+	typedef std::map<std::string, std::string>::iterator	it_;
+
+	it_		iter_begin	= mapHeader_.begin();
+	it_		iter_end 	= mapHeader_.end();
+
+	for(;iter_begin != iter_end;iter_begin++)
+	{
+		std::cout << "key == [" << iter_begin->first << "], value == [" \
+		<< iter_begin->second << "]" << std::endl;
+	}
+}
+
+} // namespace ft

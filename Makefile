@@ -15,7 +15,8 @@ SERVER = connection.cpp \
 REQUEST = request.cpp \
 		  RequestHandler.cpp
 
-RESPONSE = Response.cpp
+RESPONSE = Response.cpp \
+	   mimeType.cpp
 
 SRCS = main.cpp \
 	   $(addprefix config/src/, $(CONFIG)) \

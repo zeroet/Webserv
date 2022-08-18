@@ -5,6 +5,13 @@
 #include <iostream>
 #include <map>
 #include <cstring>
+#include <string>
+#include <sstream>
+#include <filesystem>
+#include <fstream>
+#include "../request/request.hpp"
+#include "mimeType.hpp"
+#include <time.h>
 
 /* Headers to manage
 Accept-Charsets
@@ -26,57 +33,61 @@ Transfer-Encoding
 User-Agent
 WWW-Authenticate */
 
+namespace ft 
+{
+
+class MimeType;
+class Request;
 
 class Response
 {
 
-	public:
-		typedef std::map<std::string, std::string> mapStatus;
+private:
+	mapHeader 								mapStatus_;
+	mapHeader 								headers_;
+	Request									request_;
+	MimeType								mimeType_;
 
-	private:
-		std::map<std::string, std::string> 	headers_;
-		mapStatus 							mapStatus_;
-		//std::string 						statusCode_;
-		//std::string 						statusMessage_;
-		//std::string 						body_;
+public:
+	Response();
+	Response(Response const & copy);
+	Response &operator=(Response const & copy);
+	~Response();
 	
-	public:
-		Response();
-		Response(Response const & copy);
-		Response &operator=(Response const & copy);
-		~Response();
+	/* ************************************ */
+	/* ************** setter ************** */
+	/* ************************************ */
+	void						setRequest(Request const &request);
+	void						setRequestValue(void);
+	
+	/* ************************************ */
+	/* ************** getter ************** */
+	/* ************************************ */
+	std::string					makeErrorPage(int status_code);
+	std::string					makeBodyHtml(std::string const &filePath);				
+	std::string					makeHeader(int bodySize, int statusCode);
+	std::string					getExt(std::string const &filename) const;
 
-		std::string			getBodyStr(std::string const &filePath) const;
-		void				executeGet(void);
+private:
+	/* ************************************ */
+	/* ************** utils *************** */
+	/* ************************************ */
+	std::string					makeTimeLine(void);
+	void						initialMapHeaders(void);
+	void						initialMapStatusCode(void);
+	void						setValueFromRequest(void);
+	void						setContentType(void);
+	std::string 				toString(const int& v);
+	void						setContentLengh(int bodySize);
+	std::string					makeStartLine(int statusCode);
+	std::string					appendMapHeaders();
 
-	private:
-		std::string			getExt(std::string const &filename) const;
-		//std::string 	makeHeader();
-		//void			appendHeader(std::string first, std::string second);
-		
-		/*============================*/
-		/* ========== body ===========*/
-		/*============================*/
-		//void			setBody(std::string & str);
-		//void			makeStatusBody();
-		//void			makeStatusBody(std::string url);
-		//int				getBodySize() const;
-		
-		/*===================================*/
-		/* ========== status code ========== */
-		/*===================================*/
-		void			initialMapStatusCode(void);
-		void			initialMapHeaders(void);
-		
+	/* ************************************ */
+	/* ************** tester ************** */
+	/* ************************************ */
+	void						printMapHeader(ft::mapHeader	mapHeader) const;
+};
 
-		/* ================================== */
-		/* ============== setter ============ */
-		/* ================================== */
-		//std::string		getStatusCode() const;
-		//void			setStatusCode(std::string code);
-
-		//void			executePost(void);
-		//void			executeDelete(void);
-	};
+} // namespace ft
 
 #endif

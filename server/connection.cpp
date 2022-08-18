@@ -67,110 +67,52 @@ void    Connection::processRequest()
 
 void    Connection::processResponse()
 {
-	/*
-
-	std::string		ret_buf;
-
-	if (checkErrorCode())
-	{
-		ret_buf += makeErrorPage();
-	}
-	else 
-	{
-		// initial variable for html and cgi
-		if (this->checkCgi())
-			this->request_.setVariableForCgi();
-		this->request_.setVariableForHtml();
-
-		// execute function par rapport de method!
-		// ret_buf == header + body
-		if (this->request_.getMethod() == "GET")
-			ret_buf += this->reponse_.executeGet();
-		else if (this->request_.getMethod() == "POST")
-			ret_buf += this->response_.executePost();
-		else
-			ret_buf += this->reponse_.exectueDelete();
-	}
-	// send
-	char 	*send_buf = const_cast<char*>(ret_buf.c_str());
-	int		size_buf = ret_buf.size();
-	send(this->clntFd_, &send_buf, size_buf, 0);
-
-	// gerer epoll
-	if (!keep_alive)
-		close(this->clnFd_);
-	else
-		epollin; 
-	*/
-
-
-	std::string	currentMethod(this->request_.getMethod());
-
-	if (currentMethod == "GET")
-		this->response_.executeGet();
-	else
-		std::cout << "pas encore" << std::endl;
-	//std::string	bufForBody_;
-
-
-	//this->getLocationConfig().getCgi();
-	//this->getLocationConfig().getCgiPath();
-	//bufForBody_ = this->response_.getBodyStr(this->request_.getFilePath());
-	//std::cout << bufForBody_ << " is file path" << std::endl;
-	// file open
-	// html, ou cgi
-	// file save in buf_str;
-
-	// make header with size buf_str
-
-	// add in return buf
-	// header and buf_str
-
-	// send all
-	// close fd
-
-}
-
-//void	Connection::executeGetMothod(void){
-
-	//std::cout << "get" << std::endl;
-
+	std::string	retrunBuffer_;
+	std::string	header_;
+	std::string	body_;
 	
-	//std::cout << this->request_.getBody() << std::endl;
-	//std::cout << this->request_.getFilePath() << std::endl;
-	////std::cout << this->request_.getHeaderValue() << std::endl;
-	//std::cout << this->request_.getHost() << std::endl;
-	//std::cout << this->request_.getMethod() << std::endl;
-	//std::cout << this->request_.getPath() << std::endl;
-	//std::cout << this->request_.getQueryString() << std::endl;
-	//std::cout << this->request_.getUri() << std::endl;
-//	// std::string	buf;
-//
-//	//header setting
-//	/*	
-//		buf += setHeader();
-//	*/
-//
-//	// execute html or cgi
-//	/*
-//		if (getFormat == "html")
-//			buf += getBufHTML();
-//		else (getFormat == cgi)
-//			buf += getBufCGI();
-//
-//	*/
-//	// envoyer par send
-//	/*
-//		send(this->clntFd_, &buf, sizeof(buf) - 1, 0); 
-//	*/
-//	// considerer EPOLLIN ou enlever fd de EPOLL
-//	/*
-//		if (keep_alive)
-//			ep_->epoll_Ctl_Mode(clnFd_, EPOLLIN);
-//		else
-//			fd out!
-//	*/
-//}
+	// intializer les valeurs de Request class
+	response_.setRequest(request_);
+	response_.setRequestValue();
+
+	//std::cout << req_status_code_ << " is code " << std::endl;
+	// body_
+	// si code status est entre 300 ~ 400, envoyer error page
+	if (req_status_code_ >= 300) {
+		body_ += response_.makeErrorPage(req_status_code_);
+	}
+	else {
+		std::string	currentMethod_(request_.getMethod());
+		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
+				std::string	Ext_(response_.getExt(request_.getFilePath()));
+				if (currentMethod_ == "GET" && Ext_ == "html") {
+					// file path
+					body_ = response_.makeBodyHtml(request_.getFilePath());
+					req_status_code_ = 200;
+				}
+				else {
+				//	// location and request
+				//	// cgi, if method == get, ne pas mettre body pour child process
+					std::cout << "get,post and cgi" << std::endl;
+					req_status_code_ = 201;
+				}
+		}
+		else if (currentMethod_ == "DELETE") {
+			std::cout << "delete, pas encore" << std::endl;
+		}
+	}
+	
+	// make header_
+	header_ += response_.makeHeader(body_.size(), req_status_code_);
+	// make return buffer
+	retrunBuffer_ = header_ + body_ ; //+ "\r\n";
+
+	// send return buffer
+	send(clntFd_, const_cast<char*>(retrunBuffer_.c_str()), retrunBuffer_.size(), 0);
+
+	// epollout, close fd
+	close(clntFd_);
+}
 
 //getter
 std::vector<ServerBlock>		&Connection::getBlock(void) {
@@ -218,10 +160,6 @@ void	Connection::setReqStatusCode(int status_code) {
 void	Connection::setPhaseMsg(int new_msg) {
 	phase_msg_ = new_msg;
 }
-
-//void    Connection::response() {
-//    std::cout <<"Response execute" <<std::endl;
-//}
 
 void	Connection::setServerBlockConfig(std::string server_name) {
 	serverConfig_ = getServerConfigByServerName(server_name);
