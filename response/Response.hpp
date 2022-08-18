@@ -36,14 +36,17 @@ namespace ft
 {
 
 class MimeType;
+class Request;
 
 class Response
 {
 
 private:
 	mapHeader 								headers_;
-	mapHeader 							mapStatus_;
+	mapHeader 								mapStatus_;
 	MimeType								mimeType_;
+	Request									request_;
+
 public:
 	Response();
 	Response(Response const & copy);
@@ -53,7 +56,7 @@ public:
 	/* ************************************ */
 	/* ************** setter ************** */
 	/* ************************************ */
-	void						setRequestValue(ft::Request const &request);
+	void						setRequest(Request const &request);
 	
 	/* ************************************ */
 	/* ************** getter ************** */
@@ -62,17 +65,18 @@ public:
 	std::string					makeBodyPage(Request const &Request);
 	std::string					makeErrorPage(int status_code);
 	std::string					makeBodyHtml(std::string const &filePath);				
+	std::string					makeHeader(int bodySize);
 	std::string					getExt(std::string const &filename) const;
-
 private:
 	
 	/* ************************************ */
 	/* ************** utils *************** */
 	/* ************************************ */
+	void						setRequestValue(void);
 	void						initialMapHeaders(void);
 	void						initialMapStatusCode(void);
-	void						setValueFromRequest(ft::Request const &request);
-	void						setContentType(ft::Request const &request);
+	void						setValueFromRequest(void);
+	void						setContentType(void);
 	std::string 				toString(const int& v);
 		
 	/* ************************************ */
