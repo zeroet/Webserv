@@ -206,7 +206,8 @@ void	Connection::printRequestMsg(void) {
 	printf("body:\n");
 	printf("%s\n", getBodyBuf().c_str());
 	printf("=====================\n");
-	std::cout << "content_length: " << getRequest().getHeaderValue("Content-Length") << std::endl;
+	std::cout << "content_length_buffer: " << buffer_content_length << std::endl;
+	// std::cout << "content_length: " << getRequest().getHeaderValue("Content-Length") << std::endl;
 	std::cout << "client_max_body_size: " << client_max_body_size << std::endl;
 	printf("=====================\n");
 }

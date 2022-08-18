@@ -422,21 +422,25 @@ void	RequestHandler::checkHeader(Connection *c) {
 }
 
 void	RequestHandler::checkRequestBody(Connection *c) {
-	if (!c->is_chunk)
+	// std::cout << "BUFFER CHECK >>> " <<  c->buffer_char << std::endl;
+
+	if (c->is_chunk == false)
 	{
-		if (((ssize_t)c->buffer_content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_.c_str()))
+		if (((ssize_t)c->buffer_content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_char))
 			return ;
-		else if ((size_t)c->buffer_content_length <= strlen(c->buffer_.c_str()))
+		
+		else if ((size_t)c->buffer_content_length <= strlen(c->buffer_char)) //buffer content length가 buffer char 길이보다 작거나 같을때
 		{
-			c->body_buf.append(c->buffer_.c_str(), c->buffer_content_length);
+			c->body_buf.append(c->buffer_char, c->buffer_content_length);
 			c->buffer_content_length = -1;
 			c->getRequest().setBody(c->body_buf);
 			c->setPhaseMsg(BODY_COMPLETE);
 		}
-		else
+		else //buffer content length가 buffer char 길이보다 클때
 		{
-			c->buffer_content_length = c->buffer_content_length - strlen(c->buffer_.c_str());
-			c->setBodyBuf(c->buffer_);
+				std::cout << "HERE2" << std::endl;
+			c->buffer_content_length = c->buffer_content_length - strlen(c->buffer_char);
+			c->setBodyBuf(c->buffer_char);
 		}
 	}
 	else
