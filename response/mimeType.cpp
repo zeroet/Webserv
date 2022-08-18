@@ -54,4 +54,4 @@ void MimeType::setMIMETypeTable(void)
     this->MIMEMap_.insert(std::make_pair("txt", "text/plain"));
 }
 
-}
+} // namespace ft

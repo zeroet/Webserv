@@ -80,12 +80,13 @@ void    Connection::processRequest()
 void    Connection::processResponse()
 {
 	 
-	//std::string	retrunBuffer_;
+	std::string	retrunBuffer_;
 	std::string	header_;
 	std::string	body_;
 	
 	// intializer les valeurs de Request class
 	response_.setRequest(request_);
+	response_.setRequestValue();
 
 	// body_
 	// si code status est entre 300 ~ 400, envoyer error page
@@ -100,22 +101,30 @@ void    Connection::processResponse()
 				if (currentMethod_ == "GET" && Ext_ == "html") {
 					// file path
 					body_ = response_.makeBodyHtml(request_.getFilePath());
+					req_status_code_ = 200;
 				}
-				//else {
+				else {
 				//	// location and request
 				//	// cgi, if method == get, ne pas mettre body pour child process
-				//	std::cout << "get,post and cgi" << std::endl;
-				//}
+					std::cout << "get,post and cgi" << std::endl;
+					req_status_code_ = 201;
+				}
 		}
 		else if (currentMethod_ == "DELETE") {
 			std::cout << "delete, pas encore" << std::endl;
 		}
 	}
+	
+	// make header_
+	header_ += response_.makeHeader(body_.size(), req_status_code_);
+	// make return buffer
+	retrunBuffer_ = header_ + body_ ; //+ "\r\n";
 
-	// make header
-	header_ += response_.makeHeader(body_.size());
+	// send return buffer
+	send(clntFd_, const_cast<char*>(retrunBuffer_.c_str()), retrunBuffer_.size(), 0);
 
-
+	// epollout, close fd
+	close(clntFd_);
 }
 
 //getter
