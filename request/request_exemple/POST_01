@@ -7,5 +7,9 @@ Accept-Language: en-us
 Accept-Encoding: gzip, deflate
 Connection: Keep-Alive
 
+POST /post/index.html HTTP/1.1
+Host: localhost
+Content-Length: 101
+
 <?xml version=\"1.0\" encoding=\"utf-8\"?>
 <string xmlns=\"http://clearforest.com/\">string</string>
