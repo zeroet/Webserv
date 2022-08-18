@@ -1,4 +1,4 @@
-GET /index.html HTTP/1.1
+GET /index2.html HTTP/1.1
 Host: localhost
 Accept: */*
 Content-Length: 513

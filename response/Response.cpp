@@ -83,6 +83,7 @@ std::string		Response::makeErrorPage(int	status_code) {
 	std::string	errorMessage_(this->mapStatus_[errorCode_]);
 	std::string	errorBody_;
 
+	errorBody_ += "\r\n";
 	errorBody_ += "<!DOCTYPE html>\r\n";
 	errorBody_ += "<html lang=\"en\">\r\n";
 	errorBody_ += "<head>\r\n";
@@ -110,10 +111,11 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 	
 	filePath_ = "./" + filePath;
 
+	//std::cout << filePath_ << std::endl;
 	ifs.open(const_cast<char*>(filePath_.c_str()));
 	if (ifs.fail())
 	{
-		// std::cout << "error for open" << std::endl;
+		//std::cout << "error for open" << std::endl;
 		return makeErrorPage(404);
 	}
 
@@ -208,7 +210,7 @@ std::string		Response::makeStartLine(int statusCode) {
 	std::string	statusCode_ = toString(statusCode);
 	std::string	statusMessage_ = mapStatus_[statusCode_];
 
-	startLine += request_.getVersion();
+	startLine += "HTTP/1.1";
 	startLine += " ";
 	startLine += statusCode_;
 	startLine += " ";

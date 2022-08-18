@@ -87,10 +87,10 @@ void    Connection::processResponse()
 	response_.setRequest(request_);
 	response_.setRequestValue();
 
+	//std::cout << req_status_code_ << " is code " << std::endl;
 	// body_
 	// si code status est entre 300 ~ 400, envoyer error page
-	if (req_status_code_ >= 300)
-	{
+	if (req_status_code_ >= 300) {
 		body_ += response_.makeErrorPage(req_status_code_);
 	}
 	else {
