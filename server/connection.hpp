@@ -101,7 +101,7 @@ class Connection
 		//getter
 		std::vector<ServerBlock>	&getBlock(void);
 		Request						&getRequest(void);
-		Response					&getResponse(void);
+		ft::Response					&getResponse(void);
 		int							&getPhaseMsg(void);
 		std::string 				&getBuffer(void);
 		int							&getReqStatusCode(void);

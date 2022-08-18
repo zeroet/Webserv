@@ -5,6 +5,10 @@
 #include <iostream>
 #include <map>
 #include <cstring>
+#include <string>
+#include <sstream>
+#include "../request/request.hpp"
+#include "mimeType.hpp"
 
 /* Headers to manage
 Accept-Charsets
@@ -26,29 +30,53 @@ Transfer-Encoding
 User-Agent
 WWW-Authenticate */
 
+namespace ft 
+{
+
+class MimeType;
 
 class Response
 {
 
-	public:
-		typedef std::map<std::string, std::string> map_;
-
-	private:
-		map_ 							headers_;
-		map_ 							mapStatus_;
+private:
+	mapHeader 								headers_;
+	mapHeader 							mapStatus_;
+	MimeType								mimeType_;
+public:
+	Response();
+	Response(Response const & copy);
+	Response &operator=(Response const & copy);
+	~Response();
 	
-	public:
-		Response();
-		Response(Response const & copy);
-		Response &operator=(Response const & copy);
-		~Response();
+	/* ************************************ */
+	/* ************** setter ************** */
+	/* ************************************ */
+	void						setRequestValue(ft::Request const &request);
+	
+	/* ************************************ */
+	/* ************** getter ************** */
+	/* ************************************ */
+	
+	std::string					makeErrorPage(int status_code);
+	std::string					makeBodyPage(Request const &Request);
+	std::string					getExt(std::string const &filename) const;
 
-	private:
+private:
+	
+	/* ************************************ */
+	/* ************** utils *************** */
+	/* ************************************ */
+	void						initialMapHeaders(void);
+	void						initialMapStatusCode(void);
+	void						setValueFromRequest(ft::Request const &request);
+	void						setContentType(ft::Request const &request);
+	std::string 				toString(const int& v);
 		
-		void						initialMapStatusCode(void);
-		void						initialMapHeaders(void);
-		
-		std::string			getExt(std::string const &filename) const;
-	};
+	/* ************************************ */
+	/* ************** tester ************** */
+	/* ************************************ */
+	void						printMapHeader(ft::mapHeader	mapHeader) const;
+};
 
+}
 #endif

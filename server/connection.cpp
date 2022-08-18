@@ -79,7 +79,32 @@ void    Connection::processRequest()
 
 void    Connection::processResponse()
 {
+	 
+	//std::string	retrunBuffer_;
+	//std::string	header_;
+	std::string	body_;
 	
+	// intializer les valeurs de Request class
+	this->response_.setRequestValue(this->request_);
+
+	// body_
+	// si code status est entre 300 ~ 400, envoyer error page
+	if (this->req_status_code_ >= 300)
+	{
+		body_ += this->response_.makeErrorPage(this->req_status_code_);
+	}
+	else {
+		std::cout << "not error" << std::endl;
+	
+	}
+	// envoyer code de error page
+
+	std::cout << body_ << std::endl;
+
+	// make header
+
+
+
 }
 
 //getter
@@ -128,10 +153,6 @@ void	Connection::setReqStatusCode(int status_code) {
 void	Connection::setPhaseMsg(int new_msg) {
 	phase_msg_ = new_msg;
 }
-
-//void    Connection::response() {
-//    std::cout <<"Response execute" <<std::endl;
-//}
 
 void	Connection::setServerBlockConfig(std::string server_name) {
 	serverConfig_ = getServerConfigByServerName(server_name);
