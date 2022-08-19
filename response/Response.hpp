@@ -61,26 +61,52 @@ public:
 	void						setRequestValue(void);
 	
 	/* ************************************ */
-	/* ************** getter ************** */
+	/* *************** utils ************** */
+	/* ************************************ */
+	std::string					makeHeader(int bodySize, int statusCode);
+
+	/* ************************************ */
+	/* ************ error page ************ */
 	/* ************************************ */
 	std::string					makeErrorPage(int status_code);
+
+	/* ************************************ */
+	/* *********** method = GET *********** */
+	/* ************************************ */
 	std::string					makeBodyHtml(std::string const &filePath);				
-	std::string					makeHeader(int bodySize, int statusCode);
+
+	/* ************************************ */
+	/* ********* method = DELETE ********** */
+	/* ************************************ */
+	int							execteDelete(void);
+	/* ************************************ */
+	/* *************** utils ************** */
+	/* ************************************ */
 	std::string					getExt(std::string const &filename) const;
 
 private:
 	/* ************************************ */
-	/* ************** utils *************** */
+	/* ************** initial ************* */
 	/* ************************************ */
-	std::string					makeTimeLine(void);
 	void						initialMapHeaders(void);
 	void						initialMapStatusCode(void);
 	void						setValueFromRequest(void);
-	void						setContentType(void);
+
+
+	/* ************************************ */
+	/* ************** utils *************** */
+	/* ************************************ */
 	std::string 				toString(const int& v);
+
+	/* ************************************ */
+	/* ************ make header *********** */
+	/* ************************************ */
+	void						setContentType(void);
+	std::string					makeTimeLine(void);
 	void						setContentLengh(int bodySize);
 	std::string					makeStartLine(int statusCode);
 	std::string					appendMapHeaders();
+
 
 	/* ************************************ */
 	/* ************** tester ************** */
