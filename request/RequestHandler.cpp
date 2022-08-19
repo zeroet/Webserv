@@ -29,7 +29,7 @@ void	RequestHandler::checkRequestMessage(Connection *c) {
 	if (c->getPhaseMsg() == START_LINE_COMPLETE)
 	{
 		//parse start line
-		std::cout << "Parse Start Line" << std::endl;
+		// std::cout << "Parse Start Line" << std::endl;
 		parseStartLine(c);
 	}
 	if (c->getPhaseMsg() == HEADER_INCOMPLETE)
@@ -40,7 +40,7 @@ void	RequestHandler::checkRequestMessage(Connection *c) {
 	}
 	if (c->getPhaseMsg() == HEADER_COMPLETE)
 	{
-		std::cout << "Parse Header" << std::endl;
+		// std::cout << "Parse Header" << std::endl;
 		parseHeaders(c);
 		checkHeader(c);
 	}
@@ -100,7 +100,7 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	cmp = version.compare(0, 2, "1.");
 	if (cmp)
 	{
-		std::cout << "hererkejflksdjflksdjf" << std::endl;
+		// std::cout << "hererkejflksdjflksdjf" << std::endl;
 		c->setReqStatusCode(HTTP_VERSION_NOT_SUPPORTED);
 		// c->setPhaseMsg(HEADER_COMPLETE);
 		c->setPhaseMsg(HEADER_COMPLETE);
@@ -309,10 +309,26 @@ void	RequestHandler::checkHeader(Connection *c) {
 	c->setServerBlockConfig(c->getRequest().getHost());
 	if (!c->checkLocationConfigExist(c->getRequest().getPath()))
 	{
+		std::cout << "HERERERERERERERE////////////////////////" << std::endl;
+		std::cout << ">>>>>> PATH CHECK <<<<<<" << c->getRequest().getPath() << std::endl;
+		// if (*(c->getRequest().getPath().rbegin()) == '/' && c->getRequest().getMethod().compare("DELETE"))
+		// {
+		// 	filePathCompleteWithIndexDirective(c);
+		// }
+		// else
+		// {
+			// c->setReqStatusCode(NOT_FOUND);
+			// c->setPhaseMsg(BODY_COMPLETE);
+			// return ;
+		// }
+		
 		// uri root == serverblock root
 		// index.html check -> index.html use
 		// if not -> autoindex check -> on => directory list / off => forbidden 403 
-		c->getRequest().setFilePath(c->getServerConfig().getRoot());
+		c->getRequest().setFilePath(c->getServerConfig().getRoot() + c->getRequest().getPath());
+		if (!(*(c->getRequest().getFilePath().rbegin()) == '/'))
+			c->getRequest().setFilePath(c->getRequest().getFilePath() + "/");
+		std::cout << ">>>>>> FILE PATH CHECK <<<<<<" << c->getRequest().getFilePath() << std::endl;
 		if (!checkIndex(c))
 		{
 			if (c->getServerConfig().getAutoindex() == false)
@@ -322,9 +338,12 @@ void	RequestHandler::checkHeader(Connection *c) {
 				return ;
 			}
 		}
+		
 	}
 	else //set path / file path / uri
 		setFilePathWithLocation(c->getLocationConfig(), c);
+
+	
 
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getServerConfig().getClientMaxBodySize();
@@ -347,6 +366,14 @@ void	RequestHandler::checkHeader(Connection *c) {
 	// 	c->is_chunk = true;
 	// 	c->setPhaseMsg(BODY_CHUNKED);
 	// }
+
+	// when index directive exist
+	if (*(c->getRequest().getFilePath().rbegin()) == '/' && c->getRequest().getMethod().compare("DELETE"))
+	{
+		std::cout << "*******************************" << std::endl;
+		checkIndex(c);
+	}
+
 
 	// when file doesn't exist
 	if (c->getRequest().getMethod() != "POST" && !isFileExist(c))
@@ -438,7 +465,7 @@ void	RequestHandler::checkRequestBody(Connection *c) {
 		}
 		else //buffer content length가 buffer char 길이보다 클때
 		{
-				std::cout << "HERE2" << std::endl;
+				// std::cout << "HERE2" << std::endl;
 			c->buffer_content_length = c->buffer_content_length - strlen(c->buffer_char);
 			c->setBodyBuf(c->buffer_char);
 		}
@@ -452,7 +479,7 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 
 	while ((pos = c->getBuffer().find(CRLF)) != std::string::npos) //buffer안에 CRLF가 있을때 계속 loop
 	{
-		std::cout << "/////BUFFER CHECK/////" << c->getBuffer() << std::endl;
+		// std::cout << "/////BUFFER CHECK/////" << c->getBuffer() << std::endl;
 		if (c->chunked_msg_checker == STR_SIZE) //STR SIZE 일때 
 		{
 			if ((pos = c->getBuffer().find(CRLF)) != std::string::npos)
@@ -533,7 +560,7 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 				c->getBuffer().erase(0, pos + LEN_CRLF);
 		}
 	}
-	std::cout << ">>>>>>>>>>>> CHUNKED MSG STATUS <<<<<<<<<<<" << c->chunked_msg_checker << std::endl;
+	// std::cout << ">>>>>>>>>>>> CHUNKED MSG STATUS <<<<<<<<<<<" << c->chunked_msg_checker << std::endl;
 	return (true);
 }
 
@@ -621,9 +648,13 @@ void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection 
 	if (location.getRoot() != c->getBlock()[0].getRoot())
 	{
 		if (c->getRequest().getPath().substr(location.getUriPath().length()).empty()) //case 1
+		{
+			std::cout << "11111111111111111111" << std::endl;
 			filepath.append("/");
+		}
 		else // case 2
 		{
+			std::cout << "222222222222222222222" << std::endl;
 			if (*(location.getUriPath().rbegin()) == '/') // /cgi_tester/
 				filepath.append(c->getRequest().getPath().substr(location.getUriPath().length() - 1));
 			else // /cgi_tester
@@ -631,9 +662,12 @@ void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection 
 		}
 	}
 	else
+	{
 	/* 	block root: /var/www/html
 		location root: /var/www/html */
 		filepath.append(c->getRequest().getPath()); //just append the rest of path on request path to complet path
+		std::cout << "333333333333333333" << std::endl;
+	}
 	c->getRequest().setFilePath(filepath);
 }
 
@@ -659,7 +693,7 @@ bool	RequestHandler::checkIndex(Connection *c) {
 
 	for (std::vector<std::string>::iterator it = index.begin(); it != index.end(); it++)
 	{
-		index_path = c->getRequest().getFilePath() + "/" + (*it);
+		index_path = c->getRequest().getFilePath() + (*it);
 		if (stat(index_path.c_str(), &stat_buf) == 0)
 		{
 			c->getRequest().setFilePath(index_path);
