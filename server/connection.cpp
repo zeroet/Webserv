@@ -110,7 +110,7 @@ void    Connection::processResponse()
 				}
 		}
 		else if (currentMethod_ == "DELETE") {
-			std::cout << "delete, pas encore" << std::endl;
+			req_status_code_ = response_.execteDelete();
 		}
 	}
 	

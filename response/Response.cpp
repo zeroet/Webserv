@@ -133,7 +133,6 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 Referrer-Policy: no-referrer
 Content-Length: 1555
 Date: Thu, 18 Aug 2022 02:34:57 GMT
-
 */
 std::string		Response::makeHeader(int bodySize, int statusCode) {
 	std::string	header_;
@@ -151,11 +150,16 @@ std::string		Response::makeHeader(int bodySize, int statusCode) {
 	return header_;
 }
 
+// content-length for delete?
 std::string		Response::appendMapHeaders(void) {
 	std::string	mapHeader_;
 
 	for (ft::mapHeader::iterator it=headers_.begin(); it!=headers_.end(); ++it) {
 		if ( !(it->second.empty()) ) {
+			if (request_.getMethod() == "DELETE"
+				&& it->first == "Content-Type") {
+					continue ;
+				} 
 			mapHeader_ += it->first;
 			mapHeader_ += ": ";
 			mapHeader_ += it->second;
@@ -182,6 +186,16 @@ std::string		Response::makeTimeLine(void) {
 	timeLine += buffer;
 	timeLine += "\r\n";
 	return (timeLine);
+}
+
+int				Response::execteDelete(void) {
+	int	status_code(204);
+	std::string		filePath_("./" + request_.getFilePath());
+
+	if (remove(const_cast<char*>(filePath_.c_str())) == -1) {
+			status_code = 403;
+	}
+	return (status_code);
 }
 
 /* ********************************************************************************* */
