@@ -122,12 +122,6 @@ class Connection
     
 		void    		processRequest(void);
 		void    		processResponse(void);
-
-		/* ****************************************** */
-		/* ************** execute function ********** */
-		/* ****************************************** */
-		//void	executeGetMothod(void);
-
 		
 		//tmp
 		void	printRequestMsg(void);
