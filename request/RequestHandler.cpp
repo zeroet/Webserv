@@ -649,12 +649,12 @@ void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection 
 	{
 		if (c->getRequest().getPath().substr(location.getUriPath().length()).empty()) //case 1
 		{
-			std::cout << "11111111111111111111" << std::endl;
+			// std::cout << "11111111111111111111" << std::endl;
 			filepath.append("/");
 		}
 		else // case 2
 		{
-			std::cout << "222222222222222222222" << std::endl;
+			// std::cout << "222222222222222222222" << std::endl;
 			if (*(location.getUriPath().rbegin()) == '/') // /cgi_tester/
 				filepath.append(c->getRequest().getPath().substr(location.getUriPath().length() - 1));
 			else // /cgi_tester
@@ -666,7 +666,9 @@ void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection 
 	/* 	block root: /var/www/html
 		location root: /var/www/html */
 		filepath.append(c->getRequest().getPath()); //just append the rest of path on request path to complet path
-		std::cout << "333333333333333333" << std::endl;
+		// std::cout << "333333333333333333" << std::endl;
+		if (*(location.getUriPath().rbegin()) != '/')
+			filepath.append("/");
 	}
 	c->getRequest().setFilePath(filepath);
 }
