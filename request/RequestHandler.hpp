@@ -70,6 +70,7 @@ class RequestHandler {
 		bool	checkAllowMethod(Connection *c);
 		void	checkLocationReturnAndApply(std::vector<std::string> ret, Connection *c);
 		bool	isUriDirectory(Connection *c);
+		bool	isUriDirectory(std::string path);
 		// bool	filePathCompleteWithIndexDirective(Connection *c);
 
 		template<typename T>

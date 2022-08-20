@@ -326,17 +326,28 @@ void	RequestHandler::checkHeader(Connection *c) {
 		// index.html check -> index.html use
 		// if not -> autoindex check -> on => directory list / off => forbidden 403 
 		c->getRequest().setFilePath(c->getServerConfig().getRoot() + c->getRequest().getPath());
-		if (!(*(c->getRequest().getFilePath().rbegin()) == '/'))
+		if (!(*(c->getRequest().getFilePath().rbegin()) == '/') && isUriDirectory(c)) //is file exist rather??
 			c->getRequest().setFilePath(c->getRequest().getFilePath() + "/");
 		std::cout << ">>>>>> FILE PATH CHECK <<<<<<" << c->getRequest().getFilePath() << std::endl;
 		if (!checkIndex(c))
 		{
 			if (c->getServerConfig().getAutoindex() == false)
 			{
-				c->setReqStatusCode(NOT_FOUND);
-				c->setPhaseMsg(BODY_COMPLETE);
-				return ;
+				if (isFileExist(c))
+				{
+					c->setReqStatusCode(FORBIDDEN); //403 FORBIDDEN
+					c->setPhaseMsg(BODY_COMPLETE);
+					return ;
+				}
+				else
+				{
+					c->setReqStatusCode(NOT_FOUND); //403 FORBIDDEN
+					c->setPhaseMsg(BODY_COMPLETE);
+					return ;
+				}
 			}
+			else
+				std::cout << "autoindex ON, FILE TREE needed" << std::endl;
 		}
 		
 	}
@@ -344,7 +355,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 		setFilePathWithLocation(c->getLocationConfig(), c);
 
 	
-
 	//get Client_Max_Body_Size
 	c->client_max_body_size = c->getServerConfig().getClientMaxBodySize();
 
@@ -361,19 +371,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 		if (!(c->getBuffer().empty())) 	//put the rest of buffer into request body member
 			c->setBodyBuf(c->getBuffer());
 	}
-	// else if ((c->getRequest().getRequestHeaders().count("Transfer-Encoding")) && !(c->getRequest().getHeaderValue("Transfer-Encoding")).compare("chunked"))
-	// {
-	// 	c->is_chunk = true;
-	// 	c->setPhaseMsg(BODY_CHUNKED);
-	// }
-
-	// when index directive exist
-	if (*(c->getRequest().getFilePath().rbegin()) == '/' && c->getRequest().getMethod().compare("DELETE"))
-	{
-		std::cout << "*******************************" << std::endl;
-		checkIndex(c);
-	}
-
 
 	// when file doesn't exist
 	if (c->getRequest().getMethod() != "POST" && !isFileExist(c))
@@ -382,6 +379,26 @@ void	RequestHandler::checkHeader(Connection *c) {
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
+
+	// when index directive exist
+	if (*(c->getRequest().getFilePath().rbegin()) == '/' && c->getRequest().getMethod().compare("DELETE"))
+	{
+		// std::cout << "*******************************" << std::endl;
+		if (!checkIndex(c))
+		{
+			if (c->getServerConfig().getAutoindex() == false)
+			{
+				c->setReqStatusCode(FORBIDDEN); //403 FORBIDDEN
+				c->setPhaseMsg(BODY_COMPLETE);
+				return ;
+			}
+			else
+				std::cout << "autoindex ON, FILE TREE needed" << std::endl;
+			
+		}
+	}
+
+
 	
 	//Allow method check
 	if (checkAllowMethod(c) == false)
@@ -667,9 +684,11 @@ void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection 
 		location root: /var/www/html */
 		filepath.append(c->getRequest().getPath()); //just append the rest of path on request path to complet path
 		// std::cout << "333333333333333333" << std::endl;
-		if (*(location.getUriPath().rbegin()) != '/')
-			filepath.append("/");
+		// if (*(location.getUriPath().rbegin()) != '/')
+		// 	filepath.append("/");
 	}
+	if (*(filepath.rbegin()) != '/' && isUriDirectory(filepath))
+		filepath.append("/");
 	c->getRequest().setFilePath(filepath);
 }
 
@@ -748,6 +767,16 @@ bool RequestHandler::isUriDirectory(Connection *c) {
 	struct stat stat_buffer;
 
 	stat(c->getRequest().getFilePath().c_str(), &stat_buffer);
+	if (S_ISDIR(stat_buffer.st_mode))
+		return (true);
+	return (false);
+}
+
+
+bool RequestHandler::isUriDirectory(std::string path) {
+	struct stat stat_buffer;
+
+	stat(path.c_str(), &stat_buffer);
 	if (S_ISDIR(stat_buffer.st_mode))
 		return (true);
 	return (false);
