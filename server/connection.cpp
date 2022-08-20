@@ -106,6 +106,24 @@ void    Connection::processResponse()
 				//	// location and request
 				//	// cgi, if method == get, ne pas mettre body pour child process
 					std::cout << "get,post and cgi" << std::endl;
+					
+					// verifier ext -> getCgi() vector!
+					// sinon, error code;
+					
+					// verifier cgi path!
+					// set envp, set pipe for read and write
+					// set execve variables!
+					 
+					
+					// initial in response : location, req_status_code
+					// response_.setLocation(location, &req_status_code);
+					
+
+					//std::cout << this->locationConfig_.getCgi().at(0) << std::endl;
+					//
+					//std::cout << this->locationConfig_.getCgiPath() << std::endl;
+					//std::cout << this->locationConfig_.getUriPath() << std::endl;
+					// pas besoin 
 					req_status_code_ = 201;
 				}
 		}
