@@ -49,6 +49,9 @@ private:
 	MimeType								mimeType_;
 
 public:
+	/* ************************************ */
+	/* **** constructor / destructor ****** */
+	/* ************************************ */
 	Response();
 	Response(Response const & copy);
 	Response &operator=(Response const & copy);
@@ -61,7 +64,7 @@ public:
 	void						setRequestValue(void);
 	
 	/* ************************************ */
-	/* *************** utils ************** */
+	/* *************** header ************** */
 	/* ************************************ */
 	std::string					makeHeader(int bodySize, int statusCode);
 
@@ -79,6 +82,7 @@ public:
 	/* ********* method = DELETE ********** */
 	/* ************************************ */
 	int							execteDelete(void);
+
 	/* ************************************ */
 	/* *************** utils ************** */
 	/* ************************************ */
@@ -96,13 +100,13 @@ private:
 	/* ************************************ */
 	/* ************** utils *************** */
 	/* ************************************ */
-	std::string 				toString(const int& v);
+	std::string 				toString(const int& v) const;
 
 	/* ************************************ */
 	/* ************ make header *********** */
 	/* ************************************ */
 	void						setContentType(void);
-	std::string					makeTimeLine(void);
+	std::string					makeTimeLine(void) const;
 	void						setContentLengh(int bodySize);
 	std::string					makeStartLine(int statusCode);
 	std::string					appendMapHeaders();

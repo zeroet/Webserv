@@ -2,6 +2,188 @@
 namespace ft
 {
 
+/* ********************************************************************************* */
+/* ************************** constructor / destructor ***************************** */
+/* ********************************************************************************* */
+Response::Response()
+{
+	initialMapStatusCode();
+	initialMapHeaders();
+}
+
+Response::Response(Response const & copy)
+{
+	(*this) = copy;
+}
+
+Response & Response::operator=(Response const & copy)
+{
+	(void) copy;
+	return (*this);
+}
+
+Response::~Response()
+{
+}
+
+
+
+
+
+
+/* ********************************************************************************* */
+/* ****************************************** setter ******************************* */
+/* ********************************************************************************* */
+void			Response::setRequest(Request const &request) {
+	this->request_ = request;
+	this->request_.setFilePath(request.getFilePath());
+}
+
+void			Response::setRequestValue(void){
+	// set value from request class
+	this->setValueFromRequest();
+	// content-type : mime
+	this->setContentType(); 
+	// printMapHeader(headers_);
+}
+
+
+
+
+
+
+/* ********************************************************************************* */
+/* ****************************************** header ******************************* */
+/* ********************************************************************************* */
+/*
+Referrer-Policy: no-referrer
+Content-Length: 1555
+Date: Thu, 18 Aug 2022 02:34:57 GMT
+*/
+std::string		Response::makeHeader(int bodySize, int statusCode) {
+	std::string	header_;
+
+	// body size -> Content-Length
+	// append "Content-Lengh" to headers_
+	setContentLengh(bodySize);
+	// make start line
+	header_ += makeStartLine(statusCode);
+	// append headers value!
+	header_ += appendMapHeaders();
+	// time
+	header_ += makeTimeLine();
+
+	return header_;
+}
+
+
+
+
+
+/* ********************************************************************************* */
+/* ************************************** error paget ****************************** */
+/* ********************************************************************************* */
+std::string		Response::makeErrorPage(int	status_code) {
+	std::string	errorCode_ = toString(status_code);
+	std::string	errorMessage_(this->mapStatus_[errorCode_]);
+	std::string	errorBody_;
+
+	errorBody_ += "\r\n";
+	errorBody_ += "<!DOCTYPE html>\r\n";
+	errorBody_ += "<html lang=\"en\">\r\n";
+	errorBody_ += "<head>\r\n";
+	errorBody_ += "	<meta charset=\"UTF-8\">\r\n";
+	errorBody_ += "	<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n";
+	errorBody_ += "	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n";
+	errorBody_ += "	<title>";
+	errorBody_ += errorCode_;
+	errorBody_ += "</title>\r\n";
+	errorBody_ += "</head>\r\n";
+	errorBody_ += "<body>\r\n";
+	errorBody_ += "	<h1>";
+	errorBody_ += errorMessage_;
+	errorBody_ += "</h1>\r\n";
+	errorBody_ += "</body>\r\n";
+	errorBody_ += "</html>";
+	
+	return errorBody_;
+}
+
+
+
+
+		
+/* ********************************************************************************* */
+/* *************************************** method = GET **************************** */
+/* ********************************************************************************* */
+
+std::string		Response::makeBodyHtml(std::string const &filePath) {
+	std::string		ret;
+	std::string		filePath_;
+	std::ifstream 	ifs;
+	
+	filePath_ = "./" + filePath;
+
+	//std::cout << filePath_ << std::endl;
+	ifs.open(const_cast<char*>(filePath_.c_str()));
+	if (ifs.fail())
+	{
+		//std::cout << "error for open" << std::endl;
+		return makeErrorPage(404);
+	}
+
+	std::string	str;
+	while (std::getline(ifs, str))
+	{
+		ret += "\r\n";
+		ret += str;
+	}
+
+	return (ret);
+}
+
+
+
+
+/* ********************************************************************************* */
+/* ************************************ method = DELETE **************************** */
+/* ********************************************************************************* */
+int				Response::execteDelete(void) {
+	int	status_code(204);
+	std::string		filePath_("./" + request_.getFilePath());
+
+	if (remove(const_cast<char*>(filePath_.c_str())) == -1) {
+			status_code = 403;
+	}
+	return (status_code);
+}
+
+
+
+
+
+/* ********************************************************************************* */
+/* ****************************************** utils ******************************** */
+/* ********************************************************************************* */
+std::string	Response::getExt(std::string const &filename) const
+{
+	std::string	ext;
+	std::string::size_type	idx;
+	idx = filename.rfind(".");
+	if (idx != std::string::npos) {
+		ext = filename.substr(idx + 1);
+	}
+	//std::cout << ext << " is ext in getExit" << std::endl;
+	//std::cout << filename << " is filename in getExt"  << std::endl;
+    return ext;
+}
+
+
+
+
+/* ********************************************************************************* */
+/* ****************************************** initial ****************************** */
+/* ********************************************************************************* */
 void		Response::initialMapHeaders(void)
 {
   this->headers_["Allow"] = "";
@@ -52,104 +234,41 @@ void		Response::initialMapStatusCode()
 	this->mapStatus_.insert(std::make_pair("502", "Bad Gateway"));	
 	this->mapStatus_.insert(std::make_pair("505", "HTTP Version Not Supported"));	
 }
-		
 
-Response::Response()
-{
-	initialMapStatusCode();
-	initialMapHeaders();
+void			Response::setValueFromRequest(void){
+	ft::mapHeader mapRequest(request_.getRequestHeaders());
+
+	ft::mapHeader::iterator	itForHeader;
+	for (ft::mapHeader::iterator it=mapRequest.begin(); it!=mapRequest.end(); ++it) {
+		itForHeader = headers_.find(it->first);
+		if (itForHeader != headers_.end()
+			&& itForHeader->first != "Content-Length") {
+ 				headers_[itForHeader->first] = it->second;
+		}
+	}
 }
 
-Response::Response(Response const & copy)
-{
-	(*this) = copy;
-}
 
-Response & Response::operator=(Response const & copy)
-{
-	(void) copy;
-	return (*this);
-}
 
-Response::~Response()
-{
-}
+
+
 
 /* ********************************************************************************* */
-/* ****************************************** getter ******************************* */
+/* ****************************************** utils ******************************** */
 /* ********************************************************************************* */
-std::string		Response::makeErrorPage(int	status_code) {
-	std::string	errorCode_ = toString(status_code);
-	std::string	errorMessage_(this->mapStatus_[errorCode_]);
-	std::string	errorBody_;
-
-	errorBody_ += "\r\n";
-	errorBody_ += "<!DOCTYPE html>\r\n";
-	errorBody_ += "<html lang=\"en\">\r\n";
-	errorBody_ += "<head>\r\n";
-	errorBody_ += "	<meta charset=\"UTF-8\">\r\n";
-	errorBody_ += "	<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n";
-	errorBody_ += "	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n";
-	errorBody_ += "	<title>";
-	errorBody_ += errorCode_;
-	errorBody_ += "</title>\r\n";
-	errorBody_ += "</head>\r\n";
-	errorBody_ += "<body>\r\n";
-	errorBody_ += "	<h1>";
-	errorBody_ += errorMessage_;
-	errorBody_ += "</h1>\r\n";
-	errorBody_ += "</body>\r\n";
-	errorBody_ += "</html>";
-	
-	return errorBody_;
+std::string 	Response::toString(const int& v) const {
+	std::ostringstream ss;
+	ss << v;
+	return (ss.str());
 }
 
-std::string		Response::makeBodyHtml(std::string const &filePath) {
-	std::string		ret;
-	std::string		filePath_;
-	std::ifstream 	ifs;
-	
-	filePath_ = "./" + filePath;
 
-	//std::cout << filePath_ << std::endl;
-	ifs.open(const_cast<char*>(filePath_.c_str()));
-	if (ifs.fail())
-	{
-		//std::cout << "error for open" << std::endl;
-		return makeErrorPage(404);
-	}
 
-	std::string	str;
-	while (std::getline(ifs, str))
-	{
-		ret += "\r\n";
-		ret += str;
-	}
 
-	return (ret);
-}
 
-/*
-Referrer-Policy: no-referrer
-Content-Length: 1555
-Date: Thu, 18 Aug 2022 02:34:57 GMT
-*/
-std::string		Response::makeHeader(int bodySize, int statusCode) {
-	std::string	header_;
-
-	// body size -> Content-Length
-	// append "Content-Lengh" to headers_
-	setContentLengh(bodySize);
-	// make start line
-	header_ += makeStartLine(statusCode);
-	// append headers value!
-	header_ += appendMapHeaders();
-	// time
-	header_ += makeTimeLine();
-
-	return header_;
-}
-
+/* ********************************************************************************* */
+/* ************************************** make header*************************** */
+/* ********************************************************************************* */
 // content-length for delete?
 std::string		Response::appendMapHeaders(void) {
 	std::string	mapHeader_;
@@ -171,7 +290,7 @@ std::string		Response::appendMapHeaders(void) {
 }
 
 /* Date: Thu, 18 Aug 2022 11:02:41 GMT */
-std::string		Response::makeTimeLine(void) {
+std::string		Response::makeTimeLine(void) const {
 	std::string	timeLine;
 	timeLine += "Date: ";
 	
@@ -187,36 +306,6 @@ std::string		Response::makeTimeLine(void) {
 	timeLine += "\r\n";
 	return (timeLine);
 }
-
-int				Response::execteDelete(void) {
-	int	status_code(204);
-	std::string		filePath_("./" + request_.getFilePath());
-
-	if (remove(const_cast<char*>(filePath_.c_str())) == -1) {
-			status_code = 403;
-	}
-	return (status_code);
-}
-
-/* ********************************************************************************* */
-/* ****************************************** setter ******************************* */
-/* ********************************************************************************* */
-void			Response::setRequest(Request const &request) {
-	this->request_ = request;
-	this->request_.setFilePath(request.getFilePath());
-}
-
-void			Response::setRequestValue(void){
-	// set value from request class
-	this->setValueFromRequest();
-	// content-type : mime
-	this->setContentType(); 
-	// printMapHeader(headers_);
-}
-
-/* ********************************************************************************* */
-/* ****************************************** utils ******************************** */
-/* ********************************************************************************* */
 
 /* HTTP/1.0 400 Bad Request */
 std::string		Response::makeStartLine(int statusCode) {
@@ -246,38 +335,7 @@ void		Response::setContentType(void) {
 	this->headers_["Content-Type"] += "; charset=UTF-8";
 }
 
-std::string 	Response::toString(const int& v)
-{
-	std::ostringstream ss;
-	ss << v;
-	return (ss.str());
-}
 
-std::string	Response::getExt(std::string const &filename) const
-{
-	std::string	ext;
-	std::string::size_type	idx;
-	idx = filename.rfind(".");
-	if (idx != std::string::npos) {
-		ext = filename.substr(idx + 1);
-	}
-	//std::cout << ext << " is ext in getExit" << std::endl;
-	//std::cout << filename << " is filename in getExt"  << std::endl;
-    return ext;
-}
-
-void			Response::setValueFromRequest(void){
-	ft::mapHeader mapRequest(request_.getRequestHeaders());
-
-	ft::mapHeader::iterator	itForHeader;
-	for (ft::mapHeader::iterator it=mapRequest.begin(); it!=mapRequest.end(); ++it) {
-		itForHeader = headers_.find(it->first);
-		if (itForHeader != headers_.end()
-			&& itForHeader->first != "Content-Length") {
- 				headers_[itForHeader->first] = it->second;
-		}
-	}
-}
 
 
 /* ********************************************************************************* */
