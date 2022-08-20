@@ -398,8 +398,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 		}
 	}
 
-
-	
 	//Allow method check
 	if (checkAllowMethod(c) == false)
 	{
@@ -416,7 +414,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
-	
 	
 	if((isUriDirectory(c) == true) && (c->getRequest().getMethod() == "DELETE") && (c->getLocationConfig().getAutoindex() == false))
 	{

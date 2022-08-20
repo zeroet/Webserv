@@ -1,15 +1,9 @@
-POST /test/process.cgi HTTP/1.1
-User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
-Host: www.tutorialspoint.com
-Content-Type: text/xml; charset=utf-8
-Content-Length: 100
-Accept-Language: en-us
-Accept-Encoding: gzip, deflate
-Connection: Keep-Alive
-
 POST /post/index.html HTTP/1.1
 Host: localhost
-Content-Length: 101
+Content-Length: 100
+Accept-Language: en-us
+Connection: Keep-Alive
+Content-Type: text/xml; charset=utf-8
 
 <?xml version=\"1.0\" encoding=\"utf-8\"?>
 <string xmlns=\"http://clearforest.com/\">string</string>
