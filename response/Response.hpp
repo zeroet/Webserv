@@ -12,6 +12,8 @@
 #include "../request/request.hpp"
 #include "mimeType.hpp"
 #include <time.h>
+#include "../config/src/ServerBlock.hpp"
+#include "../config/src/LocationBlock.hpp"
 
 /* Headers to manage
 Accept-Charsets
@@ -36,6 +38,7 @@ WWW-Authenticate */
 namespace ft 
 {
 
+class LocationBlock;
 class MimeType;
 class Request;
 
@@ -46,6 +49,7 @@ private:
 	mapHeader 								mapStatus_;
 	mapHeader 								headers_;
 	Request									request_;
+	LocationBlock							location_;
 	MimeType								mimeType_;
 
 public:
@@ -60,6 +64,7 @@ public:
 	/* ************************************ */
 	/* ************** setter ************** */
 	/* ************************************ */
+	void						setLocation(LocationBlock const &locationBlock);
 	void						setRequest(Request const &request);
 	void						setRequestValue(void);
 	

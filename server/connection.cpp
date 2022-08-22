@@ -83,10 +83,12 @@ void    Connection::processResponse()
 	std::string	returnBuffer_;
 	std::string	header_;
 	std::string	body_;
-	
+	MimeType	mime_;
+
 	// intializer les valeurs de Request class
 	response_.setRequest(request_);
 	response_.setRequestValue();
+	response_.setLocation(this->getLocationConfig());
 
 	//std::cout << req_status_code_ << " is code " << std::endl;
 	// body_
@@ -98,7 +100,7 @@ void    Connection::processResponse()
 		std::string	currentMethod_(request_.getMethod());
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				std::string	Ext_(response_.getExt(request_.getFilePath()));
-				if (currentMethod_ == "GET" && Ext_ == "html") {
+				if (currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html") {
 					// file path
 					body_ = response_.makeBodyHtml(request_.getFilePath());
 					req_status_code_ = 200;
@@ -114,7 +116,7 @@ void    Connection::processResponse()
 					// verifier cgi path!
 					// set envp, set pipe for read and write
 					// set execve variables!
-					 
+
 					
 					// initial in response : location, req_status_code
 					// response_.setLocation(location, &req_status_code);

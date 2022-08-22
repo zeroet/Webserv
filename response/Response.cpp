@@ -47,6 +47,10 @@ void			Response::setRequestValue(void){
 	// printMapHeader(headers_);
 }
 
+void			Response::setLocation(LocationBlock const &locationBlock) {
+	this->location_ = locationBlock;
+}
+
 
 
 
