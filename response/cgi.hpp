@@ -56,7 +56,7 @@ public:
     /* ******************************** */
     /* *********** make body ********** */
     /* ******************************** */
-    std::string         makeBodyCgi(void);
+    std::string         makeBodyCgi(int &reqStatusCode);
 
 private:
     /* ******************************** */

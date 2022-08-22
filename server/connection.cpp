@@ -111,8 +111,7 @@ void    Connection::processResponse()
 				else {
 					Cgi		cgi_(getLocationConfig(), request_);
 					
-					body_ = cgi_.makeBodyCgi();
-					req_status_code_ = 201;
+					body_ = cgi_.makeBodyCgi(req_status_code_);
 					//req_status_code_ = cgi.getReqStatusCode();
 				}
 		}

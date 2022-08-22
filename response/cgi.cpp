@@ -25,7 +25,7 @@ Cgi::~Cgi() {}
 /* ********************** make body ****************** */
 /* *************************************************** */
 // req_code in parametre
-std::string            Cgi::makeBodyCgi(void) {
+std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
     std::string body_;
 
     body_ += "here is cgi";
@@ -33,7 +33,6 @@ std::string            Cgi::makeBodyCgi(void) {
     // check cgi-php with cgi_path
     // return with body_ vide;
     // req_code update;
-
     // make environ;
     // make variable for execve
 
@@ -44,6 +43,7 @@ std::string            Cgi::makeBodyCgi(void) {
 
     //return body_
     
+    reqStatusCode = 201;
     return body_;
 }
 
