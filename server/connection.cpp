@@ -88,7 +88,10 @@ void    Connection::processResponse()
 	// intializer les valeurs de Request class
 	response_.setRequest(request_);
 	response_.setRequestValue();
-	response_.setLocation(this->getLocationConfig());
+	response_.setLocation(getLocationConfig());
+
+	// autoindex on; error code;
+	// get new file_path -> setFilePath(newFilePath);
 
 	//std::cout << req_status_code_ << " is code " << std::endl;
 	// body_
@@ -106,28 +109,11 @@ void    Connection::processResponse()
 					req_status_code_ = 200;
 				}
 				else {
-				//	// location and request
-				//	// cgi, if method == get, ne pas mettre body pour child process
-					std::cout << "get,post and cgi" << std::endl;
+					Cgi		cgi_(getLocationConfig());
 					
-					// verifier ext -> getCgi() vector!
-					// sinon, error code;
-					
-					// verifier cgi path!
-					// set envp, set pipe for read and write
-					// set execve variables!
-
-					
-					// initial in response : location, req_status_code
-					// response_.setLocation(location, &req_status_code);
-					
-
-					//std::cout << this->locationConfig_.getCgi().at(0) << std::endl;
-					//
-					//std::cout << this->locationConfig_.getCgiPath() << std::endl;
-					//std::cout << this->locationConfig_.getUriPath() << std::endl;
-					// pas besoin 
+					body_ = cgi_.makeBodyCgi();
 					req_status_code_ = 201;
+					//req_status_code_ = cgi.getReqStatusCode();
 				}
 		}
 		else if (currentMethod_ == "DELETE") {
@@ -138,7 +124,7 @@ void    Connection::processResponse()
 	// make header_
 	header_ += response_.makeHeader(body_.size(), req_status_code_);
 	// make return buffer
-	returnBuffer_ = header_ + body_ ; //+ "\r\n";
+	returnBuffer_ = header_ + body_ ;
 
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);

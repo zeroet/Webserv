@@ -16,7 +16,8 @@ REQUEST = request.cpp \
 		  RequestHandler.cpp
 
 RESPONSE = Response.cpp \
-	   mimeType.cpp
+	   mimeType.cpp	\
+	   cgi.cpp
 
 SRCS = main.cpp \
 	   $(addprefix config/src/, $(CONFIG)) \

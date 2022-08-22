@@ -5,6 +5,7 @@
 #include "../request/request.hpp"
 #include "../request/RequestHandler.hpp"
 #include "../response/Response.hpp"
+#include "../response/cgi.hpp"
 #include "../config/src/ServerBlock.hpp"
 
 
