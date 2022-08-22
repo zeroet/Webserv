@@ -109,6 +109,7 @@ class Connection
 		std::string					&getBodyBuf(void);
 		ServerBlock					getServerConfig(void);
 		LocationBlock				getLocationConfig(void);
+		std::string					getStatus(void);
 
 		//setter
 		void		setPhaseMsg(int new_msg);

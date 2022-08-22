@@ -170,6 +170,11 @@ std::string		&Connection::getBodyBuf(void) {
 	return (body_buf);
 }
 
+std::string		Connection::getStatus(void)
+{
+	return (this->status_);
+}
+
 
 //setter
 void	Connection::setReqStatusCode(int status_code) {
