@@ -26,9 +26,15 @@ Cgi::~Cgi() {}
 /* *************************************************** */
 // req_code in parametre
 std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
-    std::string body_;
+    std::string body_("");
 
-    body_ += "here is cgi";
+    if ( ! (isFormatCgi() && isFormatCgiPath())) {
+        reqStatusCode = 500;
+    }
+    else {
+
+        reqStatusCode = 201;
+    } 
     // check format with cgi
     // check cgi-php with cgi_path
     // return with body_ vide;
@@ -42,8 +48,6 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
     // status code retun and update for req_code;
 
     //return body_
-    
-    reqStatusCode = 201;
     return body_;
 }
 
@@ -59,6 +63,56 @@ void                    Cgi::initialPipe(void) {
 
 void                    Cgi::initialEnviron(void) {
     
+}
+
+
+
+
+/* *************************************************** */
+/* ********************** initial ******************** */
+/* *************************************************** */
+bool                    Cgi::isFormatCgi(void) const {
+    if ( ! (location_.getCgi().empty())) {
+        std::vector<std::string>            cgiList_(location_.getCgi());
+        std::vector<std::string>::iterator  itBegin_(cgiList_.begin());
+        std::vector<std::string>::iterator  itEnd_(cgiList_.end());
+        std::string                         ext_("." + getExt(request_.getFilePath()));
+    
+        for (;itBegin_ != itEnd_; itBegin_++) {
+            if (ext_ == *itBegin_) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool                    Cgi::isFormatCgiPath(void) const {
+    std::string     cgiPathTmp_(location_.getCgiPath());
+    char *cgiPath_ = const_cast<char*>(cgiPathTmp_.c_str());
+
+
+    if (access(cgiPath_, X_OK) == -1)
+        return false;
+    return true;
+}
+
+
+/* *************************************************** */
+/* ********************** initial ******************** */
+/* *************************************************** */
+std::string	                Cgi::getExt(std::string const &filename) const
+{
+    if (filename.empty())
+        return NULL;
+
+    std::string	ext;
+	std::string::size_type	idx;
+	idx = filename.rfind(".");
+	if (idx != std::string::npos) {
+		ext = filename.substr(idx + 1);
+	}
+    return ext;
 }
 
 } // namespace ft

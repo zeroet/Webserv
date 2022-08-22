@@ -13,6 +13,7 @@
 # include "../config/src/ServerBlock.hpp"
 # include "../config/src/LocationBlock.hpp"
 # include "../request/request.hpp"
+# include <vector>
 
 namespace ft
 {
@@ -35,8 +36,8 @@ private:
     /* ******************************** */
     /* * variables for child process ** */
     /* ******************************** */
-    int                 childPid_;
-    char                **environ_;
+    //int                 childPid_;
+    //char                **environ_;
 
     /* ******************************** */
     /* ********** set Location ******** `*/
@@ -57,13 +58,26 @@ public:
     /* *********** make body ********** */
     /* ******************************** */
     std::string         makeBodyCgi(int &reqStatusCode);
-
+    
 private:
     /* ******************************** */
     /* ************ initial *********** */
     /* ******************************** */
     void                initialPipe(void);
     void                initialEnviron(void);
+
+    /* ******************************** */
+    /* ************ checker *********** */
+    /* ******************************** */
+    bool                isFormatCgi(void) const;
+    bool                isFormatCgiPath(void) const;
+
+
+    /* ******************************** */
+    /* ************ checker *********** */
+    /* ******************************** */
+    std::string         getExt(std::string const &filename) const;
+    
 };
 
 } // namespace ft

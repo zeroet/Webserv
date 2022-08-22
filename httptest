@@ -1,4 +1,7 @@
-GET /get/index.php HTTP/1.1
+POST /post/index.php HTTP/1.1
 Host: localhost
 Accept: */*
+Content-Length: 10
+
+hello world
 

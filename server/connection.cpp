@@ -95,11 +95,7 @@ void    Connection::processResponse()
 
 	//std::cout << req_status_code_ << " is code " << std::endl;
 	// body_
-	// si code status est entre 300 ~ 400, envoyer error page
-	if (req_status_code_ >= 300) {
-		body_ += response_.makeErrorPage(req_status_code_);
-	}
-	else {
+	if  (req_status_code_ == NOT_DEFINE) {
 		std::string	currentMethod_(request_.getMethod());
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				std::string	Ext_(response_.getExt(request_.getFilePath()));
@@ -112,12 +108,16 @@ void    Connection::processResponse()
 					Cgi		cgi_(getLocationConfig(), request_);
 					
 					body_ = cgi_.makeBodyCgi(req_status_code_);
-					//req_status_code_ = cgi.getReqStatusCode();
 				}
 		}
 		else if (currentMethod_ == "DELETE") {
 			req_status_code_ = response_.execteDelete();
 		}
+	}
+	
+	// si code status est entre 300 ~ 400, envoyer error page
+	if (req_status_code_ >= 400) {
+		body_ += response_.makeErrorPage(req_status_code_);
 	}
 	
 	// make header_
