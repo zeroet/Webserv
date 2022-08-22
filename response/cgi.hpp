@@ -12,6 +12,7 @@
 # include <iostream>
 # include "../config/src/ServerBlock.hpp"
 # include "../config/src/LocationBlock.hpp"
+# include "../request/request.hpp"
 
 namespace ft
 {
@@ -20,6 +21,7 @@ namespace ft
 # define    PIPE_OUT    0
 
 class LocationBlock;
+class Request;
 
 class Cgi
 {
@@ -40,6 +42,7 @@ private:
     /* ********** set Location ******** `*/
     /* ******************************** `*/
     LocationBlock       location_;  
+    Request             request_;
 
 public:
 
@@ -47,7 +50,7 @@ public:
     /* *** constructor / destructor *** */
     /* ******************************** */
     Cgi();
-    Cgi(LocationBlock const &location);
+    Cgi(LocationBlock const &location, Request const &request);
     ~Cgi();
 
     /* ******************************** */
