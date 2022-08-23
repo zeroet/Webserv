@@ -13,6 +13,13 @@ const	Request	&Request::operator=(const Request &x) {
 	version_ = x.version_;
     requestHeaders_ = x.requestHeaders_;
     body_ = x.body_;
+
+	// sorry!
+	setFilePath(x.getFilePath());
+	setQueryString(x.getQueryString());
+	setBody(x.getBody());
+	setUri(x.getUri());
+	setPath(x.getPath());
   }
   return (*this);
 }

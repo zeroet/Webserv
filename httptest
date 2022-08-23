@@ -1,6 +1,7 @@
-GET /index2.html HTTP/1.1
+POST /post/post.php HTTP/1.1
 Host: localhost
 Accept: */*
-Content-Length: 513
+Content-Length: 15
 
+id=hy&age=1234567
 

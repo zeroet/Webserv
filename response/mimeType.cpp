@@ -12,6 +12,9 @@ MimeType::~MimeType()
 {
 }
 
+/* ******************************* */
+/* ************ getter  ********** */
+/* ******************************* */
 std::string MimeType::getMIMEType(std::string const &Ext)
 {
 
@@ -20,13 +23,17 @@ std::string MimeType::getMIMEType(std::string const &Ext)
     {
         return itFind->second;
     }
-    return ("text/plain");
+    return ("text/html");
 }
+
+
+
+
+
 
 /* ****************************** */
 /* *********** setter *********** */
 /* ****************************** */
-
 /*
  * https://docs.w3cub.com/http/basics_of_http/mime_types/complete_list_of_mime_types.html
  */

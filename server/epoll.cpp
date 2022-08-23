@@ -164,9 +164,9 @@ void    Epoll::epoll_server_manager()
                 mapConnection::iterator it = this->c_.find(fd);
                 it->second->processRequest(); //treat_request()
 				it->second->printRequestMsg();
-                // int ret = check_status_connection(it->second->getstatus());
-                // if (ret == 1)
-                //     end_connection(fd);
+                int ret = check_status_connection(it->second->getStatus());
+                if (ret == 1)
+                    end_connection(fd);
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
@@ -259,7 +259,7 @@ std::vector<ServerBlock>   Epoll::make_new_serverblock(int fd)
     return tmp;
 }
 
-// status = close 
+// status == close 
 void       Epoll::end_connection(int fd)
 {
     mapConnection::iterator it = this->c_.find(fd);

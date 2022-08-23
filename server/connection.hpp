@@ -5,6 +5,7 @@
 #include "../request/request.hpp"
 #include "../request/RequestHandler.hpp"
 #include "../response/Response.hpp"
+#include "../response/cgi.hpp"
 #include "../config/src/ServerBlock.hpp"
 
 
@@ -108,6 +109,7 @@ class Connection
 		std::string					&getBodyBuf(void);
 		ServerBlock					getServerConfig(void);
 		LocationBlock				getLocationConfig(void);
+		std::string					getStatus(void);
 
 		//setter
 		void		setPhaseMsg(int new_msg);
