@@ -12,20 +12,28 @@
 # include <iostream>
 # include "../config/src/ServerBlock.hpp"
 # include "../config/src/LocationBlock.hpp"
+# include "../config/src/ServerBlock.hpp"
 # include "../request/request.hpp"
 # include <vector>
+# include <map>
+# include <sstream>
 
 namespace ft
 {
 
 # define    PIPE_IN     1
 # define    PIPE_OUT    0
+# define    SUCCESS     1
 
+class ServerBlock;
 class LocationBlock;
 class Request;
 
 class Cgi
 {
+public:
+    typedef std::map<std::string, std::string>  mapEnviron;
+
 private:
     /* ******************************** */
     /* *** pipe for write and read **** */
@@ -37,21 +45,22 @@ private:
     /* * variables for child process ** */
     /* ******************************** */
     //int                 childPid_;
-    //char                **environ_;
+    char                **environ_;
 
     /* ******************************** */
-    /* ********** set Location ******** `*/
-    /* ******************************** `*/
+    /* *** set Location / request ***** */
+    /* ******************************** */
     LocationBlock       location_;  
     Request             request_;
+    ServerBlock         server_;
+
 
 public:
-
     /* ******************************** */
     /* *** constructor / destructor *** */
     /* ******************************** */
     Cgi();
-    Cgi(LocationBlock const &location, Request const &request);
+    Cgi(ServerBlock const &server, LocationBlock const &location, Request const &request);
     ~Cgi();
 
     /* ******************************** */
@@ -72,12 +81,25 @@ private:
     bool                isFormatCgi(void) const;
     bool                isFormatCgiPath(void) const;
 
-
     /* ******************************** */
-    /* ************ checker *********** */
+    /* ************ utils ************* */
     /* ******************************** */
     std::string         getExt(std::string const &filename) const;
-    
+    std::string         toString(const int& v) const;
+
+    /* ******************************** */
+    /* ************ setter ************ */
+    /* ******************************** */
+    int                 setVariable(void);
+    int                 setEnviron(void);
+    mapEnviron          makeMapEnviron(void);
+
+
+    /* ******************************** */
+    /* ************ setter ************ */
+    /* ******************************** */
+    void                printmap(ft::mapHeader mapHeader_) const;
+
 };
 
 } // namespace ft

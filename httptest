@@ -2,6 +2,7 @@ POST /post/index.php HTTP/1.1
 Host: localhost
 Accept: */*
 Content-Length: 10
+Content-TYPE: hello
 
 hello world
 
