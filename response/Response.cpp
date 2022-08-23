@@ -149,6 +149,29 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 	return (ret);
 }
 
+std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::string &filepath) {
+	std::string ret;
+	std::string uri_;
+	(void) filepath;
+
+	uri_ = uri;
+	uri_.append("/");
+
+	ret += "\r\n";
+	ret += "<!DOCTYPE html>\r\n";
+	ret += "<html lang=\"en\">\r\n";
+	ret += "<head>\r\n";
+	ret += "<meta charset=\"UTF-8\">\r\n";
+	ret += "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n";
+	ret += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n";
+	ret += "<title><head>";
+	ret += "Index of " + uri_ ;
+	ret += "</head></title>\r\n";
+	ret += "<body>\r\n";
+  	ret += "<h1>Index of " + uri_ + "</h1><hr><pre>";
+  	ret += "<a href=\"../\">../</a>\r\n";	
+	return (ret);
+}
 
 
 

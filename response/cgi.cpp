@@ -123,11 +123,14 @@ void                    Cgi::writeToCgi(void) {
     char    *buf_ = const_cast<char*>(request_.getBody().c_str());
     int     size_(request_.getBody().size());
     int     retWrite_;
+
     
-   // do {
-    retWrite_ = write(writeToCgi_, buf_, size_);
-    //} while (retWrite_ > 0);
-    (void)retWrite_;
+    do {
+        retWrite_ = write(writeToCgi_, buf_, size_);
+    } while (retWrite_ > 0);
+
+
+    std::cout << "write to Cgi retWrite == [" << retWrite_ << "]" << std::endl;
 }
 
 std::string             Cgi::readFromCgi(void) {
@@ -147,6 +150,8 @@ std::string             Cgi::readFromCgi(void) {
       body_ += buf_;
 
     } while (retRead_ > 0);
+
+    std::cout << "read From Cgi == [" << retRead_ << "]" << std::endl;
     return body_;
 }
 
@@ -177,6 +182,8 @@ void                    Cgi::setPipe(void) {
     fcntl(stdinCgi_, F_SETFL, O_NONBLOCK);
     fcntl(readFromCgi_, F_SETFL, O_NONBLOCK);
     fcntl(stdoutCgi_, F_SETFL, O_NONBLOCK);
+
+    
 } 
 
 
@@ -305,8 +312,19 @@ int                        Cgi::setEnviron(void) {
 
 Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     mapEnviron  mapEnviron_;
+    std::string pathInfo_(request_.getFilePath());
+    
+    std::string::size_type n = request_.getFilePath().rfind("/");
+    if (std::string::npos != n) {
+        pathInfo_.clear();
+        pathInfo_ = request_.getFilePath().substr(n + 1);
+
+    }
 
     // https://bz.apache.org/bugzilla/show_bug.cgi?id=62663
+    mapEnviron_.insert(std::make_pair("AUTH_TYPE", ""));
+    mapEnviron_.insert(std::make_pair("REMOTE_IDENT", request_.getMethod()));
+    mapEnviron_.insert(std::make_pair("REMOTE_USER", request_.getMethod()));
     mapEnviron_.insert(std::make_pair("REQUEST_METHOD", request_.getMethod()));
     mapEnviron_.insert(std::make_pair("REDIRECT_STATUS", "CGI"));
     mapEnviron_.insert(std::make_pair("SERVER_PROTOCOL", "HTTP/1.1"));
@@ -320,11 +338,13 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     if (!request_.getBody().empty() && request_.getMethod() == "POST")
         mapEnviron_.insert(std::make_pair("CONTENT_LENGTH", toString(request_.getBody().size())));
     mapEnviron_.insert(std::make_pair("CONTENT_TYPE",  "application/x-www-form-urlencoded"));
-    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", request_.getFilePath()));
-    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", request_.getFilePath()));
-    mapEnviron_.insert(std::make_pair("PATH_INFO", request_.getPath()));
+    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", request_.getPath()));
+    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", "/mnt/nfs/homes/hyungyoo/webServ"));   //
+    mapEnviron_.insert(std::make_pair("PATH_INFO", pathInfo_));
     mapEnviron_.insert(std::make_pair("REQUEST_URI", request_.getUri()));
 
+
+    //printmap(mapEnviron_);
     return (mapEnviron_);
 
 }

@@ -12,6 +12,7 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	chunked_msg_size = 0;
 	is_chunk = false;
 	body_buf = "";
+	autoindex_flag = false;
 }
 
 Connection::~Connection() { }
@@ -19,64 +20,66 @@ Connection::~Connection() { }
 void    Connection::processRequest()
 {
 	RequestHandler requesthandler;
-
-    int n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0); //except \r
-
-	// /* protection to disconnect
-	if (n < 0 || strchr(buffer_char, 0xff))
+    int n = 0;
+	
+	while((n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0)) > 0) //except \r
 	{
-		//close connection
-		printf("recv Error\n");
-		return ;
-		//need function to close connection
-		//return (Error); or return (-1);
-	}
-	// std::cout << "n: " << n << std::endl;
-	// std::cout << "buffer_char: " << buffer_char << std::endl;
-	// std::cout << "buffer_char + n: " << buffer_char + n << std::endl;
-    // buf_.insert(buf_.end(), buffer_char, buffer_char + n);
-	buffer_.insert(buffer_.end(), buffer_char, buffer_char + n);
-	// std::cout << "buffer_: " << buffer_ << std::endl;
-
-	if (phase_msg_ == START_LINE_INCOMPLETE
-		|| phase_msg_ == START_LINE_COMPLETE
-		|| phase_msg_ == HEADER_INCOMPLETE
-		|| phase_msg_ == HEADER_COMPLETE)
-		// || phase_msg_ == BODY_CHUNKED)
-		requesthandler.checkRequestMessage(this);
-	if (phase_msg_ == BODY_CHUNKED)
-	{
-		if (!requesthandler.checkChunkedMessage(this))
+		// /* protection to disconnect
+		if (n < 0 || strchr(buffer_char, 0xff))
 		{
-			std::cout << "CHUNKED MESSAGE ERROR. CLOSE CONNECTION" << std::endl;
+			//close connection
+			printf("recv Error\n");
 			return ;
+			//need function to close connection
+			//return (Error); or return (-1);
 		}
-		// else
-			// std::cout << "check CHUNCKED MESSAGE" << std::endl;
-	}
-	else if (phase_msg_ == BODY_INCOMPLETE)
-		requesthandler.checkRequestBody(this);
-	if (phase_msg_ == BODY_COMPLETE)
-	{
-		std::cout << "************ Message body process **********" << std::endl;
-		size_t pos = 0;
-		if (getRequest().getMethod() == "GET" || getRequest().getMethod() == "DELETE")
+		// std::cout << "n: " << n << std::endl;
+		// std::cout << "buffer_char: " << buffer_char << std::endl;
+		// std::cout << "buffer_char + n: " << buffer_char + n << std::endl;
+		// buf_.insert(buf_.end(), buffer_char, buffer_char + n);
+		buffer_.insert(buffer_.end(), buffer_char, buffer_char + n);
+		// std::cout << "buffer_: " << buffer_ << std::endl;
+
+		if (phase_msg_ == START_LINE_INCOMPLETE
+			|| phase_msg_ == START_LINE_COMPLETE
+			|| phase_msg_ == HEADER_INCOMPLETE
+			|| phase_msg_ == HEADER_COMPLETE)
+			// || phase_msg_ == BODY_CHUNKED)
+			requesthandler.checkRequestMessage(this);
+		if (phase_msg_ == BODY_CHUNKED)
 		{
-			// if ((pos = buffer_.find(CRLF)) != std::string::npos)
-			if (buffer_.empty())
+			if (!requesthandler.checkChunkedMessage(this))
 			{
-				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
-				std::cout << "HERE" << std::endl;
+				std::cout << "CHUNKED MESSAGE ERROR. CLOSE CONNECTION" << std::endl;
+				return ;
+			}
+			// else
+				// std::cout << "check CHUNCKED MESSAGE" << std::endl;
+		}
+		else if (phase_msg_ == BODY_INCOMPLETE)
+			requesthandler.checkRequestBody(this);
+		if (phase_msg_ == BODY_COMPLETE)
+		{
+			std::cout << "************ Message body process **********" << std::endl;
+			size_t pos = 0;
+			if (getRequest().getMethod() == "GET" || getRequest().getMethod() == "DELETE")
+			{
+				// if ((pos = buffer_.find(CRLF)) != std::string::npos)
+				if (buffer_.empty())
+				{
+					ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+					std::cout << "HERE" << std::endl;
+				}
+			}
+			else
+			{
+				request_.setBody(getBodyBuf());
+				if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
+					ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 			}
 		}
-		else
-		{
-			request_.setBody(getBodyBuf());
-			if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
-				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
-		}
+		memset(&buffer_char, 0, n);
 	}
-	memset(&buffer_char, 0, n);
 }
 
 void    Connection::processResponse()
@@ -100,12 +103,22 @@ void    Connection::processResponse()
 	//std::cout << req_status_code_ << " is code " << std::endl;
 	// body_
 	// si code status est entre 300 ~ 400, envoyer error page
+	std::cout << "AUTOINDEX FLAG : " << autoindex_flag << std::endl;
 	if (req_status_code_== NOT_DEFINE) {
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
+					if (autoindex_flag) {
+						std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+						body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
+						req_status_code_ = 200;
+					}
+					else
+					{
+						std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa" << std::endl;
 					// file path
-					body_ = response_.makeBodyHtml(request_.getFilePath());
-					req_status_code_ = 200;
+						body_ = response_.makeBodyHtml(request_.getFilePath());
+						req_status_code_ = 200;
+					}
 				}
 				else {
 					Cgi		cgi_(getServerConfig(), getLocationConfig(), request_);

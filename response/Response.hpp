@@ -92,6 +92,7 @@ public:
 	/* *************** utils ************** */
 	/* ************************************ */
 	std::string					getExt(std::string const &filename) const;
+	std::string		bodyWithAutoindexOn(const std::string &uri, const std::string &filepath);
 
 private:
 	/* ************************************ */
@@ -120,7 +121,8 @@ private:
 	/* ************************************ */
 	/* ************** tester ************** */
 	/* ************************************ */
-	void						printMapHeader(ft::mapHeader	mapHeader) const;
+	void			printMapHeader(ft::mapHeader	mapHeader) const;
+	
 };
 
 } // namespace ft

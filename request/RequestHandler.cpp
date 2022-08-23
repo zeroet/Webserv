@@ -347,7 +347,8 @@ void	RequestHandler::checkHeader(Connection *c) {
 				}
 			}
 			else
-				std::cout << "autoindex ON, FILE TREE needed" << std::endl;
+				c->autoindex_flag = true;
+				// std::cout << "autoindex ON, FILE TREE needed" << std::endl;
 		}
 		
 	}
@@ -393,13 +394,12 @@ void	RequestHandler::checkHeader(Connection *c) {
 				return ;
 			}
 			else
-				std::cout << "autoindex ON, FILE TREE needed" << std::endl;
+				c->autoindex_flag = true;
+				// std::cout << "autoindex ON, FILE TREE needed" << std::endl;
 			
 		}
 	}
 
-
-	
 	//Allow method check
 	if (checkAllowMethod(c) == false)
 	{
@@ -416,7 +416,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
 	}
-	
 	
 	if((isUriDirectory(c) == true) && (c->getRequest().getMethod() == "DELETE") && (c->getLocationConfig().getAutoindex() == false))
 	{
