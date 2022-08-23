@@ -89,6 +89,8 @@ void                    Cgi::executeChildProcess(void) {
     dup2(stdoutCgi_, STDOUT_FILENO);
     // execve
     retExecute = execve(const_cast<char*>(location_.getCgiPath().c_str()), argvExecve_, environ_);
+    if (retExecute  == -1)
+        return ;
 }
 
 std::string             Cgi::executeParentProcess(void) {
@@ -116,6 +118,7 @@ void                    Cgi::writeToCgi(void) {
    // do {
     retWrite_ = write(writeToCgi_, buf_, size_);
     //} while (retWrite_ > 0);
+    (void)retWrite_;
 }
 
 std::string             Cgi::readFromCgi(void) {
@@ -242,6 +245,14 @@ int                        Cgi::setVariable(void) {
         return statusCode_; 
     if ((statusCode_ = makeArgvForExecve()) != SUCCESS)
         return statusCode_;
+
+    std::cout << "**********start**********" << std::endl;
+    std::cout << "******** environ *********" << std::endl;
+    printTable(environ_);
+    std::cout << "********* argv **********" << std::endl;
+    printTable(argvExecve_);
+    std::cout << "***********end************" << std::endl;
+    
     return statusCode_;
 }
 
@@ -342,5 +353,14 @@ void				        Cgi::printmap(ft::mapHeader	mapHeader_) const{
 		<< iter_begin->second << "]" << std::endl;
 	}
 }
+
+void                        Cgi::printTable(char **table) const {
+    int     i(0);
+   
+    while (table[i]) {
+        std::cout << table[i++] << std::endl;
+    }
+}
+
 
 } // namespace ft

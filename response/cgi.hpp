@@ -110,7 +110,7 @@ private:
     /* ************ tester ************ */
     /* ******************************** */
     void                printmap(ft::mapHeader mapHeader_) const;
-
+    void                printTable(char **table) const;
 };
 
 } // namespace ft
