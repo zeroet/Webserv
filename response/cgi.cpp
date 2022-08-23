@@ -20,7 +20,8 @@ Cgi::Cgi(ServerBlock const &server, LocationBlock const &location, Request const
 }
 
 Cgi::~Cgi() {
-    freeEnviron();
+    freeTable(environ_);
+    freeTable(argvExecve_);
 }
 
 
@@ -42,11 +43,14 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
     else {
         // make environ, parametre pour function execve
         
-        reqStatusCode = setEnviron();
+        reqStatusCode = setVariable();
         if (reqStatusCode < 400) {
-
+            // setting for pipe, fork... etc
             // child process
             // parent process
+            // write to child process, if method -> POST
+            // read to parent process!
+            // mette a body_
                 
             reqStatusCode = 201;
         }
@@ -77,10 +81,7 @@ void                    Cgi::initialPipe(void) {
     pipeRead_[0] = -1;
     pipeRead_[1] = -1;
     environ_ = NULL;
-}
-
-void                    Cgi::initialEnviron(void) {
-    
+    argvExecve_ = NULL;
 }
 
 
@@ -142,38 +143,62 @@ std::string                 Cgi::toString(const int& v) const {
 	return (ss.str());
 }
 
- void                       Cgi::freeEnviron(void) {
+ void                       Cgi::freeTable(char **table) {
     int i(0);
-    while (environ_[i]) {
-        free(environ_[i]);
+    while (table[i]) {
+        free(table[i]);
+        i++;
     }
-    free(environ_);
+    free(table);
  }
+
+
+
+
 
 /* *************************************************** */
 /* ********************** setter ********************* */
 /* *************************************************** */
 int                        Cgi::setVariable(void) {
-    int     statusCode_;
+    int     statusCode_(SUCCESS);
 
     if ((statusCode_ = setEnviron()) != SUCCESS)
         return statusCode_; 
-
-    return (SUCCESS);
+    if ((statusCode_ = makeArgvForExecve()) != SUCCESS)
+        return statusCode_;
+    return statusCode_;
 }
 
+ int                       Cgi::makeArgvForExecve(void) {
+    int             statusCode_(SUCCESS);
+    std::string     cgiPath_(location_.getCgiPath());
+    argvExecve_ = (char**)malloc(sizeof(char*) * 3);
+    if (!argvExecve_) {
+        return 500;
+    }
+    // get cgi script
+    std::string::size_type n = location_.getCgiPath().rfind("/");
+    if (n != std::string::npos) {
+        cgiPath_ = location_.getCgiPath().substr(n + 1);
+    }
+    // set argv 
+    argvExecve_[2] = NULL;
+    argvExecve_[0] = strdup( const_cast<char*>(cgiPath_.c_str()) );
+    argvExecve_[1] = strdup( const_cast<char*>(request_.getFilePath().c_str()));
+
+    return statusCode_; 
+ }
 
 int                        Cgi::setEnviron(void) {
-   int          retCode(SUCCESS);
+   int          retCode_(SUCCESS);
    mapEnviron   mapEnviron_(makeMapEnviron());
 
    // changer mapEnviron_ comme char** environ;
    // si probleme, on doit envoyer status code
-   if ((retCode = environMapToTable(mapEnviron_)) != SUCCESS) {
-        return retCode;
+   if ((retCode_ = environMapToTable(mapEnviron_)) != SUCCESS) {
+        return retCode_;
    }
-   // make command
-   return (retCode);
+   return (retCode_);
 
 }
 
@@ -203,7 +228,6 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
 
 }
 
-
 int                             Cgi::environMapToTable(mapEnviron &mapEnviron_) {
     int             it_(0);
     char            *tmpEnv_(NULL);
@@ -218,6 +242,8 @@ int                             Cgi::environMapToTable(mapEnviron &mapEnviron_) 
         tmp_ = it->first + "=" + it->second;
         tmpEnv_ = const_cast<char*>(tmp_.c_str());
         environ_[it_] = strdup(tmpEnv_);
+        tmpEnv_ = NULL;
+        tmp_.clear();
         it_++;
     }
     return (SUCCESS);
