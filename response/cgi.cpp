@@ -20,8 +20,10 @@ Cgi::Cgi(ServerBlock const &server, LocationBlock const &location, Request const
 }
 
 Cgi::~Cgi() {
-    freeTable(environ_);
-    freeTable(argvExecve_);
+    if (environ_)
+        freeTable(environ_);
+    if (argvExecve_)
+        freeTable(argvExecve_);
 }
 
 
@@ -34,7 +36,7 @@ Cgi::~Cgi() {
 // req_code in parametre
 std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
     // body_ : string pour return
-    std::string body_("\r\nbody part");
+    std::string body_("\r\n body!!!!!!!!!!!");
 
     // verifier format de cgi et cgi path
     if ( ! (isFormatCgi() && isFormatCgiPath())) {
@@ -46,12 +48,26 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
         reqStatusCode = setVariable();
         if (reqStatusCode < 400) {
             // setting for pipe, fork... etc
+            setPipe();
+            childPid_ = fork();
+
+            if (childPid_ == -1) {
+                reqStatusCode = 500;
+                return body_;
+            }
+            else if (childPid_ == 0) {
+                executeChildProcess();
+            }
+            else {
+                wait(NULL);
+                body_ += executeParentProcess();
+            }
             // child process
             // parent process
             // write to child process, if method -> POST
             // read to parent process!
             // mette a body_
-                
+            // close pipe;
             reqStatusCode = 201;
         }
     } 
@@ -62,13 +78,60 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
     return body_;
 }
 
+void                    Cgi::executeChildProcess(void) {
+    // retExecute;
+    int     retExecute;
+    // close fd
+    close(readFromCgi_);
+    close(writeToCgi_);
+    // dup
+    dup2(stdinCgi_, STDIN_FILENO);
+    dup2(stdoutCgi_, STDOUT_FILENO);
+    // execve
+    retExecute = execve(const_cast<char*>(location_.getCgiPath().c_str()), argvExecve_, environ_);
+}
+
+std::string             Cgi::executeParentProcess(void) {
+    std::string     body_("");
 
 
+    //cloase fd
+    close(stdinCgi_);
+    close(stdoutCgi_);
+    // write to Cgi
+    if (request_.getMethod() == "POST" && request_.getBody().size() > 0)
+        writeToCgi();
+    body_ += readFromCgi();
+    //close fd
+    close(readFromCgi_);
+    close(writeToCgi_);
+    return body_;
+}
 
+void                    Cgi::writeToCgi(void) {
+    char    *buf_ = const_cast<char*>(request_.getBody().c_str());
+    int     size_(request_.getBody().size());
+    int     retWrite_;
+    
+   // do {
+    retWrite_ = write(writeToCgi_, buf_, size_);
+    //} while (retWrite_ > 0);
+}
 
+std::string             Cgi::readFromCgi(void) {
+    std::string     body_;
+    char            buf_[256];
+    int             retRead_;
 
+   
+   do {
+      memset(buf_, 0, 256);
+      retRead_ = read(readFromCgi_, buf_, sizeof(buf_));
+      body_ += buf_;
 
-
+    } while (retRead_ > 0);
+    return body_;
+}
 
 
 
@@ -76,15 +139,28 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
 /* ********************** initial ******************** */
 /* *************************************************** */
 void                    Cgi::initialPipe(void) {
-    pipeWrite_[0] = -1;
-    pipeWrite_[1] = -1;
-    pipeRead_[0] = -1;
-    pipeRead_[1] = -1;
     environ_ = NULL;
     argvExecve_ = NULL;
 }
 
+void                    Cgi::setPipe(void) {
+    if (pipe(pipeWrite_) < 0)
+        return ;
+    if (pipe(pipeRead_) < 0)
+        return ;
 
+    writeToCgi_ = pipeWrite_[1];
+    stdinCgi_ = pipeWrite_[0];
+
+    readFromCgi_ = pipeRead_[0];
+    stdoutCgi_ = pipeRead_[1];
+
+    // non block
+    fcntl(writeToCgi_, F_SETFL, O_NONBLOCK);
+    fcntl(stdinCgi_, F_SETFL, O_NONBLOCK);
+    fcntl(readFromCgi_, F_SETFL, O_NONBLOCK);
+    fcntl(stdoutCgi_, F_SETFL, O_NONBLOCK);
+} 
 
 
 /* *************************************************** */

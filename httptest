@@ -1,8 +1,7 @@
-POST /post/index.php HTTP/1.1
+POST /post/post.php HTTP/1.1
 Host: localhost
 Accept: */*
-Content-Length: 10
-Content-TYPE: hello
+Content-Length: 15
 
-hello world
+id=hy&age=1234567
 
