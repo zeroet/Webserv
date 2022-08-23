@@ -81,6 +81,7 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
 void                    Cgi::executeChildProcess(void) {
     // retExecute;
     int     retExecute;
+    (void) retExecute;
     // close fd
     close(readFromCgi_);
     close(writeToCgi_);
@@ -112,6 +113,7 @@ void                    Cgi::writeToCgi(void) {
     char    *buf_ = const_cast<char*>(request_.getBody().c_str());
     int     size_(request_.getBody().size());
     int     retWrite_;
+    (void)retWrite_;
     
    // do {
     retWrite_ = write(writeToCgi_, buf_, size_);
