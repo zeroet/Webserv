@@ -28,7 +28,7 @@ void    Connection::processRequest()
 		if (n < 0 || strchr(buffer_char, 0xff))
 		{
 			//close connection
-			this->status = Close;
+			this->status_ = "Close";
 			return ;
 			//need function to close connection
 			//return (Error); or return (-1);
@@ -50,7 +50,7 @@ void    Connection::processRequest()
 		{
 			if (!requesthandler.checkChunkedMessage(this))
 			{
-				this->status = Close;
+				this->status_ = "Close";
 				return ;
 			}
 			// else

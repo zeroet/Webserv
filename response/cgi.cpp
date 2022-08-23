@@ -79,9 +79,11 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
 }
 
 void                    Cgi::executeChildProcess(void) {
+    
+    std::cout << "****************** child ***************" << std::endl;
+    
     // retExecute;
     int     retExecute;
-    (void) retExecute;
     // close fd
     close(readFromCgi_);
     close(writeToCgi_);
@@ -90,18 +92,22 @@ void                    Cgi::executeChildProcess(void) {
     dup2(stdoutCgi_, STDOUT_FILENO);
     // execve
     retExecute = execve(const_cast<char*>(location_.getCgiPath().c_str()), argvExecve_, environ_);
+    if (retExecute  == -1)
+        return ;
 }
 
 std::string             Cgi::executeParentProcess(void) {
     std::string     body_("");
 
-
+    std::cout << "****************** parent ***************" << std::endl;
+    
     //cloase fd
     close(stdinCgi_);
     close(stdoutCgi_);
     // write to Cgi
-    if (request_.getMethod() == "POST" && request_.getBody().size() > 0)
-        writeToCgi();
+    if (request_.getMethod() == "POST" && request_.getBody().size() > 0) {
+       writeToCgi();
+    }
     body_ += readFromCgi();
     //close fd
     close(readFromCgi_);
@@ -110,28 +116,43 @@ std::string             Cgi::executeParentProcess(void) {
 }
 
 void                    Cgi::writeToCgi(void) {
+
+    std::cout << "****************** write to cgi ***************" << std::endl;
+    std::cout << "size = [" << request_.getBody().size() <<"] and body_ == [" << request_.getBody() << "]" << std::endl;
+    
+
     char    *buf_ = const_cast<char*>(request_.getBody().c_str());
     int     size_(request_.getBody().size());
     int     retWrite_;
-    (void)retWrite_;
+
     
-   // do {
-    retWrite_ = write(writeToCgi_, buf_, size_);
-    //} while (retWrite_ > 0);
+    do {
+        retWrite_ = write(writeToCgi_, buf_, size_);
+    } while (retWrite_ > 0);
+
+
+    std::cout << "write to Cgi retWrite == [" << retWrite_ << "]" << std::endl;
 }
 
 std::string             Cgi::readFromCgi(void) {
+    
+    std::cout << "****************** read from cgi ***************" << std::endl;
+
+
+
     std::string     body_;
-    char            buf_[256];
+    char            buf_[65536 + 1];
     int             retRead_;
 
    
    do {
-      memset(buf_, 0, 256);
+      memset(buf_, 0, 65536);
       retRead_ = read(readFromCgi_, buf_, sizeof(buf_));
       body_ += buf_;
 
     } while (retRead_ > 0);
+
+    std::cout << "read From Cgi == [" << retRead_ << "]" << std::endl;
     return body_;
 }
 
@@ -146,10 +167,10 @@ void                    Cgi::initialPipe(void) {
 }
 
 void                    Cgi::setPipe(void) {
-    if (pipe(pipeWrite_) < 0)
+    if (pipe(pipeWrite_) < 0 || pipe(pipeRead_) < 0) {
+        std::cerr << "error open pipe" << std::endl;
         return ;
-    if (pipe(pipeRead_) < 0)
-        return ;
+    }
 
     writeToCgi_ = pipeWrite_[1];
     stdinCgi_ = pipeWrite_[0];
@@ -162,6 +183,11 @@ void                    Cgi::setPipe(void) {
     fcntl(stdinCgi_, F_SETFL, O_NONBLOCK);
     fcntl(readFromCgi_, F_SETFL, O_NONBLOCK);
     fcntl(stdoutCgi_, F_SETFL, O_NONBLOCK);
+
+    //std::cout << "pipe == [" << writeToCgi_ << "]" << std::endl;
+    //std::cout << "pipe == [" << stdinCgi_ << "]" << std::endl;
+    //std::cout << "pipe == [" << readFromCgi_ << "]" << std::endl;
+    //std::cout << "pipe == [" << stdoutCgi_ << "]" << std::endl;
 } 
 
 
@@ -230,7 +256,19 @@ std::string                 Cgi::toString(const int& v) const {
     free(table);
  }
 
-
+std::string                 Cgi::getLast(std::string const &str, std::string const &cut) {
+    std::string         ret(str);
+    
+    std::string::size_type n = str.rfind(cut);
+    if (cut == "?" && std::string::npos == n) {
+        return ("");
+    }
+    if (std::string::npos != n) {
+        ret.clear();
+        ret = str.substr(n + 1);
+    }
+    return str;
+}
 
 
 
@@ -244,6 +282,14 @@ int                        Cgi::setVariable(void) {
         return statusCode_; 
     if ((statusCode_ = makeArgvForExecve()) != SUCCESS)
         return statusCode_;
+
+    //std::cout << "**********start**********" << std::endl;
+    //std::cout << "******** environ *********" << std::endl;
+    //printTable(environ_);
+    //std::cout << "********* argv **********" << std::endl;
+    //printTable(argvExecve_);
+    //std::cout << "***********end************" << std::endl;
+
     return statusCode_;
 }
 
@@ -281,9 +327,14 @@ int                        Cgi::setEnviron(void) {
 }
 
 Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
-    mapEnviron  mapEnviron_;
+    mapEnviron          mapEnviron_;
+    std::string         pathInfo_ = getLast(request_.getFilePath(), "/");
+    std::string         uri_ = getLast(request_.getUri(), "?");
 
     // https://bz.apache.org/bugzilla/show_bug.cgi?id=62663
+    mapEnviron_.insert(std::make_pair("AUTH_TYPE", ""));
+    mapEnviron_.insert(std::make_pair("REMOTE_IDENT", request_.getMethod()));
+    mapEnviron_.insert(std::make_pair("REMOTE_USER", request_.getMethod()));
     mapEnviron_.insert(std::make_pair("REQUEST_METHOD", request_.getMethod()));
     mapEnviron_.insert(std::make_pair("REDIRECT_STATUS", "CGI"));
     mapEnviron_.insert(std::make_pair("SERVER_PROTOCOL", "HTTP/1.1"));
@@ -291,17 +342,22 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     mapEnviron_.insert(std::make_pair("REMOTE_ADDR", "127.0.0.1"));
     mapEnviron_.insert(std::make_pair("SERVER_PORT", toString(server_.getListen())));
     mapEnviron_.insert(std::make_pair("SCRIPT_NAME", location_.getCgiPath()));
-    if (!request_.getQueryString().empty() && request_.getMethod() == "GET")
+    if (!request_.getQueryString().empty() && request_.getMethod() == "GET") {
         mapEnviron_.insert(std::make_pair("QUERY_STRING", request_.getQueryString()));
+    }
     mapEnviron_.insert(std::make_pair("SERVER_SOFTWARE", "Webserv"));
-    if (!request_.getBody().empty() && request_.getMethod() == "POST")
+    if (!request_.getBody().empty() && request_.getMethod() == "POST") {
         mapEnviron_.insert(std::make_pair("CONTENT_LENGTH", toString(request_.getBody().size())));
+    }
     mapEnviron_.insert(std::make_pair("CONTENT_TYPE",  "application/x-www-form-urlencoded"));
-    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", request_.getFilePath()));
-    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", request_.getFilePath()));
-    mapEnviron_.insert(std::make_pair("PATH_INFO", request_.getPath()));
-    mapEnviron_.insert(std::make_pair("REQUEST_URI", request_.getUri()));
+    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", request_.getPath()));
+    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", "/mnt/nfs/homes/hyungyoo/webServ"));              //!!!!!!!!!!!!!!!!!!!!!!
+    mapEnviron_.insert(std::make_pair("PATH_INFO", pathInfo_));
+    if ( ! uri_.empty() && request_.getMethod() == "GET") {
+        mapEnviron_.insert(std::make_pair("REQUEST_URI", uri_));
+    }
 
+    //printmap(mapEnviron_);
     return (mapEnviron_);
 
 }
@@ -344,5 +400,14 @@ void				        Cgi::printmap(ft::mapHeader	mapHeader_) const{
 		<< iter_begin->second << "]" << std::endl;
 	}
 }
+
+void                        Cgi::printTable(char **table) const {
+    int     i(0);
+   
+    while (table[i]) {
+        std::cout << table[i++] << std::endl;
+    }
+}
+
 
 } // namespace ft
