@@ -79,6 +79,9 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
 }
 
 void                    Cgi::executeChildProcess(void) {
+    
+    std::cout << "****************** child ***************" << std::endl;
+    
     // retExecute;
     int     retExecute;
     // close fd
@@ -96,7 +99,8 @@ void                    Cgi::executeChildProcess(void) {
 std::string             Cgi::executeParentProcess(void) {
     std::string     body_("");
 
-
+    std::cout << "****************** parent ***************" << std::endl;
+    
     //cloase fd
     close(stdinCgi_);
     close(stdoutCgi_);
@@ -111,6 +115,9 @@ std::string             Cgi::executeParentProcess(void) {
 }
 
 void                    Cgi::writeToCgi(void) {
+
+    std::cout << "****************** write to cgi ***************" << std::endl;
+
     char    *buf_ = const_cast<char*>(request_.getBody().c_str());
     int     size_(request_.getBody().size());
     int     retWrite_;
@@ -122,13 +129,18 @@ void                    Cgi::writeToCgi(void) {
 }
 
 std::string             Cgi::readFromCgi(void) {
+    
+    std::cout << "****************** read from cgi ***************" << std::endl;
+
+
+
     std::string     body_;
-    char            buf_[256];
+    char            buf_[65536 + 1];
     int             retRead_;
 
    
    do {
-      memset(buf_, 0, 256);
+      memset(buf_, 0, 65536);
       retRead_ = read(readFromCgi_, buf_, sizeof(buf_));
       body_ += buf_;
 
