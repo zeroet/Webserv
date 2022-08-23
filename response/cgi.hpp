@@ -40,11 +40,15 @@ private:
     /* ******************************** */
     int                 pipeWrite_[2];
     int                 pipeRead_[2];
+    int                 writeToCgi_;
+    int                 readFromCgi_;
+    int                 stdinCgi_;
+    int                 stdoutCgi_;
 
     /* ******************************** */
     /* * variables for child process ** */
     /* ******************************** */
-    //int                 childPid_;
+    int                 childPid_;
     char                **environ_;
     char                **argvExecve_;
 
@@ -68,13 +72,17 @@ public:
     /* *********** make body ********** */
     /* ******************************** */
     std::string         makeBodyCgi(int &reqStatusCode);
+    void                executeChildProcess();
+    std::string         executeParentProcess();
     
 private:
     /* ******************************** */
     /* ************ initial *********** */
     /* ******************************** */
     void                initialPipe(void);
- 
+    void                setPipe(void);
+    void                writeToCgi(void);
+    std::string         readFromCgi(void);
 
     /* ******************************** */
     /* ************ checker *********** */
@@ -99,7 +107,7 @@ private:
     int                 makeArgvForExecve(void);
 
     /* ******************************** */
-    /* ************ setter ************ */
+    /* ************ tester ************ */
     /* ******************************** */
     void                printmap(ft::mapHeader mapHeader_) const;
 
