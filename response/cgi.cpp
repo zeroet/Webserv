@@ -20,7 +20,7 @@ Cgi::Cgi(ServerBlock const &server, LocationBlock const &location, Request const
 }
 
 Cgi::~Cgi() {
-    free(environ_);
+    freeEnviron();
 }
 
 
@@ -142,8 +142,13 @@ std::string                 Cgi::toString(const int& v) const {
 	return (ss.str());
 }
 
-
-
+ void                       Cgi::freeEnviron(void) {
+    int i(0);
+    while (environ_[i]) {
+        free(environ_[i]);
+    }
+    free(environ_);
+ }
 
 /* *************************************************** */
 /* ********************** setter ********************* */
@@ -159,20 +164,23 @@ int                        Cgi::setVariable(void) {
 
 
 int                        Cgi::setEnviron(void) {
+   int          retCode(SUCCESS);
    mapEnviron   mapEnviron_(makeMapEnviron());
 
    // changer mapEnviron_ comme char** environ;
    // si probleme, on doit envoyer status code
-   
-   // tester
-    printmap(mapEnviron_);
-    return (SUCCESS);
+   if ((retCode = environMapToTable(mapEnviron_)) != SUCCESS) {
+        return retCode;
+   }
+   // make command
+   return (retCode);
 
 }
 
 Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     mapEnviron  mapEnviron_;
 
+    // https://bz.apache.org/bugzilla/show_bug.cgi?id=62663
     mapEnviron_.insert(std::make_pair("REQUEST_METHOD", request_.getMethod()));
     mapEnviron_.insert(std::make_pair("REDIRECT_STATUS", "CGI"));
     mapEnviron_.insert(std::make_pair("SERVER_PROTOCOL", "HTTP/1.1"));
@@ -183,22 +191,37 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     if (!request_.getQueryString().empty() && request_.getMethod() == "GET")
         mapEnviron_.insert(std::make_pair("QUERY_STRING", request_.getQueryString()));
     mapEnviron_.insert(std::make_pair("SERVER_SOFTWARE", "Webserv"));
-    mapEnviron_.insert(std::make_pair("CONTENT_TYPE",  "application/x-www-form-urlencoded"));
-    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", ""));//d
-    mapEnviron_.insert(std::make_pair("PATH_INFO", ""));//d
-    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", ""));//d
-    mapEnviron_.insert(std::make_pair("REQUEST_URI", ""));//d
-    
-    std::cout << "body  == " << request_.getBody() << std::endl;
     if (!request_.getBody().empty() && request_.getMethod() == "POST")
-        mapEnviron_.insert(std::make_pair("CONTENT_LENGTH", toString(request_.getBody().size())));//d
+        mapEnviron_.insert(std::make_pair("CONTENT_LENGTH", toString(request_.getBody().size())));
+    mapEnviron_.insert(std::make_pair("CONTENT_TYPE",  "application/x-www-form-urlencoded"));
+    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", request_.getFilePath()));
+    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", request_.getFilePath()));
+    mapEnviron_.insert(std::make_pair("PATH_INFO", request_.getPath()));
+    mapEnviron_.insert(std::make_pair("REQUEST_URI", request_.getUri()));
 
     return (mapEnviron_);
 
 }
 
 
+int                             Cgi::environMapToTable(mapEnviron &mapEnviron_) {
+    int             it_(0);
+    char            *tmpEnv_(NULL);
+    std::string     tmp_;
 
+    environ_ = (char**)malloc(sizeof(char*) * (mapEnviron_.size() + 1));
+    if (!environ_) {
+        return 500;
+    }
+    environ_[mapEnviron_.size()] = NULL;
+    for (mapEnviron::iterator it=mapEnviron_.begin(); it!=mapEnviron_.end(); it++) {
+        tmp_ = it->first + "=" + it->second;
+        tmpEnv_ = const_cast<char*>(tmp_.c_str());
+        environ_[it_] = strdup(tmpEnv_);
+        it_++;
+    }
+    return (SUCCESS);
+}
 
 
 

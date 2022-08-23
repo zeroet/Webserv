@@ -18,6 +18,8 @@ const	Request	&Request::operator=(const Request &x) {
 	setFilePath(x.getFilePath());
 	setQueryString(x.getQueryString());
 	setBody(x.getBody());
+	setUri(x.getUri());
+	setPath(x.getPath());
   }
   return (*this);
 }

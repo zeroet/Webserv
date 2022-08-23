@@ -86,6 +86,7 @@ private:
     /* ******************************** */
     std::string         getExt(std::string const &filename) const;
     std::string         toString(const int& v) const;
+    void                freeEnviron(void);
 
     /* ******************************** */
     /* ************ setter ************ */
@@ -93,7 +94,7 @@ private:
     int                 setVariable(void);
     int                 setEnviron(void);
     mapEnviron          makeMapEnviron(void);
-
+    int                 environMapToTable(mapEnviron &mapEnviron_);
 
     /* ******************************** */
     /* ************ setter ************ */
