@@ -178,7 +178,6 @@ LocationBlock	Connection::getLocationConfig(void) {
 std::string		&Connection::getBodyBuf(void) {
 	// il faut faire protection pour content-length
 
-
 	std::istringstream		contentLength(request_.getHeaderValue("Content-Length"));
 	int						contentLength_;
 	contentLength >> contentLength_;
