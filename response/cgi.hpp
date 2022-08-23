@@ -46,6 +46,7 @@ private:
     /* ******************************** */
     //int                 childPid_;
     char                **environ_;
+    char                **argvExecve_;
 
     /* ******************************** */
     /* *** set Location / request ***** */
@@ -73,7 +74,7 @@ private:
     /* ************ initial *********** */
     /* ******************************** */
     void                initialPipe(void);
-    void                initialEnviron(void);
+ 
 
     /* ******************************** */
     /* ************ checker *********** */
@@ -86,6 +87,7 @@ private:
     /* ******************************** */
     std::string         getExt(std::string const &filename) const;
     std::string         toString(const int& v) const;
+    void                freeTable(char **table);
 
     /* ******************************** */
     /* ************ setter ************ */
@@ -93,7 +95,8 @@ private:
     int                 setVariable(void);
     int                 setEnviron(void);
     mapEnviron          makeMapEnviron(void);
-
+    int                 environMapToTable(mapEnviron &mapEnviron_);
+    int                 makeArgvForExecve(void);
 
     /* ******************************** */
     /* ************ setter ************ */
