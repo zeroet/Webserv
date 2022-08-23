@@ -117,6 +117,8 @@ std::string             Cgi::executeParentProcess(void) {
 void                    Cgi::writeToCgi(void) {
 
     std::cout << "****************** write to cgi ***************" << std::endl;
+    std::cout << "size = [" << request_.getBody().size() <<"] and body_ == [" << request_.getBody() << "]" << std::endl;
+    
 
     char    *buf_ = const_cast<char*>(request_.getBody().c_str());
     int     size_(request_.getBody().size());
@@ -264,7 +266,7 @@ int                        Cgi::setVariable(void) {
     std::cout << "********* argv **********" << std::endl;
     printTable(argvExecve_);
     std::cout << "***********end************" << std::endl;
-    
+
     return statusCode_;
 }
 
