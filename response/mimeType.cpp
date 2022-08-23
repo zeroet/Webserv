@@ -23,7 +23,7 @@ std::string MimeType::getMIMEType(std::string const &Ext)
     {
         return itFind->second;
     }
-    return ("text/plain");
+    return ("text/html");
 }
 
 

@@ -71,6 +71,7 @@ void    Connection::processRequest()
 		}
 		else
 		{
+			request_.setBody(getBodyBuf());
 			if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
 				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 		}
@@ -80,11 +81,14 @@ void    Connection::processRequest()
 
 void    Connection::processResponse()
 {
-	std::string	returnBuffer_;
-	std::string	header_;
-	std::string	body_;
-	MimeType	mime_;
-
+	std::string			returnBuffer_;
+	std::string			header_;
+	std::string			body_;
+	std::string			currentMethod_(request_.getMethod());
+	std::string			Ext_(response_.getExt(request_.getFilePath()));
+	MimeType			mime_;
+	bool				isGetHTML(currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html");
+	
 	// intializer les valeurs de Request class
 	response_.setRequest(request_);
 	response_.setRequestValue();
@@ -96,23 +100,17 @@ void    Connection::processResponse()
 	//std::cout << req_status_code_ << " is code " << std::endl;
 	// body_
 	// si code status est entre 300 ~ 400, envoyer error page
-	if (req_status_code_ >= 300) {
-		body_ += response_.makeErrorPage(req_status_code_);
-	}
-	else {
-		std::string	currentMethod_(request_.getMethod());
+	if (req_status_code_== NOT_DEFINE) {
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
-				std::string	Ext_(response_.getExt(request_.getFilePath()));
-				if (currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html") {
+				if (isGetHTML) {
 					// file path
 					body_ = response_.makeBodyHtml(request_.getFilePath());
 					req_status_code_ = 200;
 				}
 				else {
-					Cgi		cgi_(getLocationConfig());
+					Cgi		cgi_(getServerConfig(), getLocationConfig(), request_);
 					
-					body_ = cgi_.makeBodyCgi();
-					req_status_code_ = 201;
+					body_ = cgi_.makeBodyCgi(req_status_code_);
 					//req_status_code_ = cgi.getReqStatusCode();
 				}
 		}
@@ -120,9 +118,20 @@ void    Connection::processResponse()
 			req_status_code_ = response_.execteDelete();
 		}
 	}
+	if (req_status_code_ >= 400) {
+		body_ += response_.makeErrorPage(req_status_code_);
+	}
 	
 	// make header_
-	header_ += response_.makeHeader(body_.size(), req_status_code_);
+	// si method est "POST" et error page, ajouter header
+	// sinon, cgi rends header
+	if (isGetHTML || req_status_code_ >= 400) {
+		header_ += response_.makeHeader(body_.size(), req_status_code_);
+	}
+	else {
+		// header_ += response_.makeheader(body_); override
+		header_ += "we have to get header from result of CGI\r\n";
+	}
 	// make return buffer
 	returnBuffer_ = header_ + body_ ;
 
@@ -167,6 +176,13 @@ LocationBlock	Connection::getLocationConfig(void) {
 }
 
 std::string		&Connection::getBodyBuf(void) {
+	// il faut faire protection pour content-length
+
+	std::istringstream		contentLength(request_.getHeaderValue("Content-Length"));
+	int						contentLength_;
+	contentLength >> contentLength_;
+	body_buf.resize(contentLength_);
+	
 	return (body_buf);
 }
 

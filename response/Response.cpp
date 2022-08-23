@@ -105,6 +105,9 @@ std::string		Response::makeErrorPage(int	status_code) {
 	errorBody_ += "</head>\r\n";
 	errorBody_ += "<body>\r\n";
 	errorBody_ += "	<h1>";
+	errorBody_ += errorCode_;
+	errorBody_ += "</h1>\r\n";
+	errorBody_ += "	<h1>";
 	errorBody_ += errorMessage_;
 	errorBody_ += "</h1>\r\n";
 	errorBody_ += "</body>\r\n";
