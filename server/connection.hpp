@@ -93,6 +93,7 @@ class Connection
 		int				chunked_msg_checker;
 		size_t			chunked_msg_size;
 		std::string		body_buf;
+		bool			autoindex_flag;
 		// res
 		// exe
 
