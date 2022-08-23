@@ -162,7 +162,7 @@ void    Epoll::epoll_server_manager()
             {
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
-                it->second->processRequest(); //treat_request()
+                it->second->processRequest();
 				it->second->printRequestMsg();
                 int ret = check_status_connection(it->second->getStatus());
                 if (ret == 1)

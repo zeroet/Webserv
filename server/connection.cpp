@@ -12,6 +12,7 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	chunked_msg_size = 0;
 	is_chunk = false;
 	body_buf = "";
+	autoindex_flag = false;
 }
 
 Connection::~Connection() { }
@@ -102,12 +103,22 @@ void    Connection::processResponse()
 	//std::cout << req_status_code_ << " is code " << std::endl;
 	// body_
 	// si code status est entre 300 ~ 400, envoyer error page
+	std::cout << "AUTOINDEX FLAG : " << autoindex_flag << std::endl;
 	if (req_status_code_== NOT_DEFINE) {
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
+					if (autoindex_flag) {
+						std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+						body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
+						req_status_code_ = 200;
+					}
+					else
+					{
+						std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa" << std::endl;
 					// file path
-					body_ = response_.makeBodyHtml(request_.getFilePath());
-					req_status_code_ = 200;
+						body_ = response_.makeBodyHtml(request_.getFilePath());
+						req_status_code_ = 200;
+					}
 				}
 				else {
 					Cgi		cgi_(getServerConfig(), getLocationConfig(), request_);
