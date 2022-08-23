@@ -28,7 +28,7 @@ void    Connection::processRequest()
 		if (n < 0 || strchr(buffer_char, 0xff))
 		{
 			//close connection
-			printf("recv Error\n");
+			this->status_ = "Close";
 			return ;
 			//need function to close connection
 			//return (Error); or return (-1);
@@ -50,7 +50,7 @@ void    Connection::processRequest()
 		{
 			if (!requesthandler.checkChunkedMessage(this))
 			{
-				std::cout << "CHUNKED MESSAGE ERROR. CLOSE CONNECTION" << std::endl;
+				this->status_ = "Close";
 				return ;
 			}
 			// else
