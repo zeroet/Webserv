@@ -48,7 +48,7 @@ private:
     /* ******************************** */
     /* * variables for child process ** */
     /* ******************************** */
-    int                 childPid_;
+    pid_t                 childPid_;
     char                **environ_;
     char                **argvExecve_;
 
@@ -96,6 +96,7 @@ private:
     std::string         getExt(std::string const &filename) const;
     std::string         toString(const int& v) const;
     void                freeTable(char **table);
+    std::string         getLast(std::string const &str, std::string const &cut);
 
     /* ******************************** */
     /* ************ setter ************ */

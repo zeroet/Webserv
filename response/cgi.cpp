@@ -105,8 +105,9 @@ std::string             Cgi::executeParentProcess(void) {
     close(stdinCgi_);
     close(stdoutCgi_);
     // write to Cgi
-    if (request_.getMethod() == "POST" && request_.getBody().size() > 0)
-        writeToCgi();
+    if (request_.getMethod() == "POST" && request_.getBody().size() > 0) {
+       writeToCgi();
+    }
     body_ += readFromCgi();
     //close fd
     close(readFromCgi_);
@@ -166,10 +167,10 @@ void                    Cgi::initialPipe(void) {
 }
 
 void                    Cgi::setPipe(void) {
-    if (pipe(pipeWrite_) < 0)
+    if (pipe(pipeWrite_) < 0 || pipe(pipeRead_) < 0) {
+        std::cerr << "error open pipe" << std::endl;
         return ;
-    if (pipe(pipeRead_) < 0)
-        return ;
+    }
 
     writeToCgi_ = pipeWrite_[1];
     stdinCgi_ = pipeWrite_[0];
@@ -183,7 +184,10 @@ void                    Cgi::setPipe(void) {
     fcntl(readFromCgi_, F_SETFL, O_NONBLOCK);
     fcntl(stdoutCgi_, F_SETFL, O_NONBLOCK);
 
-    
+    //std::cout << "pipe == [" << writeToCgi_ << "]" << std::endl;
+    //std::cout << "pipe == [" << stdinCgi_ << "]" << std::endl;
+    //std::cout << "pipe == [" << readFromCgi_ << "]" << std::endl;
+    //std::cout << "pipe == [" << stdoutCgi_ << "]" << std::endl;
 } 
 
 
@@ -252,7 +256,19 @@ std::string                 Cgi::toString(const int& v) const {
     free(table);
  }
 
-
+std::string                 Cgi::getLast(std::string const &str, std::string const &cut) {
+    std::string         ret(str);
+    
+    std::string::size_type n = str.rfind(cut);
+    if (cut == "?" && std::string::npos == n) {
+        return ("");
+    }
+    if (std::string::npos != n) {
+        ret.clear();
+        ret = str.substr(n + 1);
+    }
+    return str;
+}
 
 
 
@@ -267,12 +283,12 @@ int                        Cgi::setVariable(void) {
     if ((statusCode_ = makeArgvForExecve()) != SUCCESS)
         return statusCode_;
 
-    std::cout << "**********start**********" << std::endl;
-    std::cout << "******** environ *********" << std::endl;
-    printTable(environ_);
-    std::cout << "********* argv **********" << std::endl;
-    printTable(argvExecve_);
-    std::cout << "***********end************" << std::endl;
+    //std::cout << "**********start**********" << std::endl;
+    //std::cout << "******** environ *********" << std::endl;
+    //printTable(environ_);
+    //std::cout << "********* argv **********" << std::endl;
+    //printTable(argvExecve_);
+    //std::cout << "***********end************" << std::endl;
 
     return statusCode_;
 }
@@ -311,15 +327,9 @@ int                        Cgi::setEnviron(void) {
 }
 
 Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
-    mapEnviron  mapEnviron_;
-    std::string pathInfo_(request_.getFilePath());
-    
-    std::string::size_type n = request_.getFilePath().rfind("/");
-    if (std::string::npos != n) {
-        pathInfo_.clear();
-        pathInfo_ = request_.getFilePath().substr(n + 1);
-
-    }
+    mapEnviron          mapEnviron_;
+    std::string         pathInfo_ = getLast(request_.getFilePath(), "/");
+    std::string         uri_ = getLast(request_.getUri(), "?");
 
     // https://bz.apache.org/bugzilla/show_bug.cgi?id=62663
     mapEnviron_.insert(std::make_pair("AUTH_TYPE", ""));
@@ -332,17 +342,20 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     mapEnviron_.insert(std::make_pair("REMOTE_ADDR", "127.0.0.1"));
     mapEnviron_.insert(std::make_pair("SERVER_PORT", toString(server_.getListen())));
     mapEnviron_.insert(std::make_pair("SCRIPT_NAME", location_.getCgiPath()));
-    if (!request_.getQueryString().empty() && request_.getMethod() == "GET")
+    if (!request_.getQueryString().empty() && request_.getMethod() == "GET") {
         mapEnviron_.insert(std::make_pair("QUERY_STRING", request_.getQueryString()));
+    }
     mapEnviron_.insert(std::make_pair("SERVER_SOFTWARE", "Webserv"));
-    if (!request_.getBody().empty() && request_.getMethod() == "POST")
+    if (!request_.getBody().empty() && request_.getMethod() == "POST") {
         mapEnviron_.insert(std::make_pair("CONTENT_LENGTH", toString(request_.getBody().size())));
+    }
     mapEnviron_.insert(std::make_pair("CONTENT_TYPE",  "application/x-www-form-urlencoded"));
     mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", request_.getPath()));
-    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", "/mnt/nfs/homes/hyungyoo/webServ"));   //
+    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", "/mnt/nfs/homes/hyungyoo/webServ"));              //!!!!!!!!!!!!!!!!!!!!!!
     mapEnviron_.insert(std::make_pair("PATH_INFO", pathInfo_));
-    mapEnviron_.insert(std::make_pair("REQUEST_URI", request_.getUri()));
-
+    if ( ! uri_.empty() && request_.getMethod() == "GET") {
+        mapEnviron_.insert(std::make_pair("REQUEST_URI", uri_));
+    }
 
     //printmap(mapEnviron_);
     return (mapEnviron_);
