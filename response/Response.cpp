@@ -202,7 +202,7 @@ std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::st
 					filename += "/";
 				}
 			}
-			ret += "<a href=\"" + filename + "\">" + filename + "</a>";
+			ret += "<a href=\"" + filepath + filename + "\">" + filename + "</a>";
 			ret += getFileDateTime(fileinfo.st_mtime);
 			// ss.clear(
 			// ret += ss.str();
