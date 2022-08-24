@@ -50,8 +50,8 @@ void    Connection::processRequest(void) {
 		// std::cout << "buffer_char: " << buffer_char << std::endl;
 		// std::cout << "buffer_char + n: " << buffer_char + n << std::endl;
 		// buf_.insert(buf_.end(), buffer_char, buffer_char + n);
-		// buffer_.insert(buffer_.end(), buffer_char, buffer_char + n);
-		buffer_.append(buffer_char);
+		buffer_.insert(buffer_.end(), buffer_char, buffer_char + n);
+		// buffer_.append(buffer_char);
 		// std::cout << "buffer_: " << buffer_ << std::endl;
 
 		if (phase_msg_ == START_LINE_INCOMPLETE
