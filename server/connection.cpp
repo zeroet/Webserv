@@ -110,8 +110,8 @@ void    Connection::processResponse()
 	response_.setRequestValue();
 	response_.setLocation(getLocationConfig());
 
-	Request request__(request_);
-	std::cout << "test: " << request__.getFilePath() << std::endl;
+	//Request request__(request_);
+	//std::cout << "test: " << request__.getFilePath() << std::endl;
 	// autoindex on; error code;
 	// get new file_path -> setFilePath(newFilePath);
 
@@ -165,8 +165,10 @@ void    Connection::processResponse()
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
 
+	status_ = "Close";
 	// epollout, close fd
-	ep_->end_connection(clntFd_);
+	//ep_->epoll_Ctl_Mode(clntFd_, EPOLLIN);
+	
 }
 
 //getter
