@@ -39,7 +39,7 @@ void    Epoll::init_server_socket()
     int count = 0;
 
 	create_epoll_fd();
-	epoll_add(0);
+	// epoll_add(0);
 	for (int i = 0; i < numServerFd; i++)
 	{
         if (OK != (epoll_add(vecBloc_[i].getSocketFd())))
@@ -161,20 +161,26 @@ void    Epoll::epoll_server_manager()
             }
             else if(epEvent[i].events & EPOLLIN)
             {
-                std::cout << "EPOLL IN " << std::endl;
+                std::cerr << "Epoll IN" << std::endl;           //
+
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
                 it->second->processRequest();
 				it->second->printRequestMsg();
-                int ret = check_status_connection(it->second->getStatus());
-                if (ret == 1)
-                    end_connection(fd);
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
                 it->second->processResponse();
+                //int ret = check_status_connection(it->second->getStatus());
+                //if (ret == 1)
+                //   end_connection(fd);
+                //else {
+                //    epoll_Ctl_Mode(fd, EPOLLIN); 
+                //    std::cout << "in epoll ctl mode " << std::endl;
+                //}
+                // end_connection(fd);
             }
         }
     }
