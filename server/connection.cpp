@@ -97,6 +97,8 @@ void    Connection::processResponse()
 	response_.setRequestValue();
 	response_.setLocation(getLocationConfig());
 
+	Request request__(request_);
+	std::cout << "test: " << request__.getFilePath() << std::endl;
 	// autoindex on; error code;
 	// get new file_path -> setFilePath(newFilePath);
 
