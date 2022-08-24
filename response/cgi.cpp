@@ -35,42 +35,43 @@ Cgi::~Cgi() {
 /* *************************************************** */
 // req_code in parametre
 std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
+    
     // body_ : string pour return
-    std::string body_("\r\n body!!!!!!!!!!!");
+    std::string body_("");
 
     // verifier format de cgi et cgi path
-    if ( ! (isFormatCgi() && isFormatCgiPath())) {
-        reqStatusCode = 500;
-    }
-    else {
-        // make environ, parametre pour function execve
-        
-        reqStatusCode = setVariable();
-        if (reqStatusCode < 400) {
-            // setting for pipe, fork... etc
-            setPipe();
-            childPid_ = fork();
-
-            if (childPid_ == -1) {
-                reqStatusCode = 500;
-                return body_;
-            }
-            else if (childPid_ == 0) {
-                executeChildProcess();
-            }
-            else {
-                wait(NULL);
-                body_ += executeParentProcess();
-            }
-            // child process
-            // parent process
-            // write to child process, if method -> POST
-            // read to parent process!
-            // mette a body_
-            // close pipe;
+    //if ( ! (isFormatCgi() && isFormatCgiPath())) {
+    //  reqStatusCode = 500;
+    //}
+    //else {
+    //    // make environ, parametre pour function execve
+    //    
+    //    reqStatusCode = setVariable();
+    //    if (reqStatusCode < 400) {
+    //        // setting for pipe, fork... etc
+    //        setPipe();
+    //        childPid_ = fork();
+//
+    //        if (childPid_ == -1) {
+    //            reqStatusCode = 500;
+    //            return body_;
+    //        }
+    //        else if (childPid_ == 0) {
+    //            executeChildProcess();
+    //        }
+    //        else {
+    //            wait(NULL);
+    //            body_ += executeParentProcess();
+    //        }
+    //        // child process
+    //        // parent process
+    //        // write to child process, if method -> POST
+    //        // read to parent process!
+    //        // mette a body_
+    //        // close pipe;
             reqStatusCode = 201;
-        }
-    } 
+    //    }
+    //} 
 
     // status code retun and update for req_code;
 
@@ -136,7 +137,7 @@ void                    Cgi::writeToCgi(void) {
 
 std::string             Cgi::readFromCgi(void) {
     
-    std::cout << "****************** read from cgi ***************" << std::endl;
+    std::cout << "****************** read from cgi ***************" << std::endl;//////////
 
 
 
@@ -152,7 +153,7 @@ std::string             Cgi::readFromCgi(void) {
 
     } while (retRead_ > 0);
 
-    std::cout << "read From Cgi == [" << retRead_ << "]" << std::endl;
+    std::cout << "read From Cgi == [" << retRead_ << "]" << std::endl; ///////////
     return body_;
 }
 
@@ -210,10 +211,14 @@ bool                    Cgi::isFormatCgi(void) const {
     return false;
 }
 
+
+
+
+
+
 bool                    Cgi::isFormatCgiPath(void) const {
     std::string     cgiPathTmp_(location_.getCgiPath());
-    char *cgiPath_ = const_cast<char*>(cgiPathTmp_.c_str());
-
+    char            *cgiPath_ = const_cast<char*>(cgiPathTmp_.c_str());
 
     if (access(cgiPath_, X_OK) == -1)
         return false;

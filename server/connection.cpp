@@ -84,9 +84,9 @@ void    Connection::processRequest()
 
 void    Connection::processResponse()
 {
-	std::string			returnBuffer_;
-	std::string			header_;
-	std::string			body_;
+	std::string			returnBuffer_("");
+	std::string			header_("");
+	std::string			body_("");
 	std::string			currentMethod_(request_.getMethod());
 	std::string			Ext_(response_.getExt(request_.getFilePath()));
 	MimeType			mime_;
