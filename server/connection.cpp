@@ -2,23 +2,36 @@
 
 //RequestHandle		requesthandler = RequestHandler();
 
-Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep) {
-	// Ctl_mode_flag_ = false;
+Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep), request_() {
+	memset(buffer_char, 0, BUFFER_SIZE);
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
-	buffer_content_length = -1;
 	client_max_body_size = 0;
+	buffer_content_length = -1;
+	is_chunk = false;
 	chunked_msg_checker = STR_SIZE;
 	chunked_msg_size = 0;
-	is_chunk = false;
 	body_buf = "";
 	autoindex_flag = false;
 }
 
 Connection::~Connection() { }
 
-void    Connection::processRequest()
-{
+void	Connection::clear(void) {
+	request_.clear();
+	// response_.clear();
+	phase_msg_ = START_LINE_INCOMPLETE;
+	req_status_code_ = NOT_DEFINE;
+	client_max_body_size = 0;
+	buffer_content_length = -1;
+	is_chunk = false;
+	chunked_msg_checker = STR_SIZE;
+	chunked_msg_size = 0;
+	body_buf.clear();
+	autoindex_flag = false;
+}
+
+void    Connection::processRequest(void) {
 	RequestHandler requesthandler;
     int n = 0;
 	
@@ -116,8 +129,7 @@ void    Connection::processResponse()
 					}
 					else
 					{
-						std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa" << std::endl;
-					// file path
+						// file path
 						body_ = response_.makeBodyHtml(request_.getFilePath());
 						req_status_code_ = 200;
 					}

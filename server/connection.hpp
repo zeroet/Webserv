@@ -122,6 +122,7 @@ class Connection
 
 		//utils
 		ServerBlock 	getServerConfigByServerName(std::string server_name);
+		void			clear(void);
     
 		void    		processRequest(void);
 		void    		processResponse(void);
