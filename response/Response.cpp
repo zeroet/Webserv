@@ -169,7 +169,8 @@ std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::st
 	// (void) filepath;
 
 	uri_ = uri;
-	uri_.append("/");
+	if (!(*(uri_.rbegin()) == '/'))
+		uri_.append("/");
 
 	ret += "\r\n";
 	ret += "<!DOCTYPE html>\r\n";
@@ -202,7 +203,7 @@ std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::st
 					filename += "/";
 				}
 			}
-			ret += "<a href=\"" + filepath + filename + "\">" + filename + "</a>";
+			ret += "<a href=\"" + uri_ + filename + "\">" + filename + "</a>";
 			ret += getFileDateTime(fileinfo.st_mtime);
 			// ss.clear(
 			// ret += ss.str();
