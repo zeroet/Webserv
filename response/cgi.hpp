@@ -44,6 +44,7 @@ private:
     int                 readFromCgi_;
     int                 stdinCgi_;
     int                 stdoutCgi_;
+    bool                isPost_;
 
     /* ******************************** */
     /* * variables for child process ** */
@@ -97,6 +98,7 @@ private:
     std::string         toString(const int& v) const;
     void                freeTable(char **table);
     std::string         getLast(std::string const &str, std::string const &cut);
+    void                closePipe(void);
 
     /* ******************************** */
     /* ************ setter ************ */

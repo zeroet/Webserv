@@ -17,6 +17,7 @@ Cgi::Cgi(ServerBlock const &server, LocationBlock const &location, Request const
     location_ = location;
     request_ = request;
     server_ = server;
+    isPost_ = ((request_.getMethod() == "POST") && (request_.getBody().size() > 0));
 }
 
 Cgi::~Cgi() {
@@ -40,38 +41,42 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
     std::string body_("");
 
     // verifier format de cgi et cgi path
-    //if ( ! (isFormatCgi() && isFormatCgiPath())) {
-    //  reqStatusCode = 500;
-    //}
-    //else {
-    //    // make environ, parametre pour function execve
-    //    
-    //    reqStatusCode = setVariable();
-    //    if (reqStatusCode < 400) {
-    //        // setting for pipe, fork... etc
-    //        setPipe();
-    //        childPid_ = fork();
-//
-    //        if (childPid_ == -1) {
-    //            reqStatusCode = 500;
-    //            return body_;
-    //        }
-    //        else if (childPid_ == 0) {
-    //            executeChildProcess();
-    //        }
-    //        else {
-    //            wait(NULL);
-    //            body_ += executeParentProcess();
-    //        }
-    //        // child process
-    //        // parent process
-    //        // write to child process, if method -> POST
-    //        // read to parent process!
-    //        // mette a body_
-    //        // close pipe;
+    if ( ! (isFormatCgi() && isFormatCgiPath())) {
+      reqStatusCode = 500;
+    }
+    else {
+        // make environ, parametre pour function execve
+        
+        reqStatusCode = setVariable();
+
+        /* refaire de setting evirons */
+        //printTable(environ_);
+
+        if (reqStatusCode < 400) {
+            // setting for pipe, fork... etc
+            setPipe();
+            childPid_ = fork();
+
+            if (childPid_ == -1) {
+                reqStatusCode = 500;
+                return body_;
+            }
+            else if (childPid_ == 0) {
+                executeChildProcess();
+            }
+            else {
+                wait(NULL);
+                body_ += executeParentProcess();
+            }
+            // child process
+            // parent process
+            // write to child process, if method -> POST
+            // read to parent process!
+            // mette a body_
+            // close pipe;
             reqStatusCode = 201;
-    //    }
-    //} 
+        }
+    } 
 
     // status code retun and update for req_code;
 
@@ -85,16 +90,26 @@ void                    Cgi::executeChildProcess(void) {
     
     // retExecute;
     int     retExecute;
+    
     // close fd
+    if (isPost_) {
+        close(writeToCgi_);
+    }
     close(readFromCgi_);
-    close(writeToCgi_);
+
     // dup
-    dup2(stdinCgi_, STDIN_FILENO);
+    if (isPost_) {
+        dup2(stdinCgi_, STDIN_FILENO);
+    }
     dup2(stdoutCgi_, STDOUT_FILENO);
+    
     // execve
     retExecute = execve(const_cast<char*>(location_.getCgiPath().c_str()), argvExecve_, environ_);
     if (retExecute  == -1)
+    {
+        closePipe();
         return ;
+    }
 }
 
 std::string             Cgi::executeParentProcess(void) {
@@ -103,16 +118,20 @@ std::string             Cgi::executeParentProcess(void) {
     std::cout << "****************** parent ***************" << std::endl;
     
     //cloase fd
-    close(stdinCgi_);
+    if (isPost_) {
+        close(stdinCgi_);
+    }
     close(stdoutCgi_);
+
     // write to Cgi
-    if (request_.getMethod() == "POST" && request_.getBody().size() > 0) {
-       writeToCgi();
+    if (isPost_) {
+        writeToCgi();
+        close(writeToCgi_);
     }
     body_ += readFromCgi();
+    
     //close fd
     close(readFromCgi_);
-    close(writeToCgi_);
     return body_;
 }
 
@@ -126,13 +145,14 @@ void                    Cgi::writeToCgi(void) {
     int     size_(request_.getBody().size());
     int     retWrite_;
 
+    std::cout << "i am in write to cgi" << std::endl;
     
     do {
         retWrite_ = write(writeToCgi_, buf_, size_);
+        std::cout << "ret write = [" << retWrite_ << "]" << std::endl;
     } while (retWrite_ > 0);
 
-
-    std::cout << "write to Cgi retWrite == [" << retWrite_ << "]" << std::endl;
+    std::cout << "write to Cgi retWrite is done! == [" << retWrite_ << "]" << std::endl;
 }
 
 std::string             Cgi::readFromCgi(void) {
@@ -152,8 +172,7 @@ std::string             Cgi::readFromCgi(void) {
       body_ += buf_;
 
     } while (retRead_ > 0);
-
-    std::cout << "read From Cgi == [" << retRead_ << "]" << std::endl; ///////////
+    //std::cout << "read From Cgi == [" << retRead_ << "]" << std::endl;
     return body_;
 }
 
@@ -168,20 +187,29 @@ void                    Cgi::initialPipe(void) {
 }
 
 void                    Cgi::setPipe(void) {
-    if (pipe(pipeWrite_) < 0 || pipe(pipeRead_) < 0) {
+    if (pipe(pipeRead_) < 0) {
         std::cerr << "error open pipe" << std::endl;
         return ;
     }
 
-    writeToCgi_ = pipeWrite_[1];
-    stdinCgi_ = pipeWrite_[0];
+    if (isPost_) {
+        if (pipe(pipeWrite_) < 0) {
+            std::cerr << "error open pipe" << std::endl;
+            close(pipeRead_[0]);
+            close(pipeRead_[1]);
+            return ;
+        }
+        writeToCgi_ = pipeWrite_[1];
+        stdinCgi_ = pipeWrite_[0];
+        // non block
+        fcntl(writeToCgi_, F_SETFL, O_NONBLOCK);
+        fcntl(stdinCgi_, F_SETFL, O_NONBLOCK);
+    }
 
     readFromCgi_ = pipeRead_[0];
     stdoutCgi_ = pipeRead_[1];
 
     // non block
-    fcntl(writeToCgi_, F_SETFL, O_NONBLOCK);
-    fcntl(stdinCgi_, F_SETFL, O_NONBLOCK);
     fcntl(readFromCgi_, F_SETFL, O_NONBLOCK);
     fcntl(stdoutCgi_, F_SETFL, O_NONBLOCK);
 
@@ -190,6 +218,12 @@ void                    Cgi::setPipe(void) {
     //std::cout << "pipe == [" << readFromCgi_ << "]" << std::endl;
     //std::cout << "pipe == [" << stdoutCgi_ << "]" << std::endl;
 } 
+
+
+
+
+
+
 
 
 /* *************************************************** */
@@ -275,6 +309,20 @@ std::string                 Cgi::getLast(std::string const &str, std::string con
     return str;
 }
 
+void                        Cgi::closePipe(void) {
+    if (stdinCgi_ != -1) {
+        close(stdinCgi_);
+    }
+    if (stdoutCgi_ != -1) {
+        close(stdoutCgi_);
+    }
+    if (readFromCgi_ != -1) {
+        close(readFromCgi_);
+    }
+    if (writeToCgi_ != -1) {
+        close(writeToCgi_);
+    }
+}
 
 
 /* *************************************************** */
@@ -358,7 +406,7 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", request_.getPath()));
     mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", "/mnt/nfs/homes/hyungyoo/webServ"));              //!!!!!!!!!!!!!!!!!!!!!!
     mapEnviron_.insert(std::make_pair("PATH_INFO", pathInfo_));
-    if ( ! uri_.empty() && request_.getMethod() == "GET") {
+    if ( !uri_.empty() && request_.getMethod() == "GET") {
         mapEnviron_.insert(std::make_pair("REQUEST_URI", uri_));
     }
 
