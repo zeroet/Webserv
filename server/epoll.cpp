@@ -39,9 +39,9 @@ void    Epoll::init_server_socket()
     int count = 0;
 
 	create_epoll_fd();
+	epoll_add(0);
 	for (int i = 0; i < numServerFd; i++)
 	{
-		// epoll_add(0);
         if (OK != (epoll_add(vecBloc_[i].getSocketFd())))
 			std::cout << RED << "PortNumber [" << vecBloc_[i].getListen() <<
             "] Epoll_Ctl_Add failed" << FIN <<std::endl;
@@ -119,6 +119,7 @@ void    Epoll::epoll_server_manager()
     int                 evCount;
     int                 clntFd;
     event               epEvent[MAX_EVENT];
+    std::string         flag;
 
     while (1)
     {
@@ -137,11 +138,11 @@ void    Epoll::epoll_server_manager()
                 close(epEvent[i].data.fd);
                 continue ;
             }
-            // else if (epEvent[i].data.fd == 0)
-            // {
-            //     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            //     return ;
-            // }
+            else if (epEvent[i].data.fd == 0)
+            {
+               std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                return ;
+            }
             else if ((find_server_fd(epEvent[i].data.fd)) == OK)
             {
                 clntFd = create_clnt_socket(epEvent[i].data.fd);
@@ -160,6 +161,7 @@ void    Epoll::epoll_server_manager()
             }
             else if(epEvent[i].events & EPOLLIN)
             {
+                std::cout << "EPOLL IN " << std::endl;
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
                 it->second->processRequest();
