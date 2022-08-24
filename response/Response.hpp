@@ -9,9 +9,15 @@
 #include <sstream>
 #include <filesystem>
 #include <fstream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include "../request/request.hpp"
 #include "mimeType.hpp"
 #include <time.h>
+#include <bits/types.h>
+#include <dirent.h>
+#include <iomanip>
 #include "../config/src/ServerBlock.hpp"
 #include "../config/src/LocationBlock.hpp"
 
@@ -93,6 +99,7 @@ public:
 	/* ************************************ */
 	std::string					getExt(std::string const &filename) const;
 	std::string		bodyWithAutoindexOn(const std::string &uri, const std::string &filepath);
+	std::string		getFileDateTime(time_t sec);
 
 private:
 	/* ************************************ */
