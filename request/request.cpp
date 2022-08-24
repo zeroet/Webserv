@@ -1,27 +1,37 @@
 #include "../server/connection.hpp"
 
-Request::Request(void) : method_(""), uri_(""), version_(""), requestHeaders_(), body_("") {}
+Request::Request(void) : method_(""), uri_("/"), version_(""), requestHeaders_(), body_("") {
+	uri_struct_.path_ = "/";
+}
 
 Request::Request(Request const &x) {
 	*this = x;
 }
 
 const	Request	&Request::operator=(const Request &x) {
-	if (this != &x) {
-    method_ = x.method_;
-    uri_ = x.uri_;
-	version_ = x.version_;
-    requestHeaders_ = x.requestHeaders_;
-    body_ = x.body_;
+	if (this != &x) 
+	{
+		method_ = x.method_;
+		uri_ = x.uri_;
+		version_ = x.version_;
+		requestHeaders_ = x.requestHeaders_;
+		body_ = x.body_;
 
-	// sorry!
-	setFilePath(x.uri_struct_.filepath_);
-	setQueryString(x.uri_struct_.query_string_);
-	setBody(x.body_);
-	setUri(x.uri_);
-	setPath(x.uri_struct_.path_);
-  }
-  return (*this);
+		uri_struct_.schema_ = x.uri_struct_.schema_;
+		uri_struct_.host_ = x.uri_struct_.host_;
+		uri_struct_.port_ = x.uri_struct_.port_;
+		uri_struct_.path_ = x.uri_struct_.path_;
+		uri_struct_.filepath_ = x.uri_struct_.filepath_;
+		uri_struct_.query_string_ = x.uri_struct_.query_string_;
+
+		// sorry!
+		// setFilePath(x.uri_struct_.filepath_);
+		// setQueryString(x.uri_struct_.query_string_);
+		// setBody(x.body_);
+		// setUri(x.uri_);
+		// setPath(x.uri_struct_.path_);
+	}
+	return (*this);
 }
 
 Request::~Request(void) {
@@ -34,6 +44,13 @@ void	Request::clear(void) {
   	version_.clear();
 	requestHeaders_.clear();
   	body_.clear();
+
+	uri_struct_.schema_.clear();
+	uri_struct_.host_.clear();
+	uri_struct_.port_.clear();
+	uri_struct_.path_ = "/";
+	uri_struct_.filepath_.clear();
+	uri_struct_.query_string_.clear();
 }
 
 //getter
