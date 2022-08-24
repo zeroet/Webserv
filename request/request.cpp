@@ -15,11 +15,11 @@ const	Request	&Request::operator=(const Request &x) {
     body_ = x.body_;
 
 	// sorry!
-	setFilePath(x.getFilePath());
-	setQueryString(x.getQueryString());
-	setBody(x.getBody());
-	setUri(x.getUri());
-	setPath(x.getPath());
+	setFilePath(x.uri_struct_.filepath_);
+	setQueryString(x.uri_struct_.query_string_);
+	setBody(x.body_);
+	setUri(x.uri_);
+	setPath(x.uri_struct_.path_);
   }
   return (*this);
 }
