@@ -160,9 +160,13 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 }
 
 std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::string &filepath) {
-	std::string ret;
-	std::string uri_;
-	(void) filepath;
+	std::string 	ret;
+	std::string 	uri_;
+	DIR				*dir_ptr;
+	struct dirent  	*dir_entry;
+	struct stat		fileinfo;
+	std::stringstream	ss;
+	// (void) filepath;
 
 	uri_ = uri;
 	uri_.append("/");
@@ -174,15 +178,54 @@ std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::st
 	ret += "<meta charset=\"UTF-8\">\r\n";
 	ret += "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n";
 	ret += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n";
-	ret += "<title><head>";
-	ret += "Index of " + uri_ ;
-	ret += "</head></title>\r\n";
+	ret += "<title>\r\n";
+	ret += "Index of " + uri_ + "\r\n";
+	ret += "</title>\r\n";
+	ret += "</head>\r\n";
 	ret += "<body>\r\n";
-  	ret += "<h1>Index of " + uri_ + "</h1><hr><pre>";
-  	ret += "<a href=\"../\">../</a>\r\n";	
+  	ret += "<h1>Index of " + uri_ + "</h1><hr><pre>\r\n";
+  	ret += "<a href=\"../\">../</a>\r\n";
+	dir_ptr = opendir(filepath.c_str()); //filepath to open directory
+	if (dir_ptr != NULL)
+	{
+		while ((dir_entry = readdir(dir_ptr))) //get every file and directory info after opendir
+		{
+			if (strcmp(dir_entry->d_name, ".") == 0 || strcmp(dir_entry->d_name, "..") == 0)
+				continue;
+			std::string filename = std::string(dir_entry->d_name);
+			std::cout << "///////////////////////////////////" << std::endl;
+			std::cout << filepath+filename << std::endl; 
+			if (stat((filepath + filename).c_str(), &fileinfo) == 0)
+			{
+				if (S_ISDIR(fileinfo.st_mode))
+				{
+					filename += "/";
+				}
+			}
+			ret += "<a href=\"" + filename + "\">" + filename + "</a>";
+			ret += getFileDateTime(fileinfo.st_mtime);
+			// ss.clear(
+			// ret += ss.str();
+			ret += "\r\n";
+		}
+	}
+	ret += "<hr></pre>\r\n";
+	ret += "</body>\r\n";
+	ret += "</html>\r\n";
+
 	return (ret);
 }
 
+// dd-mmm-yyyy hh:mm (18 char)
+std::string	Response::getFileDateTime(time_t sec) {
+	std::string	ret;
+	char		buf[18];
+
+	strftime(buf, sizeof(buf), "%d-%b-%Y %H:%M", localtime(&sec));
+	ret += buf;
+
+	return (ret);
+}
 
 
 

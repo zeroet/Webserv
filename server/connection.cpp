@@ -50,7 +50,8 @@ void    Connection::processRequest(void) {
 		// std::cout << "buffer_char: " << buffer_char << std::endl;
 		// std::cout << "buffer_char + n: " << buffer_char + n << std::endl;
 		// buf_.insert(buf_.end(), buffer_char, buffer_char + n);
-		buffer_.insert(buffer_.end(), buffer_char, buffer_char + n);
+		// buffer_.insert(buffer_.end(), buffer_char, buffer_char + n);
+		buffer_.append(buffer_char);
 		// std::cout << "buffer_: " << buffer_ << std::endl;
 
 		if (phase_msg_ == START_LINE_INCOMPLETE
@@ -66,8 +67,6 @@ void    Connection::processRequest(void) {
 				this->status_ = "Close";
 				return ;
 			}
-			// else
-				// std::cout << "check CHUNCKED MESSAGE" << std::endl;
 		}
 		else if (phase_msg_ == BODY_INCOMPLETE)
 			requesthandler.checkRequestBody(this);
@@ -77,7 +76,6 @@ void    Connection::processRequest(void) {
 			size_t pos = 0;
 			if (getRequest().getMethod() == "GET" || getRequest().getMethod() == "DELETE")
 			{
-				// if ((pos = buffer_.find(CRLF)) != std::string::npos)
 				if (buffer_.empty())
 				{
 					ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
