@@ -65,8 +65,13 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
                 executeChildProcess();
             }
             else {
-                wait(NULL);
+                if (request_.getMethod() == "GET") {
+                    wait(NULL);
+                }
                 body_ += executeParentProcess();
+                if (request_.getMethod() == "POST") {
+                    wait(NULL);
+                }
             }
             // child process
             // parent process
@@ -138,6 +143,8 @@ std::string             Cgi::executeParentProcess(void) {
 void                    Cgi::writeToCgi(void) {
 
     std::cout << "****************** write to cgi ***************" << std::endl;
+    std::string    body_(request_.getBody());
+    
     std::cout << "size = [" << request_.getBody().size() <<"] and body_ == [" << request_.getBody() << "]" << std::endl;
     
 
@@ -147,10 +154,10 @@ void                    Cgi::writeToCgi(void) {
 
     std::cout << "i am in write to cgi" << std::endl;
     
-    do {
+    //do {
         retWrite_ = write(writeToCgi_, buf_, size_);
         std::cout << "ret write = [" << retWrite_ << "]" << std::endl;
-    } while (retWrite_ > 0);
+    //} while (retWrite_ > 0);
 
     std::cout << "write to Cgi retWrite is done! == [" << retWrite_ << "]" << std::endl;
 }
