@@ -111,6 +111,7 @@ void    Connection::processResponse()
 
 	if (!locationConfig_.getReturn().empty()) {
 		std::cout << "Redirection!" << std::endl;
+		std::cout << "j'ai pas fait encore redirection sans status code" std::endl;
 	}
 	else if (req_status_code_== NOT_DEFINE) {
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
