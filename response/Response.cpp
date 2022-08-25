@@ -388,8 +388,8 @@ std::string		Response::appendMapHeaders(int option, int statusCode) {
 					continue ;
 			} 
 			mapHeader_ += it->first;
-			mapHeader_ += ": ";
 			if (it->first == "Content-Type" && statusCode >= 400) {
+			mapHeader_ += ": ";
 				mapHeader_ += "text/html";
 			}
 			else {
