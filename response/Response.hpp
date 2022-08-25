@@ -5,19 +5,19 @@
 #include <iostream>
 #include <map>
 #include <cstring>
-#include <string>
 #include <sstream>
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
+#include <bitset>
+#include <bits/types.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include "../request/request.hpp"
-#include "mimeType.hpp"
-#include <time.h>
-#include <bits/types.h>
 #include <dirent.h>
-#include <iomanip>
+#include <unistd.h>
+#include <time.h>
+#include "mimeType.hpp"
+#include "../request/request.hpp"
 #include "../config/src/ServerBlock.hpp"
 #include "../config/src/LocationBlock.hpp"
 
