@@ -106,7 +106,6 @@ void    Connection::processResponse()
 	bool				isHTMLMimeType_(mime_.getMIMEType(Ext_) == "text/html");
 	
 	// intializer les valeurs de Request class
-	std::cout << body_buf << " !!! " << std::endl;
 	response_.setRequest(request_);
 	response_.setRequestValue();
 	response_.setLocation(getLocationConfig());
@@ -137,7 +136,8 @@ void    Connection::processResponse()
 					}
 				}
 				else {
-					Cgi		cgi_(getServerConfig(), getLocationConfig(), request_);
+					Cgi		cgi_(getServerConfig(), getLocationConfig()
+									, request_, buffer_content_length);
 					
 					body_ = cgi_.makeBodyCgi(req_status_code_);
 					//req_status_code_ = cgi.getReqStatusCode();
