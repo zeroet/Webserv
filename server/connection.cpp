@@ -116,12 +116,12 @@ void    Connection::processResponse()
 	//std::cout << req_status_code_ << " is code " << std::endl;
 	// body_
 	// si code status est entre 300 ~ 400, envoyer error page
-	std::cout << "AUTOINDEX FLAG : " << autoindex_flag << std::endl;
+	//std::cout << "AUTOINDEX FLAG : " << autoindex_flag << std::endl;
 	if (req_status_code_== NOT_DEFINE) {
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
 					if (autoindex_flag) {
-						std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+						//std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 						body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
 						req_status_code_ = 200;
 					}
@@ -154,8 +154,9 @@ void    Connection::processResponse()
 		header_ += response_.makeHeader(body_.size(), req_status_code_);
 	}
 	else {
-		// header_ += response_.makeheader(body_); override
-		header_ += "we have to get header from result of CGI\r\n";
+		std::cout << "status code " << req_status_code_ << std::endl;
+		header_ += response_.makeHeaderCgi(body_, req_status_code_); //override
+		//header_ += "we have to get header from result of CGI in Connection.cpp\r\n";
 	}
 	// make return buffer
 	returnBuffer_ = header_ + body_ ;
@@ -163,7 +164,8 @@ void    Connection::processResponse()
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
 
-	status_ = "Close";
+	ep_->end_connection(clntFd_);
+	//status_ = "Close";
 	// epollout, close fd
 	//ep_->epoll_Ctl_Mode(clntFd_, EPOLLIN);
 	
@@ -205,10 +207,10 @@ LocationBlock	Connection::getLocationConfig(void) {
 std::string		&Connection::getBodyBuf(void) {
 	// il faut faire protection pour content-length
 
-	std::istringstream		contentLength(request_.getHeaderValue("Content-Length"));
-	int						contentLength_;
-	contentLength >> contentLength_;
-	body_buf.resize(contentLength_);
+	//std::istringstream		contentLength(request_.getHeaderValue("Content-Length"));
+	//int						contentLength_;
+	//contentLength >> contentLength_;
+	//body_buf.resize(contentLength_);
 	
 	return (body_buf);
 }

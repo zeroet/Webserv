@@ -44,6 +44,9 @@ WWW-Authenticate */
 namespace ft 
 {
 
+# define CGI	0
+# define HTML	1
+
 class LocationBlock;
 class MimeType;
 class Request;
@@ -78,6 +81,7 @@ public:
 	/* *************** header ************** */
 	/* ************************************ */
 	std::string					makeHeader(int bodySize, int statusCode);
+	std::string					makeHeaderCgi(std::string &body, int statusCode);
 
 	/* ************************************ */
 	/* ************ error page ************ */
@@ -98,8 +102,8 @@ public:
 	/* *************** utils ************** */
 	/* ************************************ */
 	std::string					getExt(std::string const &filename) const;
-	std::string		bodyWithAutoindexOn(const std::string &uri, const std::string &filepath);
-	std::string		getFileDateTime(time_t sec);
+	std::string					bodyWithAutoindexOn(const std::string &uri, const std::string &filepath);
+	std::string					getFileDateTime(time_t sec);
 
 private:
 	/* ************************************ */
@@ -119,10 +123,10 @@ private:
 	/* ************ make header *********** */
 	/* ************************************ */
 	void						setContentType(void);
-	std::string					makeTimeLine(void) const;
+	std::string					makeTimeLine(int option) const;
 	void						setContentLengh(int bodySize);
 	std::string					makeStartLine(int statusCode);
-	std::string					appendMapHeaders();
+	std::string					appendMapHeaders(int option);
 
 
 	/* ************************************ */

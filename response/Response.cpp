@@ -73,24 +73,40 @@ std::string		Response::makeHeader(int bodySize, int statusCode) {
 	// make start line
 	header_ += makeStartLine(statusCode);
 	// append headers value!
-	header_ += appendMapHeaders();
+	header_ += appendMapHeaders(HTML);
 	// time
-	header_ += makeTimeLine();
+	header_ += makeTimeLine(HTML);
 
 	return header_;
 }
 
+std::string		Response::makeHeaderCgi(std::string  &body, int statusCode) {
+	std::string				header_;
+	std::string				bodyTmp_(body);
+	std::string::size_type	n_;
 
-
-
-
-
-
-
-
-
-
-
+	// start line
+	header_ += makeStartLine(statusCode);
+	
+	// diviser body (parametre) en deux: body et header
+	n_ = bodyTmp_.find("\r\n\r\n");
+	if (n_ != std::string::npos) {
+		header_ += bodyTmp_.substr(0, n_) + "\r\n";	//
+		body.clear();
+		body = bodyTmp_.substr(n_, bodyTmp_.size());			//
+		bodyTmp_.clear();
+	}
+	//// body size -> Content-Length
+	//// append "Content-Lengh" to headers_
+	setContentLengh(body.size());
+	//// make start line
+	//// append headers value!
+	header_ += appendMapHeaders(CGI);
+	//// time
+	header_ += makeTimeLine(CGI);
+	
+	return header_;
+}
 
 
 
@@ -362,15 +378,16 @@ std::string 	Response::toString(const int& v) const {
 /* ************************************** make header*************************** */
 /* ********************************************************************************* */
 // content-length for delete?
-std::string		Response::appendMapHeaders(void) {
+std::string		Response::appendMapHeaders(int option) {
 	std::string	mapHeader_;
 
-	for (ft::mapHeader::iterator it=headers_.begin(); it!=headers_.end(); ++it) {
+	for (ft::mapHeader::iterator it=headers_.begin(); it!=headers_.end(); it++) {
 		if ( !(it->second.empty()) ) {
-			if (request_.getMethod() == "DELETE"
-				&& it->first == "Content-Type") {
+			std::cout << it->first << " is first and " << it->second << " is seconde " << std::endl;
+			if ((request_.getMethod() == "DELETE"
+				&& it->first == "Content-Type") || option == CGI) {
 					continue ;
-				} 
+			} 
 			mapHeader_ += it->first;
 			mapHeader_ += ": ";
 			mapHeader_ += it->second;
@@ -382,7 +399,7 @@ std::string		Response::appendMapHeaders(void) {
 }
 
 /* Date: Thu, 18 Aug 2022 11:02:41 GMT */
-std::string		Response::makeTimeLine(void) const {
+std::string		Response::makeTimeLine(int option) const {
 	std::string	timeLine;
 	timeLine += "Date: ";
 	
@@ -395,7 +412,9 @@ std::string		Response::makeTimeLine(void) const {
   	strftime(buffer, 80, "%a, %d %b %Y %T GMT", timeinfo);
 
 	timeLine += buffer;
-	timeLine += "\r\n";
+	if (option == HTML) {
+		timeLine += "\r\n";
+	}
 	return (timeLine);
 }
 
