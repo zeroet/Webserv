@@ -109,7 +109,10 @@ void    Connection::processResponse()
 	response_.setRequestValue();
 	response_.setLocation(getLocationConfig());
 
-	if (req_status_code_== NOT_DEFINE) {
+	if (!locationConfig_.getReturn().empty()) {
+		std::cout << "Redirection!" << std::endl;
+	}
+	else if (req_status_code_== NOT_DEFINE) {
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
 					if (autoindex_flag) {
