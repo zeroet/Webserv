@@ -101,7 +101,8 @@ void    Connection::processResponse()
 	std::string			currentMethod_(request_.getMethod());
 	std::string			Ext_(response_.getExt(request_.getFilePath()));
 	MimeType			mime_;
-	bool				isGetHTML(currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html");
+	bool				isGetHTML(currentMethod_ == "GET" && Ext_ != "php");
+	//bool				isGetHTML(currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html");
 	
 	// intializer les valeurs de Request class
 	response_.setRequest(request_);
@@ -159,6 +160,7 @@ void    Connection::processResponse()
 	// make return buffer
 	returnBuffer_ = header_ + body_ ;
 
+	std::cout << returnBuffer_ << std::endl;
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
 

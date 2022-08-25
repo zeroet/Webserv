@@ -388,8 +388,8 @@ std::string		Response::appendMapHeaders(int option, int statusCode) {
 					continue ;
 			} 
 			mapHeader_ += it->first;
-			if (it->first == "Content-Type" && statusCode >= 400) {
 			mapHeader_ += ": ";
+			if (it->first == "Content-Type" && statusCode >= 400) {
 				mapHeader_ += "text/html";
 			}
 			else {
@@ -416,7 +416,7 @@ std::string		Response::makeTimeLine(int option) const {
   	strftime(buffer, 80, "%a, %d %b %Y %T GMT", timeinfo);
 
 	timeLine += buffer;
-	if (option == HTML) {
+	if (option == HTML || request_.getMethod() == "DELETE") {
 		timeLine += "\r\n";
 	}
 	return (timeLine);
