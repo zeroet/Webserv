@@ -67,6 +67,8 @@ public:
     /* ******************************** */
     Cgi();
     Cgi(ServerBlock const &server, LocationBlock const &location, Request const &request);
+    Cgi(Cgi const &copy);
+    Cgi &operator=(Cgi const &x);
     ~Cgi();
 
     /* ******************************** */
@@ -99,6 +101,7 @@ private:
     void                freeTable(char **table);
     std::string         getLast(std::string const &str, std::string const &cut);
     void                closePipe(void);
+    char                **copyTable(char **table);
 
     /* ******************************** */
     /* ************ setter ************ */

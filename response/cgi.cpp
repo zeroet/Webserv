@@ -11,13 +11,34 @@ Cgi::Cgi() {
     initialPipe();
 }
 
-
 Cgi::Cgi(ServerBlock const &server, LocationBlock const &location, Request const &request) {
     initialPipe();
     location_ = location;
     request_ = request;
     server_ = server;
     isPost_ = ((request_.getMethod() == "POST") && (request_.getBody().size() > 0));
+}
+
+Cgi::Cgi(Cgi const &copy) {
+    (*this) = copy;
+}
+
+Cgi &Cgi::operator=(Cgi const &x) {
+    // pipe for write and read
+    writeToCgi_ = x.writeToCgi_;
+    readFromCgi_ = x.readFromCgi_;
+    stdinCgi_ = x.stdinCgi_;
+    stdoutCgi_ = x.stdoutCgi_;
+    isPost_ = x.isPost_;
+    // variable for child process
+    childPid_ = x.childPid_;
+    environ_ = copyTable(x.environ_);
+    argvExecve_ = copyTable(x.argvExecve_);
+    // set location / request
+    location_ = x.location_;
+    request_ = x.request_;
+    server_ = x.server_;
+    return (*this);
 }
 
 Cgi::~Cgi() {
@@ -236,11 +257,6 @@ bool                    Cgi::isFormatCgi(void) const {
     return false;
 }
 
-
-
-
-
-
 bool                    Cgi::isFormatCgiPath(void) const {
     std::string     cgiPathTmp_(location_.getCgiPath());
     char            *cgiPath_ = const_cast<char*>(cgiPathTmp_.c_str());
@@ -315,6 +331,23 @@ void                        Cgi::closePipe(void) {
     }
 }
 
+char**                      Cgi::copyTable(char **table) {
+    char    **table_;
+    int     i(0);
+    while (table[i])
+        i++;
+    table_ = (char **)malloc(sizeof(char*) * i + 1);
+    if (!table_) {
+        return NULL;
+    }
+    i = 0;
+    while (table_[i]) {
+        table_[i] = strdup(table[i]);
+        i++;
+    }
+    table_[i] = NULL;
+    return table_;
+}
 
 /* *************************************************** */
 /* ********************** setter ********************* */

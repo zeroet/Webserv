@@ -67,7 +67,7 @@ public:
 	/* ************************************ */
 	Response();
 	Response(Response const & copy);
-	Response &operator=(Response const & copy);
+	Response &operator=(Response const & x);
 	~Response();
 	
 	/* ************************************ */
@@ -94,6 +94,14 @@ public:
 	std::string					makeBodyHtml(std::string const &filePath);				
 
 	/* ************************************ */
+	/* ************ autoindex ************* */
+	/* ************************************ */
+	std::string					bodyWithAutoindexOn(const std::string &uri, const std::string &filepath);
+	std::string					getFileDateTime(time_t sec);
+	std::string					fileTextIntoBody(const std::string &filepath);
+
+
+	/* ************************************ */
 	/* ********* method = DELETE ********** */
 	/* ************************************ */
 	int							execteDelete(void);
@@ -102,9 +110,6 @@ public:
 	/* *************** utils ************** */
 	/* ************************************ */
 	std::string					getExt(std::string const &filename) const;
-	std::string					bodyWithAutoindexOn(const std::string &uri, const std::string &filepath);
-	std::string					getFileDateTime(time_t sec);
-	std::string					fileTextIntoBody(const std::string &filepath);
 
 private:
 	/* ************************************ */
@@ -113,7 +118,6 @@ private:
 	void						initialMapHeaders(void);
 	void						initialMapStatusCode(void);
 	void						setValueFromRequest(void);
-
 
 	/* ************************************ */
 	/* ************** utils *************** */
@@ -133,7 +137,7 @@ private:
 	/* ************************************ */
 	/* ************** tester ************** */
 	/* ************************************ */
-	void			printMapHeader(ft::mapHeader	mapHeader) const;
+	void						printMapHeader(ft::mapHeader	mapHeader) const;
 	
 };
 
