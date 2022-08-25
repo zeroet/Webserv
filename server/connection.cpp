@@ -103,6 +103,7 @@ void    Connection::processResponse()
 	MimeType			mime_;
 	bool				isGetHTML(currentMethod_ == "GET" && Ext_ != "php");
 	//bool				isGetHTML(currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html");
+	bool				isHTMLMimeType_(mime_.getMIMEType(Ext_) == "text/html");
 	
 	// intializer les valeurs de Request class
 	std::cout << body_buf << " !!! " << std::endl;
@@ -130,7 +131,8 @@ void    Connection::processResponse()
 					else
 					{
 						// file path
-						body_ = response_.makeBodyHtml(request_.getFilePath());
+						std::cout <<  mime_.getMIMEType(Ext_)  << " is ext file ******************************** " << std::endl;
+						body_ = response_.makeBodyHtml(request_.getFilePath(), isHTMLMimeType_);
 						req_status_code_ = 200;
 					}
 				}
@@ -164,6 +166,12 @@ void    Connection::processResponse()
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
 
+	// clean up buffer
+	header_.clear();
+	body_.clear();
+	returnBuffer_.clear();
+
+	// close connection  client fd
 	ep_->end_connection(clntFd_);
 	//status_ = "Close";
 	// epollout, close fd

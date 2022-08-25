@@ -110,9 +110,9 @@ void                    Cgi::executeChildProcess(void) {
     
     // close fd
     if (isPost_) {
-        close(writeToCgi_);
+        closeFd(writeToCgi_);
     }
-    close(readFromCgi_);
+    closeFd(readFromCgi_);
 
     // dup
     if (isPost_) {
@@ -135,19 +135,19 @@ std::string             Cgi::executeParentProcess(void) {
     
     //cloase fd
     if (isPost_) {
-        close(stdinCgi_);
+        closeFd(stdinCgi_);
     }
-    close(stdoutCgi_);
+    closeFd(stdoutCgi_);
 
     // write to Cgi
     if (isPost_) {
         writeToCgi();
-        close(writeToCgi_);
+        closeFd(writeToCgi_);
     }
     body_ += readFromCgi();
     
     //close fd
-    close(readFromCgi_);
+    closeFd(readFromCgi_);
     return body_;
 }
 
@@ -207,8 +207,8 @@ void                    Cgi::setPipe(void) {
     if (isPost_) {
         if (pipe(pipeWrite_) < 0) {
             std::cerr << "error open pipe" << std::endl;
-            close(pipeRead_[0]);
-            close(pipeRead_[1]);
+            closeFd(pipeRead_[0]);
+            closeFd(pipeRead_[1]);
             return ;
         }
         writeToCgi_ = pipeWrite_[1];
@@ -318,16 +318,16 @@ std::string                 Cgi::getLast(std::string const &str, std::string con
 
 void                        Cgi::closePipe(void) {
     if (stdinCgi_ != -1) {
-        close(stdinCgi_);
+        closeFd(stdinCgi_);
     }
     if (stdoutCgi_ != -1) {
-        close(stdoutCgi_);
+        closeFd(stdoutCgi_);
     }
     if (readFromCgi_ != -1) {
-        close(readFromCgi_);
+        closeFd(readFromCgi_);
     }
     if (writeToCgi_ != -1) {
-        close(writeToCgi_);
+        closeFd(writeToCgi_);
     }
 }
 
@@ -348,6 +348,18 @@ char**                      Cgi::copyTable(char **table) {
     table_[i] = NULL;
     return table_;
 }
+
+void                        Cgi::closeFd(int pipeFd_) {
+    close(pipeFd_);
+    pipeFd_ = -1;
+}
+
+
+
+
+
+
+
 
 /* *************************************************** */
 /* ********************** setter ********************* */

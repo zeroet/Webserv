@@ -103,6 +103,7 @@ private:
     std::string         getLast(std::string const &str, std::string const &cut);
     void                closePipe(void);
     char                **copyTable(char **table);
+    void                closeFd(int pipeFd_);
 
     /* ******************************** */
     /* ************ setter ************ */
