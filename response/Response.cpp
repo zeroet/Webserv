@@ -410,7 +410,8 @@ std::string		Response::appendMapHeaders(int option, int statusCode) {
 	for (ft::mapHeader::iterator it=headers_.begin(); it!=headers_.end(); it++) {
 		if ( !(it->second.empty()) ) {
 			if ((request_.getMethod() == "DELETE" && it->first == "Content-Type") 
-				|| (it->first == "Content-Type" && option == CGI)) {
+				|| (it->first == "Content-Type" && option == CGI)
+				|| (it->first == "Transfer-Encoding")) {
 					continue ;
 			} 
 			mapHeader_ += it->first;

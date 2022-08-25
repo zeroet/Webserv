@@ -105,10 +105,11 @@ void    Connection::processResponse()
 	//bool				isGetHTML(currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html");
 	
 	// intializer les valeurs de Request class
+	std::cout << body_buf << " !!! " << std::endl;
 	response_.setRequest(request_);
 	response_.setRequestValue();
 	response_.setLocation(getLocationConfig());
-
+	
 	//Request request__(request_);
 	//std::cout << "test: " << request__.getFilePath() << std::endl;
 	// autoindex on; error code;
@@ -122,20 +123,9 @@ void    Connection::processResponse()
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
 					if (autoindex_flag) {
-
-						struct stat			fileinfo;
-						stat(request_.getFilePath().c_str(), &fileinfo);
-						if (S_ISDIR(fileinfo.st_mode))
-						{
-							std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
-							body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
-							req_status_code_ = 200;
-						}
-						if (S_ISREG(fileinfo.st_mode))
-						{
-							body_ = response_.fileTextIntoBody(request_.getFilePath());
-							req_status_code_ = 200;
-						} 
+						std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+						body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
+						req_status_code_ = 200;
 					}
 					else
 					{
@@ -176,9 +166,9 @@ void    Connection::processResponse()
 
 	ep_->end_connection(clntFd_);
 	//status_ = "Close";
+	// epollout, close fd
+	//ep_->epoll_Ctl_Mode(clntFd_, EPOLLIN);
 	
-	//clear everything before circulate again.
-	clear();
 }
 
 //getter
@@ -216,10 +206,12 @@ LocationBlock	Connection::getLocationConfig(void) {
 
 std::string		&Connection::getBodyBuf(void) {
 	// il faut faire protection pour content-length
+
 	//std::istringstream		contentLength(request_.getHeaderValue("Content-Length"));
 	//int						contentLength_;
 	//contentLength >> contentLength_;
 	//body_buf.resize(contentLength_);
+	
 	return (body_buf);
 }
 

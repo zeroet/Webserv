@@ -88,7 +88,6 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
 
 void                    Cgi::executeChildProcess(void) {
     
-    std::cout << "****************** child ***************" << std::endl;
     
     // retExecute;
     int     retExecute;
@@ -117,7 +116,6 @@ void                    Cgi::executeChildProcess(void) {
 std::string             Cgi::executeParentProcess(void) {
     std::string     body_("");
 
-    std::cout << "****************** parent ***************" << std::endl;
     
     //cloase fd
     if (isPost_) {
@@ -139,29 +137,20 @@ std::string             Cgi::executeParentProcess(void) {
 
 void                    Cgi::writeToCgi(void) {
 
-    std::cout << "****************** write to cgi ***************" << std::endl;
     std::string    body_(request_.getBody());
-    
-    std::cout << "size = [" << request_.getBody().size() <<"] and body_ == [" << request_.getBody() << "]" << std::endl;
     
 
     char    *buf_ = const_cast<char*>(request_.getBody().c_str());
     int     size_(request_.getBody().size());
     int     retWrite_;
 
-    std::cout << "i am in write to cgi" << std::endl;
-    
     //do {
         retWrite_ = write(writeToCgi_, buf_, size_);
-        std::cout << "ret write = [" << retWrite_ << "]" << std::endl;
     //} while (retWrite_ > 0);
-
-    std::cout << "write to Cgi retWrite is done! == [" << retWrite_ << "]" << std::endl;
 }
 
 std::string             Cgi::readFromCgi(void) {
     
-    std::cout << "****************** read from cgi ***************" << std::endl;//////////
 
 
     if (request_.getMethod() == "POST") {
