@@ -69,9 +69,6 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
                     wait(NULL);
                 }
                 body_ += executeParentProcess();
-                if (request_.getMethod() == "POST") {
-                    wait(NULL);
-                }
             }
             // child process
             // parent process
@@ -167,6 +164,9 @@ std::string             Cgi::readFromCgi(void) {
     std::cout << "****************** read from cgi ***************" << std::endl;//////////
 
 
+    if (request_.getMethod() == "POST") {
+        wait(NULL);
+    }
 
     std::string     body_;
     char            buf_[65536 + 1];
@@ -388,9 +388,10 @@ int                        Cgi::setEnviron(void) {
 
 Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     mapEnviron          mapEnviron_;
-    std::string         pathInfo_ = getLast("./" + request_.getFilePath(), "/");
+    std::string         pathInfo_ = getLast(request_.getFilePath(), "/");
     std::string         uri_ = getLast(request_.getUri(), "?");
     std::string         pathTranslated_(getenv("PWD"));
+    pathTranslated_ +=  "/" + request_.getFilePath();
     
     // https://bz.apache.org/bugzilla/show_bug.cgi?id=62663
     mapEnviron_.insert(std::make_pair("AUTH_TYPE", ""));
@@ -411,9 +412,11 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
         mapEnviron_.insert(std::make_pair("CONTENT_LENGTH", toString(request_.getBody().size())));
     }
     mapEnviron_.insert(std::make_pair("CONTENT_TYPE",  "application/x-www-form-urlencoded"));
-    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", pathInfo_));
+    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", pathTranslated_));
     mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", pathTranslated_));
     mapEnviron_.insert(std::make_pair("PATH_INFO", pathInfo_));
+
+    // check! justement pour get??
     if ( !uri_.empty() && request_.getMethod() == "GET") {
         mapEnviron_.insert(std::make_pair("REQUEST_URI", uri_));
     }
