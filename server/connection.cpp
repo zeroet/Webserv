@@ -122,7 +122,7 @@ void    Connection::processResponse()
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
 					if (autoindex_flag) {
-						//std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+						std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 						body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
 						req_status_code_ = 200;
 					}
@@ -160,7 +160,6 @@ void    Connection::processResponse()
 	// make return buffer
 	returnBuffer_ = header_ + body_ ;
 
-	std::cout << returnBuffer_ << std::endl;
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
 
