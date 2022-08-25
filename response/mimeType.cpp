@@ -3,14 +3,29 @@
 namespace ft
 {
 
-MimeType::MimeType()
-{
+/* ******************************* */
+/* ** constructor / destructor *** */
+/* ******************************* */
+MimeType::MimeType() {
     setMIMETypeTable();
 }
 
-MimeType::~MimeType()
-{
+MimeType::MimeType(MimeType const &copy) {
+    (*this) = copy;
 }
+
+MimeType &MimeType::operator=(MimeType const &x) {
+    MIMEMap_ = x.MIMEMap_;
+    return (*this);
+
+}
+
+MimeType::~MimeType() {
+}
+
+
+
+
 
 /* ******************************* */
 /* ************ getter  ********** */

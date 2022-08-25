@@ -11,7 +11,6 @@ Cgi::Cgi() {
     initialPipe();
 }
 
-
 Cgi::Cgi(ServerBlock const &server, LocationBlock const &location, Request const &request) {
     initialPipe();
     location_ = location;
@@ -20,11 +19,38 @@ Cgi::Cgi(ServerBlock const &server, LocationBlock const &location, Request const
     isPost_ = ((request_.getMethod() == "POST") && (request_.getBody().size() > 0));
 }
 
+Cgi::Cgi(Cgi const &copy) {
+    (*this) = copy;
+}
+
+Cgi &Cgi::operator=(Cgi const &x) {
+    // pipe for write and read
+    writeToCgi_ = x.writeToCgi_;
+    readFromCgi_ = x.readFromCgi_;
+    stdinCgi_ = x.stdinCgi_;
+    stdoutCgi_ = x.stdoutCgi_;
+    isPost_ = x.isPost_;
+    // variable for child process
+    childPid_ = x.childPid_;
+    environ_ = copyTable(x.environ_);
+    argvExecve_ = copyTable(x.argvExecve_);
+    // set location / request
+    location_ = x.location_;
+    request_ = x.request_;
+    server_ = x.server_;
+    return (*this);
+}
+
 Cgi::~Cgi() {
-    if (environ_)
+    if (environ_) {
         freeTable(environ_);
-    if (argvExecve_)
+        environ_ = NULL;
+    }
+    if (argvExecve_) {
         freeTable(argvExecve_);
+        argvExecve_ = NULL;
+    }
+    //std::cout << "end of cgi" << std::endl;
 }
 
 
@@ -70,19 +96,9 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
                 }
                 body_ += executeParentProcess();
             }
-            // child process
-            // parent process
-            // write to child process, if method -> POST
-            // read to parent process!
-            // mette a body_
-            // close pipe;
             reqStatusCode = 201;
         }
     } 
-
-    // status code retun and update for req_code;
-
-    //return body_
     return body_;
 }
 
@@ -241,11 +257,6 @@ bool                    Cgi::isFormatCgi(void) const {
     return false;
 }
 
-
-
-
-
-
 bool                    Cgi::isFormatCgiPath(void) const {
     std::string     cgiPathTmp_(location_.getCgiPath());
     char            *cgiPath_ = const_cast<char*>(cgiPathTmp_.c_str());
@@ -320,6 +331,23 @@ void                        Cgi::closePipe(void) {
     }
 }
 
+char**                      Cgi::copyTable(char **table) {
+    char    **table_;
+    int     i(0);
+    while (table[i])
+        i++;
+    table_ = (char **)malloc(sizeof(char*) * i + 1);
+    if (!table_) {
+        return NULL;
+    }
+    i = 0;
+    while (table_[i]) {
+        table_[i] = strdup(table[i]);
+        i++;
+    }
+    table_[i] = NULL;
+    return table_;
+}
 
 /* *************************************************** */
 /* ********************** setter ********************* */

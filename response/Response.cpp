@@ -5,25 +5,28 @@ namespace ft
 /* ********************************************************************************* */
 /* ************************** constructor / destructor ***************************** */
 /* ********************************************************************************* */
-Response::Response()
-{
+Response::Response() {
 	initialMapStatusCode();
 	initialMapHeaders();
 }
 
-Response::Response(Response const & copy)
-{
+Response::Response(Response const & copy) {
 	(*this) = copy;
 }
 
-Response & Response::operator=(Response const & copy)
-{
-	(void) copy;
+Response & Response::operator=(Response const & x) {
+	mapStatus_ = x.mapStatus_;
+	headers_ = x.headers_;
+	request_ = x.request_;
+	location_ = x.location_;
+	mimeType_ = x.mimeType_;
 	return (*this);
 }
 
-Response::~Response()
-{
+Response::~Response() {
+	mapStatus_.clear();
+	headers_.clear();
+	//std::cout << "end of response" << std::endl;
 }
 
 
@@ -175,6 +178,23 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 	return (ret);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ********************************************************************************* */
+/* **************************************** autoindex ****************************** */
+/* ********************************************************************************* */
 std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::string &filepath) {
 	std::string 	ret;
 	std::string 	uri_;

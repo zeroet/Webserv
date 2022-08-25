@@ -18,10 +18,15 @@ public:
     typedef std::map<std::string, std::string>::iterator    it_;
 
 private:
-    mimeMap     MIMEMap_;
+    mimeMap         MIMEMap_;
 
 public:
+    /* ******************************** */
+    /* *** constructor / destructor *** */
+    /* ******************************** */
     MimeType();
+    MimeType(MimeType const &copy);
+    MimeType &operator=(MimeType const &x);
     ~MimeType();
     
     /* ******************************* */
@@ -33,7 +38,7 @@ private:
     /* ******************************* */
     /* ************ setter  ********** */
     /* ******************************* */
-    void        setMIMETypeTable(void);
+    void            setMIMETypeTable(void);
 };
 
 }
