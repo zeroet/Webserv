@@ -53,7 +53,12 @@ Cgi::~Cgi() {
         freeTable(argvExecve_);
         argvExecve_ = NULL;
     }
+    closePipe();
     //std::cout << "end of cgi" << std::endl;
+    std::cout << stdinCgi_ << std::endl;
+    std::cout << stdoutCgi_ << std::endl;
+    std::cout << readFromCgi_ << std::endl;
+    std::cout << writeToCgi_ << std::endl;
 }
 
 
@@ -351,7 +356,7 @@ char**                      Cgi::copyTable(char **table) {
     return table_;
 }
 
-void                        Cgi::closeFd(int pipeFd_) {
+void                        Cgi::closeFd(int &pipeFd_) {
     close(pipeFd_);
     pipeFd_ = -1;
 }

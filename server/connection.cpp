@@ -121,7 +121,6 @@ void    Connection::processResponse()
 					}
 					else
 					{
-						std::cout <<  mime_.getMIMEType(Ext_)  << " is ext file ******************************** " << std::endl;
 						body_ = response_.makeBodyHtml(request_.getFilePath(), isHTMLMimeType_);
 						req_status_code_ = 200;
 					}
@@ -164,6 +163,7 @@ void    Connection::processResponse()
 	returnBuffer_.clear();
 
 	// close connection  client fd
+	//
 	ep_->end_connection(clntFd_);
 	//status_ = "Close";
 	// epollout, close fd
