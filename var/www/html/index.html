@@ -32,5 +32,69 @@ margin-top:15%;
 <h2>If you see this page, the our web server is successfully installed and working.<br>Thank you for using our Webserv.</h2>
 <p>More information go to <a href="https://github.com/zeroet/Webserv">our git</a></p>
 </div>
-</body>
-</html>
+
+</br>
+</br>
+<div>
+  	<body>
+    	<div>POST test</div>
+    	<form action="./post/post.php" method="post">
+    	  <input type="text" name="id" placeholder="Enter id here">
+    	  <input type="text" name="age" placeholder="Enter age here">
+    	  <input type="submit" value="Submit">
+    	</form>
+  	</body>
+</div>
+</br>
+</br>
+<div>
+	<body>
+	  	<div>GET test</div>
+	  	<form action="./get/index.php" method="get">
+			<input type="text" name="id" placeholder="Enter id here">
+			<input type="text" name="age" placeholder="Enter age here">
+			<input type="submit" value="Submit">
+	  	</form>
+	  	<form action="./get/phpinfo.php" method="get">
+			<input type="submit" value="phpInfo">
+	  	</form>
+	</body>
+</div>
+</br>
+</br>
+<div>
+	<body>
+	  	<div>Photo</div>
+	  	<form action="./image/paris.jpg" method="get">
+			<input type="submit" value="get paris.jpg">
+	  	</form>
+		</br>
+	  	<form action="./image/42.png" method="get">
+			<input type="submit" value="get 42.png">
+	  	</form>
+	</body>
+</div>
+</br>
+</br>
+<div>
+	<body>
+	  	<div>Autoindex</div>
+	  	<form action="helloworld/" method="get">
+			<input type="submit" value="autoindex">
+	  	</form>
+	</body>
+</div>
+</br>
+</br>
+<div>
+	<body>
+		<div>Redirection to google</div>
+		<form action="redirection_google/" method="get">
+		  <input type="submit" value="redirection to google">
+		</form>	  	
+		<div>Redirection to error page</div>
+		<form action="redirection_error/" method="get">
+		  <input type="submit" value="redirection to error page">
+		</form>
+	</body>
+</div>

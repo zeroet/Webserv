@@ -10,24 +10,20 @@
 
 int main(int argc, char** argv)
 {
+	char	filePath[] = "config/conf/sample.conf";
 	std::pair<bool, ft::HttpBlock>	httpContext;
 
 	(void)ft::sTokenTypeStrings;
-	(void)argc;
-	httpContext = ft::PrintConfig::parseConfig(argv[1], P_SERVER); // possible flags: P_TOKEN, P_CONTENT, P_SERVER, P_LOCATION
+	if (argc == 1) 
+		httpContext = ft::PrintConfig::parseConfig(filePath, P_SERVER); // possible flags: P_TOKEN, P_CONTENT, P_SERVER, P_LOCATION
+	else
+		httpContext = ft::PrintConfig::parseConfig(argv[1], P_SERVER); // possible flags: P_TOKEN, P_CONTENT, P_SERVER, P_LOCATION
 	//bool error if ()
 	if (httpContext.first == 1)
 	{
-		// try
-		// {
 			Socket socket(httpContext.second.getServerBlock());
 			Epoll epoll(socket.getter_vecBloc());
-		// }
-		// catch()
-		// {
-
-		// }
 	}
-
+	std::cerr << "Config error" << std::endl;
 	return (0);
 }

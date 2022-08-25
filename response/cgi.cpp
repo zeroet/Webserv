@@ -9,11 +9,15 @@ namespace ft
 /* *************************************************** */
 Cgi::Cgi() {
     initialPipe();
+    environ_ = NULL;
+    argvExecve_ = NULL;
 }
 
 Cgi::Cgi(ServerBlock const &server, LocationBlock const &location
         , Request const &request, int const &contentLength) {
     initialPipe();
+    environ_ = NULL;
+    argvExecve_ = NULL;
     location_ = location;
     request_ = request;
     server_ = server;
@@ -53,7 +57,12 @@ Cgi::~Cgi() {
         freeTable(argvExecve_);
         argvExecve_ = NULL;
     }
+    closePipe();
     //std::cout << "end of cgi" << std::endl;
+    //std::cout << stdinCgi_ << std::endl;
+    //std::cout << stdoutCgi_ << std::endl;
+    //std::cout << readFromCgi_ << std::endl;
+    //std::cout << writeToCgi_ << std::endl;
 }
 
 
@@ -65,7 +74,6 @@ Cgi::~Cgi() {
 /* *************************************************** */
 // req_code in parametre
 std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
-    
     // body_ : string pour return
     std::string body_("");
 
@@ -101,7 +109,7 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
             }
             reqStatusCode = 200;
         }
-    } 
+    }
     return body_;
 }
 
@@ -162,31 +170,23 @@ void                    Cgi::writeToCgi(void) {
     int     size_(body_.size());
     int     retWrite_;
 
-    //do {
+    do {
         retWrite_ = write(writeToCgi_, buf_, size_);
-    //} while (retWrite_ > 0);
+    } while (retWrite_ > 0);
 }
 
 std::string             Cgi::readFromCgi(void) {
-    
-
-
     if (request_.getMethod() == "POST") {
         wait(NULL);
     }
-
     std::string     body_;
     char            buf_[65536 + 1];
     int             retRead_;
-
-   
    do {
       memset(buf_, 0, 65536);
       retRead_ = read(readFromCgi_, buf_, sizeof(buf_));
       body_ += buf_;
-
     } while (retRead_ > 0);
-    //std::cout << "read From Cgi == [" << retRead_ << "]" << std::endl;
     return body_;
 }
 
@@ -196,8 +196,10 @@ std::string             Cgi::readFromCgi(void) {
 /* ********************** initial ******************** */
 /* *************************************************** */
 void                    Cgi::initialPipe(void) {
-    environ_ = NULL;
-    argvExecve_ = NULL;
+    stdinCgi_ = -1;
+    stdoutCgi_ = -1;
+    readFromCgi_ = -1;
+    writeToCgi_ = -1;
 }
 
 void                    Cgi::setPipe(void) {
@@ -226,11 +228,6 @@ void                    Cgi::setPipe(void) {
     // non block
     fcntl(readFromCgi_, F_SETFL, O_NONBLOCK);
     fcntl(stdoutCgi_, F_SETFL, O_NONBLOCK);
-
-    //std::cout << "pipe == [" << writeToCgi_ << "]" << std::endl;
-    //std::cout << "pipe == [" << stdinCgi_ << "]" << std::endl;
-    //std::cout << "pipe == [" << readFromCgi_ << "]" << std::endl;
-    //std::cout << "pipe == [" << stdoutCgi_ << "]" << std::endl;
 } 
 
 
@@ -351,7 +348,7 @@ char**                      Cgi::copyTable(char **table) {
     return table_;
 }
 
-void                        Cgi::closeFd(int pipeFd_) {
+void                        Cgi::closeFd(int &pipeFd_) {
     close(pipeFd_);
     pipeFd_ = -1;
 }
@@ -373,14 +370,6 @@ int                        Cgi::setVariable(void) {
         return statusCode_; 
     if ((statusCode_ = makeArgvForExecve()) != SUCCESS)
         return statusCode_;
-
-    //std::cout << "**********start**********" << std::endl;
-    //std::cout << "******** environ *********" << std::endl;
-    //printTable(environ_);
-    //std::cout << "********* argv **********" << std::endl;
-    //printTable(argvExecve_);
-    //std::cout << "***********end************" << std::endl;
-
     return statusCode_;
 }
 

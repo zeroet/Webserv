@@ -102,35 +102,25 @@ void    Connection::processResponse()
 	std::string			Ext_(response_.getExt(request_.getFilePath()));
 	MimeType			mime_;
 	bool				isGetHTML(currentMethod_ == "GET" && Ext_ != "php");
-	//bool				isGetHTML(currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html");
 	bool				isHTMLMimeType_(mime_.getMIMEType(Ext_) == "text/html");
 	
 	// intializer les valeurs de Request class
 	response_.setRequest(request_);
 	response_.setRequestValue();
 	response_.setLocation(getLocationConfig());
-	
-	//Request request__(request_);
-	//std::cout << "test: " << request__.getFilePath() << std::endl;
-	// autoindex on; error code;
-	// get new file_path -> setFilePath(newFilePath);
 
-	//std::cout << req_status_code_ << " is code " << std::endl;
-	// body_
-	// si code status est entre 300 ~ 400, envoyer error page
-	//std::cout << "AUTOINDEX FLAG : " << autoindex_flag << std::endl;
-	if (req_status_code_== NOT_DEFINE) {
+	if (!locationConfig_.getReturn().empty()) {
+		std::cout << "Redirection!" << std::endl;
+	}
+	else if (req_status_code_== NOT_DEFINE) {
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
 					if (autoindex_flag) {
-						std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 						body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
 						req_status_code_ = 200;
 					}
 					else
 					{
-						// file path
-						std::cout <<  mime_.getMIMEType(Ext_)  << " is ext file ******************************** " << std::endl;
 						body_ = response_.makeBodyHtml(request_.getFilePath(), isHTMLMimeType_);
 						req_status_code_ = 200;
 					}
@@ -140,13 +130,14 @@ void    Connection::processResponse()
 									, request_, buffer_content_length);
 					
 					body_ = cgi_.makeBodyCgi(req_status_code_);
-					//req_status_code_ = cgi.getReqStatusCode();
 				}
 		}
 		else if (currentMethod_ == "DELETE") {
 			req_status_code_ = response_.execteDelete();
 		}
 	}
+
+	// error page
 	if (req_status_code_ >= 400) {
 		body_ += response_.makeErrorPage(req_status_code_);
 	}
@@ -172,6 +163,7 @@ void    Connection::processResponse()
 	returnBuffer_.clear();
 
 	// close connection  client fd
+	//
 	ep_->end_connection(clntFd_);
 	//status_ = "Close";
 	// epollout, close fd
