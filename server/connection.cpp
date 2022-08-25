@@ -131,7 +131,11 @@ void    Connection::processResponse()
 							body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
 							req_status_code_ = 200;
 						}
-
+						if (S_ISREG(fileinfo.st_mode))
+						{
+							body_ = response_.fileTextIntoBody(request_.getFilePath());
+							req_status_code_ = 200;
+						} 
 					}
 					else
 					{
