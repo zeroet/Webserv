@@ -91,7 +91,7 @@ public:
 	/* ************************************ */
 	/* *********** method = GET *********** */
 	/* ************************************ */
-	std::string					makeBodyHtml(std::string const &filePath);				
+	std::string					makeBodyHtml(std::string const &filePath, bool isHTML);				
 
 	/* ************************************ */
 	/* ************ autoindex ************* */

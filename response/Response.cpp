@@ -153,7 +153,7 @@ std::string		Response::makeErrorPage(int	status_code) {
 /* *************************************** method = GET **************************** */
 /* ********************************************************************************* */
 
-std::string		Response::makeBodyHtml(std::string const &filePath) {
+std::string		Response::makeBodyHtml(std::string const &filePath, bool isHTML) {
 	std::string		ret;
 	std::string		filePath_;
 	std::ifstream 	ifs;
@@ -171,7 +171,12 @@ std::string		Response::makeBodyHtml(std::string const &filePath) {
 	std::string	str;
 	while (std::getline(ifs, str))
 	{
-		ret += "\r\n";
+		if (isHTML) {
+			ret += "\r\n";
+		}
+		else {
+			ret += "\n";
+		}
 		ret += str;
 	}
 
