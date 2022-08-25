@@ -154,9 +154,7 @@ void    Connection::processResponse()
 		header_ += response_.makeHeader(body_.size(), req_status_code_);
 	}
 	else {
-		std::cout << "status code " << req_status_code_ << std::endl;
-		header_ += response_.makeHeaderCgi(body_, req_status_code_); //override
-		//header_ += "we have to get header from result of CGI in Connection.cpp\r\n";
+		header_ += response_.makeHeaderCgi(body_, req_status_code_);
 	}
 	// make return buffer
 	returnBuffer_ = header_ + body_ ;
