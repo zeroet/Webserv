@@ -381,7 +381,7 @@ int                        Cgi::setEnviron(void) {
 
 Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     mapEnviron          mapEnviron_;
-    std::string         pathInfo_ = getLast(request_.getFilePath(), "/");
+    std::string         pathInfo_ = getLast("./" + request_.getFilePath(), "/");
     std::string         uri_ = getLast(request_.getUri(), "?");
 
     // https://bz.apache.org/bugzilla/show_bug.cgi?id=62663
@@ -403,14 +403,14 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
         mapEnviron_.insert(std::make_pair("CONTENT_LENGTH", toString(request_.getBody().size())));
     }
     mapEnviron_.insert(std::make_pair("CONTENT_TYPE",  "application/x-www-form-urlencoded"));
-    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", request_.getPath()));
-    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", "/mnt/nfs/homes/hyungyoo/webServ"));              //!!!!!!!!!!!!!!!!!!!!!!
+    mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", pathInfo_));
+    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", "/mnt/nfs/homes/hyungyoo/webServ/"));              //!!!!!!!!!!!!!!!!!!!!!!
     mapEnviron_.insert(std::make_pair("PATH_INFO", pathInfo_));
     if ( !uri_.empty() && request_.getMethod() == "GET") {
         mapEnviron_.insert(std::make_pair("REQUEST_URI", uri_));
     }
 
-    //printmap(mapEnviron_);
+    printmap(mapEnviron_);
     return (mapEnviron_);
 
 }
