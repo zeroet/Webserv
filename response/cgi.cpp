@@ -75,19 +75,9 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
                 }
                 body_ += executeParentProcess();
             }
-            // child process
-            // parent process
-            // write to child process, if method -> POST
-            // read to parent process!
-            // mette a body_
-            // close pipe;
             reqStatusCode = 201;
         }
     } 
-
-    // status code retun and update for req_code;
-
-    //return body_
     return body_;
 }
 
