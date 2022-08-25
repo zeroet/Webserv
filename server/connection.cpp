@@ -121,9 +121,14 @@ void    Connection::processResponse()
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
 					if (autoindex_flag) {
-						//std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
-						body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
-						req_status_code_ = 200;
+						struct stat			fileinfo;
+						stat(request_.getFilePath().c_str(), &fileinfo);
+						if (S_ISDIR(fileinfo.st_mode))
+						{
+						// std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+							body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
+							req_status_code_ = 200;
+						}
 					}
 					else
 					{
@@ -164,9 +169,9 @@ void    Connection::processResponse()
 
 	ep_->end_connection(clntFd_);
 	//status_ = "Close";
-	// epollout, close fd
-	//ep_->epoll_Ctl_Mode(clntFd_, EPOLLIN);
 	
+	//clear everything before circulate again.
+	clear();
 }
 
 //getter
@@ -204,12 +209,10 @@ LocationBlock	Connection::getLocationConfig(void) {
 
 std::string		&Connection::getBodyBuf(void) {
 	// il faut faire protection pour content-length
-
 	//std::istringstream		contentLength(request_.getHeaderValue("Content-Length"));
 	//int						contentLength_;
 	//contentLength >> contentLength_;
 	//body_buf.resize(contentLength_);
-	
 	return (body_buf);
 }
 

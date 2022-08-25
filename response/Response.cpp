@@ -182,7 +182,6 @@ std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::st
 	struct dirent  	*dir_entry;
 	struct stat		fileinfo;
 	std::stringstream	ss;
-	// (void) filepath;
 
 	uri_ = uri;
 	if (!(*(uri_.rbegin()) == '/'))
@@ -210,19 +209,28 @@ std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::st
 			if (strcmp(dir_entry->d_name, ".") == 0 || strcmp(dir_entry->d_name, "..") == 0)
 				continue;
 			std::string filename = std::string(dir_entry->d_name);
-			std::cout << "///////////////////////////////////" << std::endl;
-			std::cout << filepath+filename << std::endl; 
 			if (stat((filepath + filename).c_str(), &fileinfo) == 0)
 			{
 				if (S_ISDIR(fileinfo.st_mode))
 				{
 					filename += "/";
+					ret += "<a href=\"" + uri_ + filename + "\">" + filename + "</a>";
 				}
+				else
+					ret += "<a href=\"" + uri_ + filename + "\">" + filename + "</a>";
 			}
-			ret += "<a href=\"" + uri_ + filename + "\">" + filename + "</a>";
+			ret += std::string(42 - filename.size(), ' ');
 			ret += getFileDateTime(fileinfo.st_mtime);
-			// ss.clear(
-			// ret += ss.str();
+			std::string filesize;
+			if (S_ISDIR(fileinfo.st_mode))
+				filesize = "-";
+			else
+			{
+				ss << fileinfo.st_size;
+				filesize = ss.str();
+			}
+			ret += std::string(10, ' ');
+			ret += filesize;
 			ret += "\r\n";
 		}
 	}
