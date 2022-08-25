@@ -9,11 +9,15 @@ namespace ft
 /* *************************************************** */
 Cgi::Cgi() {
     initialPipe();
+    environ_ = NULL;
+    argvExecve_ = NULL;
 }
 
 Cgi::Cgi(ServerBlock const &server, LocationBlock const &location
         , Request const &request, int const &contentLength) {
     initialPipe();
+    environ_ = NULL;
+    argvExecve_ = NULL;
     location_ = location;
     request_ = request;
     server_ = server;
@@ -183,7 +187,6 @@ std::string             Cgi::readFromCgi(void) {
       retRead_ = read(readFromCgi_, buf_, sizeof(buf_));
       body_ += buf_;
     } while (retRead_ > 0);
-    //std::cout << "read From Cgi == [" << retRead_ << "]" << std::endl;
     return body_;
 }
 
@@ -193,8 +196,6 @@ std::string             Cgi::readFromCgi(void) {
 /* ********************** initial ******************** */
 /* *************************************************** */
 void                    Cgi::initialPipe(void) {
-    environ_ = NULL;
-    argvExecve_ = NULL;
     stdinCgi_ = -1;
     stdoutCgi_ = -1;
     readFromCgi_ = -1;
@@ -227,11 +228,6 @@ void                    Cgi::setPipe(void) {
     // non block
     fcntl(readFromCgi_, F_SETFL, O_NONBLOCK);
     fcntl(stdoutCgi_, F_SETFL, O_NONBLOCK);
-
-    //std::cout << "pipe == [" << writeToCgi_ << "]" << std::endl;
-    //std::cout << "pipe == [" << stdinCgi_ << "]" << std::endl;
-    //std::cout << "pipe == [" << readFromCgi_ << "]" << std::endl;
-    //std::cout << "pipe == [" << stdoutCgi_ << "]" << std::endl;
 } 
 
 
@@ -374,14 +370,6 @@ int                        Cgi::setVariable(void) {
         return statusCode_; 
     if ((statusCode_ = makeArgvForExecve()) != SUCCESS)
         return statusCode_;
-
-    //std::cout << "**********start**********" << std::endl;
-    //std::cout << "******** environ *********" << std::endl;
-    //printTable(environ_);
-    //std::cout << "********* argv **********" << std::endl;
-    //printTable(argvExecve_);
-    //std::cout << "***********end************" << std::endl;
-
     return statusCode_;
 }
 
