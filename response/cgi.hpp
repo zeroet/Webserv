@@ -44,6 +44,7 @@ private:
     int                 readFromCgi_;
     int                 stdinCgi_;
     int                 stdoutCgi_;
+    id_t                contentLength_;
     bool                isPost_;
 
     /* ******************************** */
@@ -66,8 +67,8 @@ public:
     /* *** constructor / destructor *** */
     /* ******************************** */
     Cgi();
-    Cgi(ServerBlock const &server, LocationBlock const &location, 
-            Request const &request);
+    Cgi(ServerBlock const &server, LocationBlock const &location
+            , Request const &request, int const &contentLength);
     Cgi(Cgi const &copy);
     Cgi &operator=(Cgi const &x);
     ~Cgi();

@@ -152,7 +152,6 @@ std::string		Response::makeErrorPage(int	status_code) {
 /* ********************************************************************************* */
 /* *************************************** method = GET **************************** */
 /* ********************************************************************************* */
-
 std::string		Response::makeBodyHtml(std::string const &filePath, bool isHTML) {
 	std::string		ret;
 	std::string		filePath_;

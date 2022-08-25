@@ -11,11 +11,13 @@ Cgi::Cgi() {
     initialPipe();
 }
 
-Cgi::Cgi(ServerBlock const &server, LocationBlock const &location, Request const &request) {
+Cgi::Cgi(ServerBlock const &server, LocationBlock const &location
+        , Request const &request, int const &contentLength) {
     initialPipe();
     location_ = location;
     request_ = request;
     server_ = server;
+    contentLength_ = contentLength;
     isPost_ = ((request_.getMethod() == "POST") && (request_.getBody().size() > 0));
 }
 
@@ -30,6 +32,7 @@ Cgi &Cgi::operator=(Cgi const &x) {
     stdinCgi_ = x.stdinCgi_;
     stdoutCgi_ = x.stdoutCgi_;
     isPost_ = x.isPost_;
+    contentLength_ = x.contentLength_;
     // variable for child process
     childPid_ = x.childPid_;
     environ_ = copyTable(x.environ_);
@@ -96,7 +99,7 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
                 }
                 body_ += executeParentProcess();
             }
-            reqStatusCode = 201;
+            reqStatusCode = 200;
         }
     } 
     return body_;
@@ -152,12 +155,11 @@ std::string             Cgi::executeParentProcess(void) {
 }
 
 void                    Cgi::writeToCgi(void) {
-
-    std::string    body_(request_.getBody());
+    // resize body with content length
+    std::string    body_(request_.getBody().substr(0, contentLength_));
     
-
-    char    *buf_ = const_cast<char*>(request_.getBody().c_str());
-    int     size_(request_.getBody().size());
+    char    *buf_ = const_cast<char*>(body_.c_str());
+    int     size_(body_.size());
     int     retWrite_;
 
     //do {
@@ -450,7 +452,6 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
         mapEnviron_.insert(std::make_pair("REQUEST_URI", uri_));
     }
 
-    printmap(mapEnviron_);
     return (mapEnviron_);
 
 }
