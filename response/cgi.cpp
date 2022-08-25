@@ -70,7 +70,6 @@ Cgi::~Cgi() {
 /* *************************************************** */
 // req_code in parametre
 std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
-    
     // body_ : string pour return
     std::string body_("");
 
@@ -106,7 +105,7 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
             }
             reqStatusCode = 200;
         }
-    } 
+    }
     return body_;
 }
 
@@ -167,29 +166,22 @@ void                    Cgi::writeToCgi(void) {
     int     size_(body_.size());
     int     retWrite_;
 
-    //do {
+    do {
         retWrite_ = write(writeToCgi_, buf_, size_);
-    //} while (retWrite_ > 0);
+    } while (retWrite_ > 0);
 }
 
 std::string             Cgi::readFromCgi(void) {
-    
-
-
     if (request_.getMethod() == "POST") {
         wait(NULL);
     }
-
     std::string     body_;
     char            buf_[65536 + 1];
     int             retRead_;
-
-   
    do {
       memset(buf_, 0, 65536);
       retRead_ = read(readFromCgi_, buf_, sizeof(buf_));
       body_ += buf_;
-
     } while (retRead_ > 0);
     //std::cout << "read From Cgi == [" << retRead_ << "]" << std::endl;
     return body_;
