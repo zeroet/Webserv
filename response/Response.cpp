@@ -91,9 +91,9 @@ std::string		Response::makeHeaderCgi(std::string  &body, int statusCode) {
 	// diviser body (parametre) en deux: body et header
 	n_ = bodyTmp_.find("\r\n\r\n");
 	if (n_ != std::string::npos) {
-		header_ += bodyTmp_.substr(0, n_) + "\r\n";	//
+		header_ += bodyTmp_.substr(0, n_) + "\r\n";
 		body.clear();
-		body = bodyTmp_.substr(n_, bodyTmp_.size());			//
+		body = bodyTmp_.substr(n_, bodyTmp_.size());
 		bodyTmp_.clear();
 	}
 	//// body size -> Content-Length
