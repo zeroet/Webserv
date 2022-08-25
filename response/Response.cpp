@@ -383,9 +383,8 @@ std::string		Response::appendMapHeaders(int option) {
 
 	for (ft::mapHeader::iterator it=headers_.begin(); it!=headers_.end(); it++) {
 		if ( !(it->second.empty()) ) {
-			std::cout << it->first << " is first and " << it->second << " is seconde " << std::endl;
-			if ((request_.getMethod() == "DELETE"
-				&& it->first == "Content-Type") || option == CGI) {
+			if ((request_.getMethod() == "DELETE" && it->first == "Content-Type") 
+				|| (it->first == "Content-Type" && option == CGI)) {
 					continue ;
 			} 
 			mapHeader_ += it->first;
