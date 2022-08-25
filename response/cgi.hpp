@@ -66,7 +66,8 @@ public:
     /* *** constructor / destructor *** */
     /* ******************************** */
     Cgi();
-    Cgi(ServerBlock const &server, LocationBlock const &location, Request const &request);
+    Cgi(ServerBlock const &server, LocationBlock const &location, 
+            Request const &request);
     Cgi(Cgi const &copy);
     Cgi &operator=(Cgi const &x);
     ~Cgi();

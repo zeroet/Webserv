@@ -55,11 +55,11 @@ class Response
 {
 
 private:
-	mapHeader 								mapStatus_;
-	mapHeader 								headers_;
-	Request									request_;
-	LocationBlock							location_;
-	MimeType								mimeType_;
+	mapHeader 					mapStatus_;
+	mapHeader 					headers_;
+	Request						request_;
+	LocationBlock				location_;
+	MimeType					mimeType_;
 
 public:
 	/* ************************************ */
@@ -99,7 +99,6 @@ public:
 	std::string					bodyWithAutoindexOn(const std::string &uri, const std::string &filepath);
 	std::string					getFileDateTime(time_t sec);
 	std::string					fileTextIntoBody(const std::string &filepath);
-
 
 	/* ************************************ */
 	/* ********* method = DELETE ********** */
