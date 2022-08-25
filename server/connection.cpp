@@ -127,7 +127,7 @@ void    Connection::processResponse()
 						stat(request_.getFilePath().c_str(), &fileinfo);
 						if (S_ISDIR(fileinfo.st_mode))
 						{
-						// std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+							std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 							body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
 							req_status_code_ = 200;
 						}
