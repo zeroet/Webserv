@@ -219,7 +219,7 @@ std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::st
 				else
 					ret += "<a href=\"" + uri_ + filename + "\">" + filename + "</a>";
 			}
-			ret += std::string(42 - filename.size(), ' ');
+			ret += std::string(30 - filename.size(), ' ');
 			ret += getFileDateTime(fileinfo.st_mtime);
 			std::string filesize;
 			if (S_ISDIR(fileinfo.st_mode))
@@ -228,6 +228,7 @@ std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::st
 			{
 				ss << fileinfo.st_size;
 				filesize = ss.str();
+				ss.str("");
 			}
 			ret += std::string(10, ' ');
 			ret += filesize;
@@ -252,7 +253,24 @@ std::string	Response::getFileDateTime(time_t sec) {
 	return (ret);
 }
 
+std::string		Response::fileTextIntoBody(const std::string &filepath) {
+	std::ifstream in(filepath.c_str());
+	std::string line;
+	std::string ret;
 
+	if (in.is_open())
+	{
+		// std::cout << "HELOSDKFJSLDKFJSLKDFJLKSDJFLKSDJFLSDKJFLKSFDJ" << std::endl;
+		while (std::getline(in, line))
+		{
+			ret += "\r\n";
+			ret += line;
+			// std::cout << "LINE TEST : " << line << std::endl;
+			line.clear();
+		}
+	}
+	return (ret);
+}
 
 
 

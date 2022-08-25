@@ -104,6 +104,7 @@ public:
 	std::string					getExt(std::string const &filename) const;
 	std::string					bodyWithAutoindexOn(const std::string &uri, const std::string &filepath);
 	std::string					getFileDateTime(time_t sec);
+	std::string					fileTextIntoBody(const std::string &filepath);
 
 private:
 	/* ************************************ */
