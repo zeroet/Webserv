@@ -411,7 +411,7 @@ void	RequestHandler::checkHeader(Connection *c) {
 	//location config return value check
 	if (!c->getLocationConfig().getReturn().empty())
 	{
-		// std::cout << "/////////////// LOCATION RETURN EXIST //////////////" << std::endl;
+		std::cout << "/////////////// LOCATION RETURN EXIST //////////////" << std::endl;
 		checkLocationReturnAndApply(c->getLocationConfig().getReturn(), c);
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
