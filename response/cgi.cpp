@@ -55,10 +55,10 @@ Cgi::~Cgi() {
     }
     closePipe();
     //std::cout << "end of cgi" << std::endl;
-    std::cout << stdinCgi_ << std::endl;
-    std::cout << stdoutCgi_ << std::endl;
-    std::cout << readFromCgi_ << std::endl;
-    std::cout << writeToCgi_ << std::endl;
+    //std::cout << stdinCgi_ << std::endl;
+    //std::cout << stdoutCgi_ << std::endl;
+    //std::cout << readFromCgi_ << std::endl;
+    //std::cout << writeToCgi_ << std::endl;
 }
 
 
@@ -203,6 +203,10 @@ std::string             Cgi::readFromCgi(void) {
 void                    Cgi::initialPipe(void) {
     environ_ = NULL;
     argvExecve_ = NULL;
+    stdinCgi_ = -1;
+    stdoutCgi_ = -1;
+    readFromCgi_ = -1;
+    writeToCgi_ = -1;
 }
 
 void                    Cgi::setPipe(void) {
