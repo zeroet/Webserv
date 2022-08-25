@@ -73,7 +73,7 @@ std::string		Response::makeHeader(int bodySize, int statusCode) {
 	// make start line
 	header_ += makeStartLine(statusCode);
 	// append headers value!
-	header_ += appendMapHeaders(HTML);
+	header_ += appendMapHeaders(HTML, statusCode);
 	// time
 	header_ += makeTimeLine(HTML);
 
@@ -101,7 +101,7 @@ std::string		Response::makeHeaderCgi(std::string  &body, int statusCode) {
 	setContentLengh(body.size());
 	//// make start line
 	//// append headers value!
-	header_ += appendMapHeaders(CGI);
+	header_ += appendMapHeaders(CGI, statusCode);
 	//// time
 	header_ += makeTimeLine(CGI);
 	
@@ -378,7 +378,7 @@ std::string 	Response::toString(const int& v) const {
 /* ************************************** make header*************************** */
 /* ********************************************************************************* */
 // content-length for delete?
-std::string		Response::appendMapHeaders(int option) {
+std::string		Response::appendMapHeaders(int option, int statusCode) {
 	std::string	mapHeader_;
 
 	for (ft::mapHeader::iterator it=headers_.begin(); it!=headers_.end(); it++) {
@@ -389,7 +389,12 @@ std::string		Response::appendMapHeaders(int option) {
 			} 
 			mapHeader_ += it->first;
 			mapHeader_ += ": ";
-			mapHeader_ += it->second;
+			if (it->first == "Content-Type" && statusCode >= 400) {
+				mapHeader_ += "text/html";
+			}
+			else {
+				mapHeader_ += it->second;
+			}
 			mapHeader_ += "\r\n";
 		}
 	}

@@ -126,7 +126,7 @@ private:
 	std::string					makeTimeLine(int option) const;
 	void						setContentLengh(int bodySize);
 	std::string					makeStartLine(int statusCode);
-	std::string					appendMapHeaders(int option);
+	std::string					appendMapHeaders(int option, int statusCode);
 
 
 	/* ************************************ */
