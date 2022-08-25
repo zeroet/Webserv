@@ -21,10 +21,15 @@ Cgi::Cgi(ServerBlock const &server, LocationBlock const &location, Request const
 }
 
 Cgi::~Cgi() {
-    if (environ_)
+    if (environ_) {
         freeTable(environ_);
-    if (argvExecve_)
+        environ_ = NULL;
+    }
+    if (argvExecve_) {
         freeTable(argvExecve_);
+        argvExecve_ = NULL;
+    }
+    //std::cout << "end of cgi" << std::endl;
 }
 
 

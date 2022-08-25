@@ -24,6 +24,9 @@ Response & Response::operator=(Response const & copy)
 
 Response::~Response()
 {
+	mapStatus_.clear();
+	headers_.clear();
+	//std::cout << "end of response" << std::endl;
 }
 
 
