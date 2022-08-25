@@ -383,7 +383,8 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     mapEnviron          mapEnviron_;
     std::string         pathInfo_ = getLast("./" + request_.getFilePath(), "/");
     std::string         uri_ = getLast(request_.getUri(), "?");
-
+    std::string         pathTranslated_(getenv("PWD"));
+    
     // https://bz.apache.org/bugzilla/show_bug.cgi?id=62663
     mapEnviron_.insert(std::make_pair("AUTH_TYPE", ""));
     mapEnviron_.insert(std::make_pair("REMOTE_IDENT", request_.getMethod()));
@@ -404,7 +405,7 @@ Cgi::mapEnviron                Cgi::makeMapEnviron(void) {
     }
     mapEnviron_.insert(std::make_pair("CONTENT_TYPE",  "application/x-www-form-urlencoded"));
     mapEnviron_.insert(std::make_pair("SCRIPT_FILENAME", pathInfo_));
-    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", "/mnt/nfs/homes/hyungyoo/webServ/"));              //!!!!!!!!!!!!!!!!!!!!!!
+    mapEnviron_.insert(std::make_pair("PATH_TRANSLATED", pathTranslated_));
     mapEnviron_.insert(std::make_pair("PATH_INFO", pathInfo_));
     if ( !uri_.empty() && request_.getMethod() == "GET") {
         mapEnviron_.insert(std::make_pair("REQUEST_URI", uri_));

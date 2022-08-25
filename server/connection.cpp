@@ -101,7 +101,8 @@ void    Connection::processResponse()
 	std::string			currentMethod_(request_.getMethod());
 	std::string			Ext_(response_.getExt(request_.getFilePath()));
 	MimeType			mime_;
-	bool				isGetHTML(currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html");
+	bool				isGetHTML(currentMethod_ == "GET" && Ext_ != "php");
+	//bool				isGetHTML(currentMethod_ == "GET" && mime_.getMIMEType(Ext_) == "text/html");
 	
 	// intializer les valeurs de Request class
 	response_.setRequest(request_);
@@ -121,6 +122,7 @@ void    Connection::processResponse()
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
 					if (autoindex_flag) {
+
 						struct stat			fileinfo;
 						stat(request_.getFilePath().c_str(), &fileinfo);
 						if (S_ISDIR(fileinfo.st_mode))
@@ -129,6 +131,7 @@ void    Connection::processResponse()
 							body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
 							req_status_code_ = 200;
 						}
+
 					}
 					else
 					{

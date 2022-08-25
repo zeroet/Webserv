@@ -424,7 +424,7 @@ std::string		Response::makeTimeLine(int option) const {
   	strftime(buffer, 80, "%a, %d %b %Y %T GMT", timeinfo);
 
 	timeLine += buffer;
-	if (option == HTML) {
+	if (option == HTML || request_.getMethod() == "DELETE") {
 		timeLine += "\r\n";
 	}
 	return (timeLine);
