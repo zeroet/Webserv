@@ -62,8 +62,11 @@ void    Connection::processRequest(void) {
 		}
 		else if (phase_msg_ == BODY_INCOMPLETE)
 			requesthandler.checkRequestBody(this);
-		if (phase_msg_ == BODY_COMPLETE)
+		if (phase_msg_ == BODY_COMPLETE || phase_msg_ == START_LINE_ERROR)
 		{
+			if (phase_msg_ == START_LINE_ERROR) {
+				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+			}
 			size_t pos = 0;
 			if (getRequest().getMethod() == "GET" || getRequest().getMethod() == "DELETE")
 			{
@@ -77,6 +80,7 @@ void    Connection::processRequest(void) {
 					||  (size_t)buffer_content_length == body_buf.size())
 					ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 			}
+
 		}
 		memset(&buffer_char, 0, n);
 	}

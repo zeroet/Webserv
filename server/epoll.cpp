@@ -39,7 +39,7 @@ void    Epoll::init_server_socket()
     int count = 0;
 
 	create_epoll_fd();
-	// epoll_add(0);
+	epoll_add(0);
 	for (int i = 0; i < numServerFd; i++)
 	{
         if (OK != (epoll_add(vecBloc_[i].getSocketFd())))
