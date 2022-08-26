@@ -103,14 +103,18 @@ void    Connection::processResponse()
 	MimeType			mime_;
 	bool				isGetHTML(currentMethod_ == "GET" && Ext_ != "php");
 	bool				isHTMLMimeType_(mime_.getMIMEType(Ext_) == "text/html");
-	
+	bool				falgHeaderRedirection_(false);
+
 	// intializer les valeurs de Request class
 	response_.setRequest(request_);
 	response_.setRequestValue();
 	response_.setLocation(getLocationConfig());
 
 	if (!locationConfig_.getReturn().empty()) {
-		std::cout << "Redirection!" << std::endl;
+		if (req_status_code_ == 0) {
+			req_status_code_ = 301;
+			falgHeaderRedirection_ = true;
+		}
 	}
 	else if (req_status_code_== NOT_DEFINE) {
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
@@ -150,6 +154,11 @@ void    Connection::processResponse()
 	}
 	else {
 		header_ += response_.makeHeaderCgi(body_, req_status_code_);
+	}
+	if (!locationConfig_.getReturn().empty() && falgHeaderRedirection_) {
+		header_ += "Location: ";
+		header_ += body_buf;
+		header_ += "\r\n";
 	}
 	// make return buffer
 	returnBuffer_ = header_ + body_ ;
