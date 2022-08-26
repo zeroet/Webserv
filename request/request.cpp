@@ -163,5 +163,5 @@ void Request::setQueryString(std::string query_string) {
 void	Request::printHeaders(void) {
 	std::cout << "Request message headers:" << std::endl;
 	for(mapHeader::iterator it = requestHeaders_.begin(); it != requestHeaders_.end(); it++)
-		std::cout << "(key)" << (*it).first << ": (value)" << (*it).second << std::endl;
+		std::cout << (*it).first << ": " << (*it).second << std::endl;
 }

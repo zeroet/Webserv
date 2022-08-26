@@ -13,7 +13,6 @@ std::string	&RequestHandler::getHeaders(void) {
 }
 
 //setter
-
 void	RequestHandler::setBody(std::string bodybuf_) {
 	body_ = bodybuf_;
 }
@@ -27,11 +26,7 @@ void	RequestHandler::checkRequestMessage(Connection *c) {
 			c->setPhaseMsg(START_LINE_COMPLETE);
 	}
 	if (c->getPhaseMsg() == START_LINE_COMPLETE)
-	{
-		//parse start line
-		// std::cout << "Parse Start Line" << std::endl;
 		parseStartLine(c);
-	}
 	if (c->getPhaseMsg() == HEADER_INCOMPLETE)
 	{
 		size_t pos1;
@@ -40,7 +35,6 @@ void	RequestHandler::checkRequestMessage(Connection *c) {
 	}
 	if (c->getPhaseMsg() == HEADER_COMPLETE)
 	{
-		// std::cout << "Parse Header" << std::endl;
 		parseHeaders(c);
 		checkHeader(c);
 	}
@@ -56,18 +50,12 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	if (split_start_line.size() != 3)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		// c->setPhaseMsg(HEADER_COMPLETE);
 		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
-	// for (size_t i = 0; i < split_start_line.size(); i++)
-	// 	std::cout << split_start_line[i] << std::endl;
-	// std::string method = startLine_.substr(0, startLine_.find_first_of(" "));
-	// std::cout << method << std::endl;
 	if (!checkMethod(split_start_line[0]))
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		// c->setPhaseMsg(HEADER_COMPLETE);
 		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
@@ -81,7 +69,6 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	if (parseUri(split_start_line[1], c) == PARSE_INVALID_URI)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		// c->setPhaseMsg(HEADER_COMPLETE);
 		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
@@ -93,16 +80,13 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	if (!checkVersion(version) || version.length() != 3 || cmp)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		// c->setPhaseMsg(HEADER_COMPLETE);
 		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
 	cmp = version.compare(0, 2, "1.");
 	if (cmp)
 	{
-		// std::cout << "hererkejflksdjflksdjf" << std::endl;
 		c->setReqStatusCode(HTTP_VERSION_NOT_SUPPORTED);
-		// c->setPhaseMsg(HEADER_COMPLETE);
 		c->setPhaseMsg(HEADER_COMPLETE);
 		return ;
 	}
@@ -234,19 +218,13 @@ void	RequestHandler::parseHeaders(Connection *c) {
 	size_t pos = c->getBuffer().find(CRLFCRLF);
 	headers_ = c->getBuffer().substr(0, pos + LEN_CRLF);
 	c->getBuffer().erase(0, pos + LEN_CRLFCRLF);
-	// std::cout << "headers" << std::endl;
-	// std::cout << headers_ << std::endl;
-	// size_t header_len = header.length();
+
 	size_t pos1 = 0;
 	int code = 0;
-	// int i = 0;
 	while ((pos1 = headers_.find(CRLF)) != std::string::npos)
 	{
 		std::string headerline = "";
 		headerline = headers_.substr(0, pos1);
-		// std::cout << "Header line " << i++ << " : " << headerline << std::endl;
-		// }
-
 		//headerline parse - argument is < 2 => 400 // if field name is not alpha => 400
 													// if there's sth between fild name and colon => 400
 		if (headers_.length() == 2)
@@ -258,30 +236,15 @@ void	RequestHandler::parseHeaders(Connection *c) {
 			return ;
 		}
 		headers_ = headers_.substr(pos1 + LEN_CRLF, headers_.length());
-		// std::cout << "headers to parse line : " << std::endl;
-		// std::cout << headers_ << std::endl;
-		// std::cout << "header 길이: " << headers_.length() << std::endl;
 	}
-	// std::cout <<
 }
 
 int		RequestHandler::parseHeaderLine(Connection *c, std::string headerline) {
 	std::vector<std::string> header_line_parse = splitDelim(headerline, ": ");
 	if (header_line_parse.size() != 2)
-	{
-		// header_line_parse = splitDelim(headerline, ":");
-		// if (header_line_parse.size() != 2)
-		std::cout << header_line_parse.size() << std::endl;
-		std::cout<< "/////////////////////////////////////////////" << std::endl;
 			return (BAD_REQUEST);
-	}
-	// std::vector<std::string> key_parse = splitDelim(header_line_parse[0], ":");
-
-	// std::string key = key_parse[0];
 	std::string key = header_line_parse[0];
 	std::string value = header_line_parse[1];
-	// std::cout << "header key: " << key << std::endl;
-	// std::cout << "header value: " << value << std::endl;
 	c->getRequest().setHeader(key, value);
 	return (NOT_DEFINE);
 }
@@ -309,26 +272,12 @@ void	RequestHandler::checkHeader(Connection *c) {
 	c->setServerBlockConfig(c->getRequest().getHost());
 	if (!c->checkLocationConfigExist(c->getRequest().getPath()))
 	{
-		std::cout << "HERERERERERERERE////////////////////////" << std::endl;
-		std::cout << ">>>>>> PATH CHECK <<<<<<" << c->getRequest().getPath() << std::endl;
-		// if (*(c->getRequest().getPath().rbegin()) == '/' && c->getRequest().getMethod().compare("DELETE"))
-		// {
-		// 	filePathCompleteWithIndexDirective(c);
-		// }
-		// else
-		// {
-			// c->setReqStatusCode(NOT_FOUND);
-			// c->setPhaseMsg(BODY_COMPLETE);
-			// return ;
-		// }
-		
 		// uri root == serverblock root
 		// index.html check -> index.html use
 		// if not -> autoindex check -> on => directory list / off => forbidden 403 
 		c->getRequest().setFilePath(c->getServerConfig().getRoot() + c->getRequest().getPath());
-		if (!(*(c->getRequest().getFilePath().rbegin()) == '/') && isUriDirectory(c)) //is file exist rather??
+		if (!(*(c->getRequest().getFilePath().rbegin()) == '/') && isUriDirectory(c))
 			c->getRequest().setFilePath(c->getRequest().getFilePath() + "/");
-		std::cout << ">>>>>> FILE PATH CHECK <<<<<<" << c->getRequest().getFilePath() << std::endl;
 		if (!checkIndex(c))
 		{
 			if (c->getServerConfig().getAutoindex() == false)
@@ -348,7 +297,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 			}
 			else
 				c->autoindex_flag = true;
-				// std::cout << "autoindex ON, FILE TREE needed" << std::endl;
 		}
 		
 	}
@@ -362,7 +310,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 	if ((c->getRequest().getRequestHeaders().count("Content-Length")) && !c->getRequest().getHeaderValue("Content-Length").empty())
 	{
 		c->buffer_content_length = fromString<size_t>((c->getRequest().getHeaderValue("Content-Length")));
-		std::cout << "content-length in function:" << c->buffer_content_length << std::endl;
 		if ((size_t)c->buffer_content_length > (c->client_max_body_size))
 		{
 			c->setReqStatusCode(PAYLOAD_TOO_LARGE);
@@ -384,7 +331,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 	// when index directive exist
 	if (*(c->getRequest().getFilePath().rbegin()) == '/' && c->getRequest().getMethod().compare("DELETE"))
 	{
-		// std::cout << "*******************************" << std::endl;
 		if (!checkIndex(c))
 		{
 			if (c->getServerConfig().getAutoindex() == false)
@@ -395,8 +341,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 			}
 			else
 				c->autoindex_flag = true;
-				// std::cout << "autoindex ON, FILE TREE needed" << std::endl;
-			
 		}
 	}
 
@@ -411,7 +355,6 @@ void	RequestHandler::checkHeader(Connection *c) {
 	//location config return value check
 	if (!c->getLocationConfig().getReturn().empty())
 	{
-		std::cout << "/////////////// LOCATION RETURN EXIST //////////////" << std::endl;
 		checkLocationReturnAndApply(c->getLocationConfig().getReturn(), c);
 		c->setPhaseMsg(BODY_COMPLETE);
 		return ;
@@ -465,23 +408,21 @@ void	RequestHandler::checkHeader(Connection *c) {
 }
 
 void	RequestHandler::checkRequestBody(Connection *c) {
-	// std::cout << "BUFFER CHECK >>> " <<  c->buffer_char << std::endl;
 
 	if (c->is_chunk == false)
 	{
 		if (((ssize_t)c->buffer_content_length == fromString<ssize_t>(c->getRequest().getHeaderValue("Content-Length"))) && !strcmp("\r\n", c->buffer_char))
 			return ;
 		
-		else if ((size_t)c->buffer_content_length <= strlen(c->buffer_char)) //buffer content length가 buffer char 길이보다 작거나 같을때
+		else if ((size_t)c->buffer_content_length <= strlen(c->buffer_char)) //buffer content length is shorter or the same as buffer char
 		{
 			c->body_buf.append(c->buffer_char, c->buffer_content_length);
 			c->buffer_content_length = -1;
 			c->getRequest().setBody(c->body_buf);
 			c->setPhaseMsg(BODY_COMPLETE);
 		}
-		else //buffer content length가 buffer char 길이보다 클때
+		else //buffer content length is longer buffer char
 		{
-				// std::cout << "HERE2" << std::endl;
 			c->buffer_content_length = c->buffer_content_length - strlen(c->buffer_char);
 			c->setBodyBuf(c->buffer_char);
 		}
@@ -493,10 +434,9 @@ void	RequestHandler::checkRequestBody(Connection *c) {
 bool	RequestHandler::checkChunkedMessage(Connection *c) {
 	size_t pos;
 
-	while ((pos = c->getBuffer().find(CRLF)) != std::string::npos) //buffer안에 CRLF가 있을때 계속 loop
+	while ((pos = c->getBuffer().find(CRLF)) != std::string::npos) // loop until CRLF exist in buffer
 	{
-		// std::cout << "/////BUFFER CHECK/////" << c->getBuffer() << std::endl;
-		if (c->chunked_msg_checker == STR_SIZE) //STR SIZE 일때 
+		if (c->chunked_msg_checker == STR_SIZE) //when number is STR_SIZE 
 		{
 			if ((pos = c->getBuffer().find(CRLF)) != std::string::npos)
 			{
@@ -509,9 +449,8 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 					return (true);
 				}
 			}
-			//문자열을 unsigned long 값으로 변환(str to unsigned long)
+			//str to unsigned long
 			c->chunked_msg_size = (size_t)strtoul(c->getBuffer().substr(0, pos).c_str(), NULL, 16);
-			// std::cout << "////////////CHUNKED MESSAGE SIZE/////////" << c->chunked_msg_size << std::endl;
 			if (c->getReqStatusCode() != NOT_DEFINE && c->chunked_msg_size != 0)
 				return (false);
 			if (c->chunked_msg_size == 0)
@@ -539,7 +478,7 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 			else
 				c->chunked_msg_checker = STR;
 		}
-		if (c->chunked_msg_checker == STR) // string 일때
+		if (c->chunked_msg_checker == STR) // string
 		{
 			if (c->getBuffer().size() >= (c->chunked_msg_size + 2) && !(c->getBuffer().compare(c->chunked_msg_size, 2, CRLF)))
 			{
@@ -557,7 +496,7 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 			else
 				return (true);
 		}
-		if (c->chunked_msg_checker == END) // chunked message 끝일때
+		if (c->chunked_msg_checker == END) // At the end of chunked message
 		{
 			if ((pos = c->getBuffer().find(CRLF)) == 0)
 			{
@@ -576,7 +515,6 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 				c->getBuffer().erase(0, pos + LEN_CRLF);
 		}
 	}
-	// std::cout << ">>>>>>>>>>>> CHUNKED MSG STATUS <<<<<<<<<<<" << c->chunked_msg_checker << std::endl;
 	return (true);
 }
 
@@ -630,14 +568,6 @@ int			RequestHandler::checkHeaderKey(const std::string &s) {
 	return (true);
 }
 
-// int	RequestHandler::checkHostHeader(Connection *c) {
-// 	if ((c->getRequest().getRequestHeaders().count("Host")) && (c->getRequest().getVersion().compare(0, 5, "HTTP/") != 0))
-// 		return (BAD_REQUEST);
-// 	else if (c->getRequest().getVersion().compare(5, 3, "1.0") || c->getRequest().getVersion().compare(5, 3, "1.1"))
-// 		return (NOT_DEFINE);
-// 	return (HTTP_VERSION_NOT_SUPPORTED);
-// }
-
 bool RequestHandler::isFileExist(Connection *c) {
 	struct stat stat_buf;
 
@@ -651,9 +581,7 @@ void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection 
 
 	//example: request path : /test/
 	std::string filepath;
-	filepath = location.getRoot(); //location root로 filepath init /var/www/html/cgi_tester
-	// std::cout << "location root: " << filepath << std::endl;
-	// std::cout << "block root: " << c->getBlock().getRoot() << std::endl;
+	filepath = location.getRoot(); //filepath init /var/www/html/cgi_tester in to location root
 
 	/*	block root: /var/www/html
 		location root(filepath): /var/www/html/cgi_tester
@@ -664,13 +592,9 @@ void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection 
 	if (location.getRoot() != c->getBlock()[0].getRoot())
 	{
 		if (c->getRequest().getPath().substr(location.getUriPath().length()).empty()) //case 1
-		{
-			// std::cout << "11111111111111111111" << std::endl;
 			filepath.append("/");
-		}
 		else // case 2
 		{
-			// std::cout << "222222222222222222222" << std::endl;
 			if (*(location.getUriPath().rbegin()) == '/') // /cgi_tester/
 				filepath.append(c->getRequest().getPath().substr(location.getUriPath().length() - 1));
 			else // /cgi_tester
@@ -682,7 +606,6 @@ void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection 
 	/* 	block root: /var/www/html
 		location root: /var/www/html */
 		filepath.append(c->getRequest().getPath()); //just append the rest of path on request path to complet path
-		// std::cout << "333333333333333333" << std::endl;
 		// if (*(location.getUriPath().rbegin()) != '/')
 		// 	filepath.append("/");
 	}
@@ -743,7 +666,7 @@ void	RequestHandler::checkLocationReturnAndApply(std::vector<std::string> ret, C
 
 	for(size_t i = 0; i < ret.size(); i++)
 	{
-		if (isdigit(*(ret[i].begin()))) // fix with full check with digit
+		if (isdigit(*(ret[i].begin())))
 			code = fromString<size_t>(ret[i]);
 		else
 			str = ret[i];
