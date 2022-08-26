@@ -57,8 +57,8 @@ void    Connection::processRequest(void) {
 				this->status_ = "Close";
 				return ;
 			}
-			if (chunked_msg_checker == END)
-				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+			//if (chunked_msg_checker == END)
+			//	ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 		}
 		else if (phase_msg_ == BODY_INCOMPLETE)
 			requesthandler.checkRequestBody(this);
