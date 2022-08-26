@@ -169,6 +169,7 @@ void                    Cgi::writeToCgi(void) {
     char    *buf_ = const_cast<char*>(body_.c_str());
     int     size_(body_.size());
     int     retWrite_;
+    (void)retWrite_;
 
     //do {
         retWrite_ = write(writeToCgi_, buf_, size_);
