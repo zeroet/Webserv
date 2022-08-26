@@ -19,7 +19,6 @@ Connection::~Connection() { }
 
 void	Connection::clear(void) {
 	request_.clear();
-	// response_.clear();
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
 	client_max_body_size = 0;
@@ -67,20 +66,18 @@ void    Connection::processRequest(void) {
 				this->status_ = "Close";
 				return ;
 			}
+			if (chunked_msg_checker == END)
+				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 		}
 		else if (phase_msg_ == BODY_INCOMPLETE)
 			requesthandler.checkRequestBody(this);
 		if (phase_msg_ == BODY_COMPLETE)
 		{
-			std::cout << "************ Message body process **********" << std::endl;
 			size_t pos = 0;
 			if (getRequest().getMethod() == "GET" || getRequest().getMethod() == "DELETE")
 			{
 				if (buffer_.empty())
-				{
 					ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
-					std::cout << "HERE" << std::endl;
-				}
 			}
 			else
 			{
@@ -121,8 +118,18 @@ void    Connection::processResponse()
 		if (currentMethod_ == "GET" || currentMethod_ == "POST") {
 				if (isGetHTML) {
 					if (autoindex_flag) {
-						body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
-						req_status_code_ = 200;
+						struct stat			fileinfo;
+						stat(request_.getFilePath().c_str(), &fileinfo);
+						if (S_ISDIR(fileinfo.st_mode))
+						{
+							body_ = response_.bodyWithAutoindexOn(request_.getPath(), request_.getFilePath());
+							req_status_code_ = 200;
+						}
+						else if (S_ISREG(fileinfo.st_mode))
+						{
+							body_ = response_.fileTextIntoBody(request_.getFilePath());
+							req_status_code_ = 200;
+						}
 					}
 					else
 					{
@@ -171,6 +178,7 @@ void    Connection::processResponse()
 	header_.clear();
 	body_.clear();
 	returnBuffer_.clear();
+	clear();
 
 	// close connection  client fd
 	//

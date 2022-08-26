@@ -284,12 +284,10 @@ std::string		Response::fileTextIntoBody(const std::string &filepath) {
 
 	if (in.is_open())
 	{
-		// std::cout << "HELOSDKFJSLDKFJSLKDFJLKSDJFLKSDJFLSDKJFLKSFDJ" << std::endl;
 		while (std::getline(in, line))
 		{
-			ret += "\r\n";
-			ret += line;
-			// std::cout << "LINE TEST : " << line << std::endl;
+			ret += "\n";
+			ret += line + "</br>";
 			line.clear();
 		}
 	}
