@@ -73,7 +73,7 @@ void    Connection::processRequest(void) {
 		if (phase_msg_ == BODY_COMPLETE)
 		{
 			std::cout << "************ Message body process **********" << std::endl;
-			size_t pos = 0;
+//			size_t pos = 0;
 			if (getRequest().getMethod() == "GET" || getRequest().getMethod() == "DELETE")
 			{
 				if (buffer_.empty())
@@ -85,7 +85,7 @@ void    Connection::processRequest(void) {
 			else
 			{
 				request_.setBody(getBodyBuf());
-				if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
+//				if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos)
 					ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 			}
 		}
