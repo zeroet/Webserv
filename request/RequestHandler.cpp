@@ -50,7 +50,8 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	if (split_start_line.size() != 3)
 	{
 		c->setReqStatusCode(BAD_REQUEST);
-		c->setPhaseMsg(HEADER_COMPLETE);
+		//c->setPhaseMsg(HEADER_COMPLETE);
+		c->setPhaseMsg(START_LINE_ERROR);
 		return ;
 	}
 	if (!checkMethod(split_start_line[0]))

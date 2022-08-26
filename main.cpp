@@ -24,6 +24,5 @@ int main(int argc, char** argv)
 			Socket socket(httpContext.second.getServerBlock());
 			Epoll epoll(socket.getter_vecBloc());
 	}
-	std::cerr << "Config error" << std::endl;
 	return (0);
 }
