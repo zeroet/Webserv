@@ -161,8 +161,6 @@ void    Epoll::epoll_server_manager()
             }
             else if(epEvent[i].events & EPOLLIN)
             {
-                std::cerr << "Epoll IN" << std::endl;           //
-
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
                 it->second->processRequest();
@@ -175,14 +173,11 @@ void    Epoll::epoll_server_manager()
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
                 it->second->processResponse();
-                //int ret = check_status_connection(it->second->getStatus());
-                //if (ret == 1)
-                //   end_connection(fd);
-                //else {
-                //    epoll_Ctl_Mode(fd, EPOLLIN); 
-                //    std::cout << "in epoll ctl mode " << std::endl;
-                //}
-                // end_connection(fd);
+                int ret = check_status_connection(it->second->getStatus());
+                if (ret == 1)
+                  end_connection(fd);
+                else
+                   epoll_Ctl_Mode(fd, EPOLLIN); 
             }
         }
     }
@@ -281,9 +276,9 @@ void       Epoll::end_connection(int fd)
 
 int        Epoll::check_status_connection(std::string status)
 {
-    if (status.compare("Keep-Alive"))
+    if (!status.compare("Keep-Alive"))
         return (0);
-    else if (status.compare("Close"))
+    else if (!status.compare("Close"))
         return (1);
     else
     {   

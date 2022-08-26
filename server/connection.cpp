@@ -147,6 +147,7 @@ void    Connection::processResponse()
 	// error page
 	if (req_status_code_ >= 400) {
 		body_ += response_.makeErrorPage(req_status_code_);
+		status_ = "Close";
 	}
 	
 	// make header_
@@ -164,7 +165,7 @@ void    Connection::processResponse()
 		header_ += "\r\n";
 	}
 	// make return buffer
-	returnBuffer_ = header_ + body_ ;
+	returnBuffer_ = header_ + body_  + "\r\n";
 
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
@@ -177,8 +178,7 @@ void    Connection::processResponse()
 
 	// close connection  client fd
 	//
-	ep_->end_connection(clntFd_);
-	//status_ = "Close";
+	// ep_->end_connection(clntFd_);
 	// epollout, close fd
 	//ep_->epoll_Ctl_Mode(clntFd_, EPOLLIN);
 	
