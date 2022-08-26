@@ -462,6 +462,13 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 				return (false);
 			if (c->chunked_msg_size == 0)
 			{
+				if (c->getBuffer()[0] != '0' && pos == 0) {
+          		c->getBodyBuf().clear();
+							c->setReqStatusCode(BAD_REQUEST);
+							c->setPhaseMsg(BODY_COMPLETE);
+							c->is_chunk = false;
+							return (true);
+        		}
 				for (size_t i = 0; i < pos; ++i)
 				{
 					if (c->getBuffer()[i] != '0')

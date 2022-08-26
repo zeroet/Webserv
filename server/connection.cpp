@@ -57,8 +57,8 @@ void    Connection::processRequest(void) {
 				this->status_ = "Close";
 				return ;
 			}
-			if (chunked_msg_checker == END)
-				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+			//if (chunked_msg_checker == END)
+			//	ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 		}
 		else if (phase_msg_ == BODY_INCOMPLETE)
 			requesthandler.checkRequestBody(this);
@@ -67,7 +67,7 @@ void    Connection::processRequest(void) {
 			if (phase_msg_ == START_LINE_ERROR) {
 				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 			}
-			size_t pos = 0;
+			//size_t pos = 0;
 			if (getRequest().getMethod() == "GET" || getRequest().getMethod() == "DELETE")
 			{
 				if (buffer_.empty())
@@ -76,8 +76,8 @@ void    Connection::processRequest(void) {
 			else
 			{
 				request_.setBody(getBodyBuf());
-				if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos
-					||  (size_t)buffer_content_length == body_buf.size())
+				//if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos
+				//	||  (size_t)buffer_content_length == body_buf.size())
 					ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 			}
 
@@ -147,6 +147,7 @@ void    Connection::processResponse()
 	// error page
 	if (req_status_code_ >= 400) {
 		body_ += response_.makeErrorPage(req_status_code_);
+		status_ = "Close";
 	}
 	
 	// make header_
@@ -164,7 +165,7 @@ void    Connection::processResponse()
 		header_ += "\r\n";
 	}
 	// make return buffer
-	returnBuffer_ = header_ + body_ ;
+	returnBuffer_ = header_ + body_  + "\r\n";
 
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
@@ -177,8 +178,7 @@ void    Connection::processResponse()
 
 	// close connection  client fd
 	//
-	ep_->end_connection(clntFd_);
-	//status_ = "Close";
+	// ep_->end_connection(clntFd_);
 	// epollout, close fd
 	//ep_->epoll_Ctl_Mode(clntFd_, EPOLLIN);
 	
