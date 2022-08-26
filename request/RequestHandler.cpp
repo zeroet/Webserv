@@ -335,6 +335,12 @@ void	RequestHandler::checkHeader(Connection *c) {
 		{
 			if (c->getServerConfig().getAutoindex() == false)
 			{
+				if (!c->getLocationConfig().getReturn().empty())
+				{
+					checkLocationReturnAndApply(c->getLocationConfig().getReturn(), c);
+					c->setPhaseMsg(BODY_COMPLETE);
+					return ;
+				}
 				c->setReqStatusCode(FORBIDDEN); //403 FORBIDDEN
 				c->setPhaseMsg(BODY_COMPLETE);
 				return ;
