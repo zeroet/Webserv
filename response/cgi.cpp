@@ -170,9 +170,9 @@ void                    Cgi::writeToCgi(void) {
     int     size_(body_.size());
     int     retWrite_;
 
-    do {
+    //do {
         retWrite_ = write(writeToCgi_, buf_, size_);
-    } while (retWrite_ > 0);
+    //} while (retWrite_ > 0);
 }
 
 std::string             Cgi::readFromCgi(void) {
