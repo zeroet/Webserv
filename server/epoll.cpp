@@ -23,6 +23,14 @@ Epoll::Epoll(const Epoll &other) : vecBloc_(other.vecBloc_), c_(other.c_), epoll
 	*this = other;
 }
 
+// opeator
+Epoll   &Epoll::operator=(Epoll const &x) {
+    vecBloc_ = x.vecBloc_;
+    c_ = x.c_;
+    epollFd_ = x.epollFd_;
+    return *this;
+}
+
 //Destruct
 Epoll::~Epoll() {
     this->close_all_serv_socket();
@@ -164,9 +172,7 @@ void    Epoll::epoll_server_manager()
                 int fd = epEvent[i].data.fd;
                 mapConnection::iterator it = this->c_.find(fd);
                 it->second->processRequest();
-
-                //tmp
-				it->second->printRequestMsg();
+				//it->second->printRequestMsg();
             }
             else if(epEvent[i].events & EPOLLOUT)
             {
