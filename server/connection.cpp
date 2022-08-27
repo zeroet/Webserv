@@ -16,6 +16,22 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	status_ = "Keep-Alive";
 }
 
+Connection::Connection(const Connection &rhs)
+{
+	*this = rhs;
+}
+
+Connection Connection::operator=(const Connection &rhs)
+{
+	clntFd_ = rhs.clntFd_;
+	block_ = rhs.block_;
+	status_ = rhs.status_;
+	ep_  = rhs.ep_;
+	serverConfig_ = rhs.serverConfig_;
+	locationConfig_ = rhs.locationConfig_;
+	return *this;
+}
+
 Connection::~Connection() { }
 
 void	Connection::clear(void) {

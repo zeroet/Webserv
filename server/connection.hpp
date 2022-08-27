@@ -100,6 +100,8 @@ class Connection
 
 	public:
 		Connection(int fd, std::vector<ServerBlock> block, Epoll *ep);
+		Connection (const Connection &rhs);
+		Connection operator=(const Connection &rhs);
 		~Connection();
 		//getter
 		std::vector<ServerBlock>	&getBlock(void);
