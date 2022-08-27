@@ -171,6 +171,10 @@ void    Connection::processResponse()
 			status_ = "Close";
 			header_ += "Connection: close\r\n";
 		}
+		else if (request_.getHeaderValue("Connection") == "keep-alive") {
+			status_ = "Keep-Alive";
+			header_ += "Connection: keep-alive\r\n";
+		}
 	}
 
 	// make return buffer
