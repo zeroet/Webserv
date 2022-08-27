@@ -23,6 +23,7 @@
 # define LEN_CRLFCRLF 4
 
 # define BUFFER_SIZE 512
+# define CTRL_C_LIST 4
 
 namespace ft{
 

@@ -67,15 +67,23 @@ void	Connection::clear(void) {
 void    Connection::processRequest(void) {
 	RequestHandler requesthandler;
     int n = 0;
-	
+	const char ctrl_c[CTRL_C_LIST] = {0xff, 0xf4, 0xfd, 0x06};
+
 	while((n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0)) > 0) //except \r
 	{
-		if (n < 0 || strchr(buffer_char, 0xff))
+		if (n < 0 || strchr(buffer_char, ctrl_c[0]))
 		{
 			//close connection
-			this->status_ = "Close";
+			//this->status_ = "Close";
+			//ep_->end_connection(clntFd_);
+			close(clntFd_);
 			return ;
 		}
+ 		if (!strcmp(buffer_char, "\r\n")
+        	&& n == 2 && phase_msg_ == START_LINE_INCOMPLETE && buffer_.size() == 0) {
+		  memset(&buffer_char, 0, n);
+      	return ;
+    	}
 		buffer_.insert(buffer_.end(), buffer_char, buffer_char + n);
 
 		if (phase_msg_ == START_LINE_INCOMPLETE
