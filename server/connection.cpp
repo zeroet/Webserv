@@ -13,7 +13,7 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	chunked_msg_size = 0;
 	body_buf = "";
 	autoindex_flag = false;
-	//status_ = "Keep-Alive";
+	status_ = "Keep-Alive";
 }
 
 Connection::Connection(const Connection &rhs)
@@ -35,6 +35,7 @@ Connection Connection::operator=(const Connection &rhs)
 Connection::~Connection() { }
 
 void	Connection::clear(void) {
+	buffer_.clear();
 	request_.clear();
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
@@ -45,7 +46,6 @@ void	Connection::clear(void) {
 	chunked_msg_size = 0;
 	body_buf.clear();
 	autoindex_flag = false;
-	//status_ = "Keep-Alive";
 }
 
 void    Connection::processRequest(void) {
