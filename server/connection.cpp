@@ -13,6 +13,7 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	chunked_msg_size = 0;
 	body_buf = "";
 	autoindex_flag = false;
+	status_ = "Keep-Alive";
 }
 
 Connection::~Connection() { }
@@ -28,6 +29,7 @@ void	Connection::clear(void) {
 	chunked_msg_size = 0;
 	body_buf.clear();
 	autoindex_flag = false;
+	//status_ = "Keep-Alive";
 }
 
 void    Connection::processRequest(void) {
@@ -78,7 +80,7 @@ void    Connection::processRequest(void) {
 				request_.setBody(getBodyBuf());
 				//if ((pos = buffer_.find(CRLFCRLF)) != std::string::npos
 				//	||  (size_t)buffer_content_length == body_buf.size())
-					ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
+				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 			}
 
 		}
@@ -164,8 +166,18 @@ void    Connection::processResponse()
 		header_ += body_buf;
 		header_ += "\r\n";
 	}
+	if (!request_.getHeaderValue("Connection").empty()) {
+		if (request_.getHeaderValue("Connection") == "close") {
+			status_ = "Close";
+			header_ += "Connection: close\r\n";
+		}
+	}
+
 	// make return buffer
-	returnBuffer_ = header_ + body_  + "\r\n";
+	returnBuffer_ = header_ + body_;
+	if (isGetHTML) {
+		returnBuffer_ += "\r\n";
+	}
 
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
@@ -175,13 +187,6 @@ void    Connection::processResponse()
 	body_.clear();
 	returnBuffer_.clear();
 	clear();
-
-	// close connection  client fd
-	//
-	// ep_->end_connection(clntFd_);
-	// epollout, close fd
-	//ep_->epoll_Ctl_Mode(clntFd_, EPOLLIN);
-	
 }
 
 //getter

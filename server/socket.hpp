@@ -15,7 +15,7 @@
 
 #include "../config/src/ServerBlock.hpp"
 
-#define LISTEN_BACKLOG 15
+#define LISTEN_BACKLOG 4096
 #define DEFAULT -1
 #define ERROR -1
 #define OK 0

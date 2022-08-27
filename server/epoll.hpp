@@ -39,6 +39,7 @@ public:
     Epoll();
     Epoll(std::vector<ServerBlock> block); // epoll fd create
     Epoll(const Epoll &other);
+    Epoll &operator=(Epoll const &x);
     ~Epoll();
 
     //Epoll utility functions
