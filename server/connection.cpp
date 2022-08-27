@@ -13,7 +13,23 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	chunked_msg_size = 0;
 	body_buf = "";
 	autoindex_flag = false;
-	status_ = "Keep-Alive";
+	//status_ = "Keep-Alive";
+}
+
+Connection::Connection(const Connection &rhs)
+{
+	*this = rhs;
+}
+
+Connection Connection::operator=(const Connection &rhs)
+{
+	clntFd_ = rhs.clntFd_;
+	block_ = rhs.block_;
+	status_ = rhs.status_;
+	ep_  = rhs.ep_;
+	serverConfig_ = rhs.serverConfig_;
+	locationConfig_ = rhs.locationConfig_;
+	return *this;
 }
 
 Connection::~Connection() { }
@@ -170,10 +186,6 @@ void    Connection::processResponse()
 		if (request_.getHeaderValue("Connection") == "close") {
 			status_ = "Close";
 			header_ += "Connection: close\r\n";
-		}
-		else if (request_.getHeaderValue("Connection") == "keep-alive") {
-			status_ = "Keep-Alive";
-			header_ += "Connection: keep-alive\r\n";
 		}
 	}
 

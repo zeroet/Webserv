@@ -1,3 +1,0 @@
-GET /get/index.php?id=hy&age=123456 HTTP/1.1
-Host: localhost
-
