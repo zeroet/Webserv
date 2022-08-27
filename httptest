@@ -1,7 +1,0 @@
-POST /post/post.php HTTP/1.1
-Host: localhost
-Accept: */*
-Content-Length: 15
-
-id=hy&age=1234567
-

@@ -13,7 +13,7 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	chunked_msg_size = 0;
 	body_buf = "";
 	autoindex_flag = false;
-	status_ = "Keep-Alive";
+	//status_ = "Keep-Alive";
 }
 
 Connection::Connection(const Connection &rhs)
