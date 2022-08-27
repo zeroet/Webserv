@@ -32,9 +32,26 @@ Connection Connection::operator=(const Connection &rhs)
 	return *this;
 }
 
+Connection::Connection(const Connection &rhs)
+{
+	*this = rhs;
+}
+
+Connection Connection::operator=(const Connection &rhs)
+{
+	clntFd_ = rhs.clntFd_;
+	block_ = rhs.block_;
+	status_ = rhs.status_;
+	ep_  = rhs.ep_;
+	serverConfig_ = rhs.serverConfig_;
+	locationConfig_ = rhs.locationConfig_;
+	return *this;
+}
+
 Connection::~Connection() { }
 
 void	Connection::clear(void) {
+	buffer_.clear();
 	request_.clear();
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
@@ -45,7 +62,6 @@ void	Connection::clear(void) {
 	chunked_msg_size = 0;
 	body_buf.clear();
 	autoindex_flag = false;
-	//status_ = "Keep-Alive";
 }
 
 void    Connection::processRequest(void) {
