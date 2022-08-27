@@ -1,6 +1,6 @@
 #include "connection.hpp"
 
-Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep), request_() {
+Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clntFd_(fd), block_(block), ep_(ep), serverConfig_(), locationConfig_(), request_(), response_() {
 	memset(buffer_char, 0, BUFFER_SIZE);
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
@@ -27,6 +27,20 @@ Connection Connection::operator=(const Connection &rhs)
 	ep_  = rhs.ep_;
 	serverConfig_ = rhs.serverConfig_;
 	locationConfig_ = rhs.locationConfig_;
+	
+	request_ = rhs.request_;
+	response_ = rhs.response_;
+	phase_msg_ = rhs.phase_msg_;
+	req_status_code_ = rhs.req_status_code_;
+	buffer_ = rhs.buffer_;
+	client_max_body_size = rhs.client_max_body_size;
+	buffer_content_length = rhs.buffer_content_length;
+	is_chunk = rhs.is_chunk;
+	chunked_msg_checker = rhs.chunked_msg_checker;
+	chunked_msg_size = rhs.chunked_msg_size;
+	body_buf = rhs.body_buf;
+	autoindex_flag = rhs.autoindex_flag;
+
 	return *this;
 }
 
@@ -35,7 +49,7 @@ Connection::~Connection() {}
 void	Connection::clear(void) {
 	memset(&buffer_char, 0, BUFFER_SIZE);
 	buffer_.clear();
-	// request_.clear();
+	request_.clear();
 	body_buf.clear();
 	phase_msg_ = START_LINE_INCOMPLETE;
 	req_status_code_ = NOT_DEFINE;
@@ -45,16 +59,18 @@ void	Connection::clear(void) {
 	chunked_msg_checker = STR_SIZE;
 	chunked_msg_size = 0;
 	autoindex_flag = false;
+	locationConfig_ = LocationBlock();
+	serverConfig_ = ServerBlock();
 }
 
 void    Connection::processRequest(void) {
 	RequestHandler requesthandler;
     int n = 0;
-	const char ctrl_c[CTRL_C_LIST] = {0xff, 0xf4, 0xfd, 0x06};
+	// const char ctrl_c[CTRL_C_LIST] = {0xff, 0xf4, 0xfd, 0x06};
 
 	while((n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0)) > 0) //except \r
 	{
-		if (n < 0 || strchr(buffer_char, ctrl_c[0]))
+		if (n < 0)// || strchr(buffer_char, ctrl_c[0]))
 		{
 			close(clntFd_);
 			return ;

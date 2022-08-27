@@ -23,13 +23,6 @@ const	Request	&Request::operator=(const Request &x) {
 		uri_struct_.path_ = x.uri_struct_.path_;
 		uri_struct_.filepath_ = x.uri_struct_.filepath_;
 		uri_struct_.query_string_ = x.uri_struct_.query_string_;
-
-		// sorry!
-		// setFilePath(x.uri_struct_.filepath_);
-		// setQueryString(x.uri_struct_.query_string_);
-		// setBody(x.body_);
-		// setUri(x.uri_);
-		// setPath(x.uri_struct_.path_);
 	}
 	return (*this);
 }

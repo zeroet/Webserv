@@ -14,7 +14,6 @@
 
 namespace ft {
 
-// class Request;
 class Connection;
 
 #define PARSE_VALID_URI 1
@@ -31,8 +30,6 @@ class RequestHandler {
 		std::string	headers_;	//extract of headers from buffer
 		std::string body_;
 		size_t		tmp_;		//for stock end pos of buffer(from connection)
-
-		// ServerBlock	*serverConfig_;
 
 	public:
 		RequestHandler(void);
@@ -64,14 +61,12 @@ class RequestHandler {
 		int		checkMethod(const std::string &s);
 		int		checkVersion(const std::string &s);
 		int		checkHeaderKey(const std::string &s);
-		// int		checkHostHeader(Connection *c);
 		bool	isFileExist(Connection *c);
 		int		setUriStructHostPort(Connection *c, std::string host_value);
 		bool	checkAllowMethod(Connection *c);
 		void	checkLocationReturnAndApply(std::vector<std::string> ret, Connection *c);
 		bool	isUriDirectory(Connection *c);
 		bool	isUriDirectory(std::string path);
-		// bool	filePathCompleteWithIndexDirective(Connection *c);
 
 		template<typename T>
 		std::string toString(const T& v)
