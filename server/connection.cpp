@@ -174,11 +174,8 @@ void    Connection::processResponse()
 	}
 
 	// make return buffer
-	returnBuffer_ = header_ + body_;
-	if (isGetHTML) {
-		returnBuffer_ += "\r\n";
-	}
-
+	returnBuffer_ = header_ + body_ + "\r\n";
+	
 	// send return buffer
 	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
 

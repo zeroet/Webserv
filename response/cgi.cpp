@@ -188,6 +188,11 @@ std::string             Cgi::readFromCgi(void) {
       retRead_ = read(readFromCgi_, buf_, sizeof(buf_));
       body_ += buf_;
     } while (retRead_ > 0);
+
+    body_ = body_.substr(0, body_.size() - 1);
+    //std::cerr << "start" << std::endl;
+    //std::cerr << body_ << std::endl;
+    //std::cerr << "end" << std::endl;
     return body_;
 }
 

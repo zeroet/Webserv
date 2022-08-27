@@ -1,4 +1,4 @@
-CXX := c++
+HCXX := c++
 NAME := webserv
 
 SRCS_DIR := srcs
