@@ -188,6 +188,10 @@ void    Connection::processResponse()
 			header_ += "Connection: close\r\n";
 		}
 	}
+	else if (req_status_code_ < 400) {
+		status_ = "Keep-Alive";
+		header_ += "Connection: keep-alive\r\n";
+	}
 
 	// make return buffer
 	returnBuffer_ = header_ + body_ + "\r\n";

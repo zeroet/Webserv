@@ -46,6 +46,9 @@ void	RequestHandler::parseStartLine(Connection *c) {
 	startLine_ = c->getBuffer().substr(0, pos);
 	c->getBuffer().erase(0, pos + LEN_CRLF);
 	//method check : GET/POST/DELETE -> toupper / if not Error 400
+
+	//while  (startLine_.empty()) {}
+	
 	std::vector<std::string> split_start_line = splitDelim(startLine_, " ");
 	if (split_start_line.size() != 3)
 	{
