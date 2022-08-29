@@ -101,7 +101,12 @@ std::string		Response::makeHeaderCgi(std::string  &body, int statusCode) {
 	}
 	//// body size -> Content-Length
 	//// append "Content-Lengh" to headers_
-	setContentLengh(body.size() - 2);
+	if (request_.getMethod() == "DELETE") {
+		setContentLengh(0);
+	}
+	else {
+		setContentLengh(body.size() - 2);
+	}
 	//// make start line
 	//// append headers value!
 	header_ += appendMapHeaders(CGI, statusCode);
