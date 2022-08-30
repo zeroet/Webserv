@@ -125,7 +125,7 @@ void    Connection::processRequest(void) {
 	if (!(errno == EAGAIN)|| !(errno == EWOULDBLOCK))
 	{
 		std::cout << "read error" << std::endl;
-		exit(1);
+		this->status_ = "Close";
 	}
 }
 
