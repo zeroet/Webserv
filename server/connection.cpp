@@ -73,6 +73,7 @@ void    Connection::processRequest(void) {
 		if (n < 0 || strchr(buffer_char, 0xff))
 		{
 			close(clntFd_);
+			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 			return ;
 		}
  		if (!strcmp(buffer_char, "\r\n") 
