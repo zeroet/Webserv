@@ -12,6 +12,7 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	body_buf = "";
 	autoindex_flag = false;
 	status_ = "Keep-Alive";
+	recv_error = -2;
 }
 
 Connection::Connection(const Connection &rhs)
@@ -40,6 +41,7 @@ Connection Connection::operator=(const Connection &rhs)
 	chunked_msg_size = rhs.chunked_msg_size;
 	body_buf = rhs.body_buf;
 	autoindex_flag = rhs.autoindex_flag;
+	recv_error = rhs.recv_error;
 
 	return *this;
 }
@@ -61,6 +63,7 @@ void	Connection::clear(void) {
 	autoindex_flag = false;
 	locationConfig_ = LocationBlock();
 	serverConfig_ = ServerBlock();
+	recv_error = -2;
 }
 
 void    Connection::processRequest(void) {
@@ -70,7 +73,7 @@ void    Connection::processRequest(void) {
 
 	while((n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0)) > 0) //except \r
 	{
-		if (n < 0 || strchr(buffer_char, 0xff))
+		if (strchr(buffer_char, 0xff))
 		{
 			close(clntFd_);
 			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
@@ -120,6 +123,12 @@ void    Connection::processRequest(void) {
 
 		}
 		memset(&buffer_char, 0, n);
+	}
+	if (n <= 0)
+	{
+		recv_error = n;
+		close(clntFd_);
+		return ;
 	}
 }
 
