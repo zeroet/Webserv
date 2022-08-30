@@ -287,15 +287,15 @@ void	RequestHandler::checkHeader(Connection *c) {
 		{
 			if (c->getServerConfig().getAutoindex() == false)
 			{
-				if (isFileExist(c))
+				if (isFileExist(c) && isUriDirectory(c))
 				{
 					c->setReqStatusCode(FORBIDDEN); //403 FORBIDDEN
 					c->setPhaseMsg(BODY_COMPLETE);
 					return ;
 				}
-				else
+				else if (!isFileExist(c))
 				{
-					c->setReqStatusCode(NOT_FOUND); //403 FORBIDDEN
+					c->setReqStatusCode(NOT_FOUND); //404 FORBIDDEN
 					c->setPhaseMsg(BODY_COMPLETE);
 					return ;
 				}
