@@ -165,7 +165,7 @@ void    Connection::processResponse()
 						}
 						else if (S_ISREG(fileinfo.st_mode))
 						{
-							body_ = response_.fileTextIntoBody(request_.getFilePath());
+							body_ = response_.fileTextIntoBody(request_.getFilePath(), isHTMLMimeType_);
 							req_status_code_ = 200;
 						}
 					}
