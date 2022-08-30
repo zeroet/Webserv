@@ -1,8 +1,0 @@
-<map id="printBaseDirectivesParameters" name="printBaseDirectivesParameters">
-<area shape="rect" id="node2" href="$classft_1_1_base_directives.html#a018f34a5ffd66e891494b5c0ee69177b" title="ft::BaseDirectives\l::getIndex" alt="" coords="274,5,401,47"/>
-<area shape="rect" id="node3" href="$classft_1_1_base_directives.html#aa5dbcb08bda0a0e7e502d2df7cf64287" title="ft::BaseDirectives\l::getRoot" alt="" coords="274,71,401,112"/>
-<area shape="rect" id="node4" href="$classft_1_1_base_directives.html#a930398ba1e4b99b2ba01a60dcda0c923" title="ft::BaseDirectives\l::getClientMaxBodySize" alt="" coords="256,136,419,177"/>
-<area shape="rect" id="node5" href="$classft_1_1_base_directives.html#ab8574338758f65325cab5d1c394826c8" title="ft::BaseDirectives\l::getKeepaliveTimeout" alt="" coords="261,201,413,243"/>
-<area shape="rect" id="node6" href="$classft_1_1_base_directives.html#a4c11ed7ad76aeac228b029a2444de568" title="ft::BaseDirectives\l::getAutoindex" alt="" coords="274,267,401,308"/>
-<area shape="rect" id="node7" href="$classft_1_1_base_directives.html#a3cb0c21f17781de392d5ee09d7190caf" title="ft::BaseDirectives\l::getErrorPage" alt="" coords="274,332,401,373"/>
-</map>

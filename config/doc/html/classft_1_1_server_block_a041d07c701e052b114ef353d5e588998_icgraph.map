@@ -1,9 +1,0 @@
-<map id="setReturn" name="setReturn">
-<area shape="rect" id="node2" href="$classft_1_1_parser.html#a18c1b12280ce1a16246a8ba09156116f" title="ft::Parser::setServerDirective\lParameter" alt="" coords="132,5,324,47"/>
-<area shape="rect" id="node8" href="$classft_1_1_server_block.html#a592b14cd2e97683f3997e666c41e5009" title="ServerBlock" alt="" coords="181,71,275,98"/>
-<area shape="rect" id="node3" href="$classft_1_1_parser.html#ae53bb700e0344f7af2519a5af3ae4230" title="ft::Parser::parseServerContext" alt="" coords="372,13,572,39"/>
-<area shape="rect" id="node4" href="$classft_1_1_parser.html#a17a213759b2cca8e91ca225b2e86739d" title="ft::Parser::parseHttpContext" alt="" coords="620,13,807,39"/>
-<area shape="rect" id="node5" href="$classft_1_1_parser.html#ace9c91f641d6eb5467ce89798679b248" title="ft::Parser::parse" alt="" coords="855,13,971,39"/>
-<area shape="rect" id="node6" href="$classft_1_1_print_config.html#afb9aa52211052c2ac541dd130558da0a" title="ft::PrintConfig::parseConfig" alt="" coords="1019,13,1200,39"/>
-<area shape="rect" id="node7" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1248,13,1299,39"/>
-</map>

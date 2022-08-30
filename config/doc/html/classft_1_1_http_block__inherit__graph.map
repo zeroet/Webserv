@@ -1,3 +1,0 @@
-<map id="HttpBlock" name="HttpBlock">
-<area shape="rect" id="node2" href="$classft_1_1_base_directives.html" title="{BaseDirectives\n|# root_\l# clientMaxBodySize_\l# keepaliveTimeout_\l# index_\l# autoindex_\l# errorPage_\l|+ BaseDirectives()\l+ getRoot()\l+ getClientMaxBodySize()\l+ getKeepaliveTimeout()\l+ getIndex()\l+ getAutoindex()\l+ getErrorPage()\l+ setRoot()\l+ setClientMaxBodySize()\l+ setKeepaliveTimeout()\l+ setIndex()\l+ setAutoindex()\l+ setErrorPage()\l+ clearIndex()\l}" alt="" coords="5,5,180,347"/>
-</map>
