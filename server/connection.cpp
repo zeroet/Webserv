@@ -66,11 +66,11 @@ void	Connection::clear(void) {
 void    Connection::processRequest(void) {
 	RequestHandler requesthandler;
     int n = 0;
-	const char ctrl_c[CTRL_C_LIST] = {0xff, 0xf4, 0xfd, 0x06};
+	//const char ctrl_c[CTRL_C_LIST] = {0xff, 0xf4, 0xfd, 0x06};
 
 	while((n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0)) > 0) //except \r
 	{
-		if (n < 0 || strchr(buffer_char, ctrl_c[0]))
+		if (n < 0 || strchr(buffer_char, 0xff))
 		{
 			close(clntFd_);
 			return ;
