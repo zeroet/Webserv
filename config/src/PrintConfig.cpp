@@ -16,7 +16,13 @@ namespace ft
 			std::cout << " " << *current_string;
 		std::cout << std::endl;
 		std::cout << "Base autoindex: " << context.getAutoindex() << std::endl;
-		std::cout << "Base error page: " << context.getErrorPage() << std::endl;
+		vec_string = context.getErrorPage();
+		current_string = vec_string.begin();
+		end_string = vec_string.end();
+		std::cout << "Base error page: ";// << context.getErrorPage() << std::endl;
+		for (; current_string != end_string; ++current_string)
+			std::cout << " " << *current_string;
+		std::cout << std::endl;
 	}
 
 	void	PrintConfig::printHttpContextDirectiveParameters(ft::HttpBlock& context)

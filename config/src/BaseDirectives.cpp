@@ -9,7 +9,7 @@ namespace ft
 		this->keepalive_timeout_ = 75;
 		this->index_.push_back("index.html");
 		this->autoindex_ = false;
-		this->error_page_ = "";
+		this->error_page_.push_back("");
 	}
 
 	// Getter	
@@ -38,9 +38,14 @@ namespace ft
 		return (this->autoindex_);
 	}
 
-	const std::string		BaseDirectives::getErrorPage(void) const
+	const std::vector<std::string>		BaseDirectives::getErrorPage(void) const
 	{
 		return (this->error_page_);
+	}
+
+	const std::string		BaseDirectives::getErrorPage(size_t	index) const
+	{
+		return (this->error_page_.at(index));
 	}
 
 	// Setter
@@ -74,9 +79,14 @@ namespace ft
 		this->autoindex_ = x;
 	}
 
-	void				BaseDirectives::setErrorPage(const std::string x)
+	void				BaseDirectives::setErrorPage(const std::vector<std::string> x)
 	{
 		this->error_page_ = x;
+	}
+
+	void				BaseDirectives::setErrorPage(const std::string x)
+	{
+		this->error_page_.push_back(x);
 	}
 
 
@@ -85,4 +95,8 @@ namespace ft
 		this->index_.clear();
 	}
 
+	void				BaseDirectives::clearErrorPage(void)
+	{
+		this->error_page_.clear();
+	}
 }

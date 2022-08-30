@@ -154,7 +154,40 @@ namespace ft
 		else if (current_directive->directive == ROOT)
 			context.setRoot((*current_directive->parameters.begin()));
 		else if (current_directive->directive == ERROR_PAGE)
-			context.setErrorPage(*(current_directive->parameters.begin()));
+		{
+			if (current_directive->parameters.size() > 2)
+			{
+				std::cout << "Error: Invalid number of arguments in \"error_page\" directive\n";
+				return (false);
+			}
+			else if (current_directive->parameters.size() > 0)
+			{
+				unsigned int		value;
+				std::string		input_string = (*current_directive->parameters.begin());
+
+				if (input_string.length() != 0)
+				{
+					if (input_string.find_first_not_of("0123456789") == std::string::npos)
+					{	
+						std::istringstream(input_string) >> value;
+						if (value < 1000)
+							context.setErrorPage(input_string);
+						else
+						{
+							std::cout << "Error: Invalid return code \"" << input_string << "\".\n";
+							return (false);
+						}
+						if (current_directive->parameters.size() == 2)
+							context.setErrorPage(*(--current_directive->parameters.end()));
+					}
+					else
+					{
+						std::cout << "Error: Invalid return code \"" << input_string << "\".\n";
+						return (false);
+					}
+				}
+			}
+		}
 		else if (current_directive->directive == INDEX)
 		{
 			std::vector<std::string>::iterator	current_parameter = current_directive->parameters.begin();
@@ -360,7 +393,9 @@ namespace ft
 				std::vector<std::string>::iterator	current_parameter = current_directive->parameters.begin();
 				std::vector<std::string>::iterator	    end_parameter = current_directive->parameters.end();
 				for (; current_parameter != end_parameter; ++current_parameter)
+				{
 					context.setLimitExcept(*current_parameter);
+				}
 			}
 			else if (current_directive->directive == CGI)
 			{
@@ -707,6 +742,7 @@ namespace ft
 			if ((directive_pair.second.directive == SERVER_NAME) ||
 					(directive_pair.second.directive == LIMIT_EXCEPT) ||
 					(directive_pair.second.directive == INDEX) ||
+					(directive_pair.second.directive == ERROR_PAGE) ||
 					(directive_pair.second.directive == RETURN))
 			{
 				while (parameter_token_pair.first == true)
