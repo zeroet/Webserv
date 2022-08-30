@@ -12,7 +12,6 @@ Connection::Connection(int fd, std::vector<ServerBlock> block, Epoll *ep) : clnt
 	body_buf = "";
 	autoindex_flag = false;
 	status_ = "Keep-Alive";
-	recv_error = -2;
 }
 
 Connection::Connection(const Connection &rhs)
@@ -41,7 +40,6 @@ Connection Connection::operator=(const Connection &rhs)
 	chunked_msg_size = rhs.chunked_msg_size;
 	body_buf = rhs.body_buf;
 	autoindex_flag = rhs.autoindex_flag;
-	recv_error = rhs.recv_error;
 
 	return *this;
 }
@@ -63,7 +61,6 @@ void	Connection::clear(void) {
 	autoindex_flag = false;
 	locationConfig_ = LocationBlock();
 	serverConfig_ = ServerBlock();
-	recv_error = -2;
 }
 
 void    Connection::processRequest(void) {
@@ -73,7 +70,7 @@ void    Connection::processRequest(void) {
 
 	while((n = recv(this->clntFd_, &buffer_char, sizeof(buffer_char) - 1, 0)) > 0) //except \r
 	{
-		if (strchr(buffer_char, 0xff))
+		if (n < 0 || strchr(buffer_char, 0xff))
 		{
 			close(clntFd_);
 			ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
@@ -123,12 +120,6 @@ void    Connection::processRequest(void) {
 
 		}
 		memset(&buffer_char, 0, n);
-	}
-	if (n <= 0)
-	{
-		recv_error = n;
-		close(clntFd_);
-		return ;
 	}
 }
 
@@ -230,16 +221,17 @@ void    Connection::processResponse()
 	returnBuffer_ = header_ + body_ + "\r\n";
 	
 	// send return buffer
-	int	n;	
-	int	size_(returnBuffer_.size());
-	do {
-		n = send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
-		size_ -= n;
-	} while (n > 0 && size_ > 0);
-	if (n < 0) {
-		std::cerr << "Error send" << std::endl;
-		status_ = "Error";
-	}
+	//int	n;	
+	//int	size_(returnBuffer_.size());
+	//do {
+	//	n = send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
+	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
+	//	size_ -= n;
+	//} while (n > 0 && size_ > 0);
+	//if (n < 0) {
+	//	std::cerr << "Error send" << std::endl;
+	//	status_ = "Error";
+	//}
 	// clean up buffer
 	header_.clear();
 	body_.clear();
