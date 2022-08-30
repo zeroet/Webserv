@@ -165,6 +165,7 @@ namespace ft
 				unsigned int		value;
 				std::string		input_string = (*current_directive->parameters.begin());
 
+				context.clearErrorPage();
 				if (input_string.length() != 0)
 				{
 					if (input_string.find_first_not_of("0123456789") == std::string::npos)
