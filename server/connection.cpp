@@ -222,12 +222,14 @@ void    Connection::processResponse()
 	
 	// send return buffer
 	int	n;	
-	//int	size_(returnBuffer_.size());
-	//do {
-	n = send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
-	//send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
-	//	size_ -= n;
-	//} while (n > 0 && size_ > 0);
+	int	buf_(0);
+	int	size_(returnBuffer_.size());
+	do {
+		n = send(clntFd_, const_cast<char*>(returnBuffer_.c_str() + buf_), size_, 0);
+		size_ -= n;
+		buf_ += n;
+		n = 0;
+	} while (n > 0 && size_ > 0);
 	if (n < 0) {
 		std::cerr << "Error send" << std::endl;
 		status_ = "Error";
