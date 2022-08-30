@@ -282,18 +282,25 @@ std::string	Response::getFileDateTime(time_t sec) {
 	return (ret);
 }
 
-std::string		Response::fileTextIntoBody(const std::string &filepath) {
+std::string		Response::fileTextIntoBody(const std::string &filepath, bool isHTML) {
 	std::ifstream in(filepath.c_str());
 	std::string line;
 	std::string ret;
 
 	if (in.is_open())
 	{
+
 		while (std::getline(in, line))
 		{
-			ret += "\n";
-			ret += line + "</br>";
-			line.clear();
+			if (isHTML) {
+				ret += "\n";
+				ret += line + "</br>";
+			}
+			else
+			{
+				ret += "\n";
+				ret += line;
+			}
 		}
 	}
 	return (ret);
