@@ -267,7 +267,7 @@ std::string		Response::bodyWithAutoindexOn(const std::string &uri, const std::st
 	ret += "<hr></pre>\r\n";
 	ret += "</body>\r\n";
 	ret += "</html>\r\n";
-
+	closedir(dir_ptr);
 	return (ret);
 }
 
