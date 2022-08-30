@@ -1,9 +1,0 @@
-POST /post/index.html HTTP/1.1
-Host: localhost
-Content-Length: 100
-Accept-Language: en-us
-Connection: Keep-Alive
-Content-Type: text/xml; charset=utf-8
-
-<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<string xmlns=\"http://clearforest.com/\">string</string>

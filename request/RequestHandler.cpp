@@ -527,7 +527,6 @@ bool	RequestHandler::checkChunkedMessage(Connection *c) {
 				else
 					c->setPhaseMsg(BODY_COMPLETE);
 				c->is_chunk = false;
-				// c->chunked_msg_checker = STR_SIZE;
 			}
 			else if (pos != std::string::npos)
 				c->getBuffer().erase(0, pos + LEN_CRLF);

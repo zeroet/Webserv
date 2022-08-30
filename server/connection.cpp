@@ -95,6 +95,7 @@ void    Connection::processRequest(void) {
 			if (!requesthandler.checkChunkedMessage(this))
 			{
 				this->status_ = "Close";
+				ep_->epoll_Ctl_Mode(clntFd_, EPOLLOUT);
 				return ;
 			}
 		}
