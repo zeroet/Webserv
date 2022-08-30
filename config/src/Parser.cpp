@@ -95,20 +95,87 @@ namespace ft
 		return (std::make_pair(true, found_directive->second)); 
 	}
 
-	std::pair<bool, Token>	Parser::expectToken(enum TokenType type, const std::string& name)
+	bool	Parser::setBaseDirectiveParameter(BaseDirectives& context, std::vector<Directive>::iterator& current_directive)
 	{
-		Token return_token;
+		if (current_directive->directive == CLIENT_MAX_BODY_SIZE)
+		{
+			unsigned long		value;
+			std::string		input_string = (*current_directive->parameters.begin());
+			std::string::size_type	n;
 
-		if (current_token_ == end_token_)
-			return (std::make_pair(false, return_token));
-		if (current_token_->type != type)
-			return (std::make_pair(false, return_token));
-		if (!name.empty() && current_token_->text != name)
-			return (std::make_pair(false, return_token));
+			if (input_string.length() != 0)
+			{
+				n = input_string.find_first_not_of("0123456789");
+				if (n == std::string::npos)
+				{	
+					value = std::strtoul((*current_directive->parameters.begin()).c_str(), NULL, 10); // string to unsigned long
+					context.setClientMaxBodySize(value); 
+				}
+				else
+				{
+					std::cout << "Error: client_max_body_size parameter should be an integer literal.\n";
+					return (false);
+				}
+			}
+		}
+		else if (current_directive->directive == KEEPALIVE_TIMEOUT)
+		{
+			unsigned int		value;
+			std::string		input_string = (*current_directive->parameters.begin());
+			std::string::size_type	n;
 
-		return_token = *current_token_;
-		++current_token_;
-		return (std::make_pair(true, return_token));
+			if (input_string.length() != 0)
+			{
+				n = input_string.find_first_not_of("0123456789");
+				if (n == std::string::npos)
+				{	
+					std::istringstream(*current_directive->parameters.begin()) >> value; // string to unsigned int
+					context.setKeepaliveTimeout(value); 
+				}
+				else
+				{
+					std::cout << "Error: keepalive_timeout parameter should be an integer literal.\n";
+					return (false);
+				}
+			}
+		}
+		else if (current_directive->directive == AUTOINDEX)
+		{
+			if ((*current_directive->parameters.begin()) == "on")
+				context.setAutoindex(true);
+			else if ((*current_directive->parameters.begin()) == "off")
+				context.setAutoindex(false);
+			else
+			{
+				std::cout << "Error: autoindex parameter should be either 'on' or 'off'.\n";
+				return (false);
+			}
+		}
+		else if (current_directive->directive == ROOT)
+			context.setRoot((*current_directive->parameters.begin()));
+		else if (current_directive->directive == ERROR_PAGE)
+			context.setErrorPage(*(current_directive->parameters.begin()));
+		else if (current_directive->directive == INDEX)
+		{
+			std::vector<std::string>::iterator	current_parameter = current_directive->parameters.begin();
+			std::vector<std::string>::iterator	    end_parameter = current_directive->parameters.end();
+
+			context.clearIndex();
+			for (; current_parameter != end_parameter; ++current_parameter)
+				context.setIndex(*current_parameter);
+		}
+		return (true);
+	}
+
+	bool	Parser::setHttpDirectiveParameter(HttpBlock& context, std::vector<Directive> directive_list)
+	{
+		std::vector<Directive>::iterator	current_directive = directive_list.begin();
+		std::vector<Directive>::iterator	end_directive = directive_list.end();
+
+		for (; current_directive != end_directive; ++current_directive)
+			if (setBaseDirectiveParameter(context, current_directive) == false)
+				return (false);
+		return (true);
 	}
 
 	bool	Parser::setServerDirectiveParameter(HttpBlock& http_context, ServerBlock& context, std::vector<Directive> directive_list)
@@ -182,15 +249,33 @@ namespace ft
 				}
 				else if (current_directive->parameters.size() > 0)
 				{
+					unsigned int		value;
 					std::string		input_string = (*current_directive->parameters.begin());
 
 					if (input_string.length() != 0)
 					{
 						if (input_string.find_first_not_of("0123456789") == std::string::npos)
 						{	
-							context.setReturn(input_string);
+							std::istringstream(input_string) >> value;
+							if (value < 1000)
+								context.setReturn(input_string);
+							else
+							{
+								std::cout << "Error: Invalid return code \"" << input_string << "\".\n";
+								return (false);
+							}
 							if (current_directive->parameters.size() == 2)
-								context.setReturn(*(--current_directive->parameters.end()));
+							{
+								input_string = *(--current_directive->parameters.end());
+								if (input_string.compare(0, 7, "http://") == 0 ||
+										input_string.compare(0, 8, "https://") == 0)
+									context.setReturn(input_string);
+								else
+								{
+									std::cout << "Error: Invalid http path \"" << input_string << "\".\n";
+									return (false);
+								}
+							}
 						}
 						else
 						{
@@ -228,15 +313,33 @@ namespace ft
 				}
 				else if (current_directive->parameters.size() > 0)
 				{
+					unsigned int		value;
 					std::string		input_string = (*current_directive->parameters.begin());
 
 					if (input_string.length() != 0)
 					{
 						if (input_string.find_first_not_of("0123456789") == std::string::npos)
 						{	
-							context.setReturn(input_string);
+							std::istringstream(input_string) >> value;
+							if (value < 1000)
+								context.setReturn(input_string);
+							else
+							{
+								std::cout << "Error: Invalid return code \"" << input_string << "\".\n";
+								return (false);
+							}
 							if (current_directive->parameters.size() == 2)
-								context.setReturn(*(--current_directive->parameters.end()));
+							{
+								input_string = *(--current_directive->parameters.end());
+								if (input_string.compare(0, 7, "http://") == 0 ||
+										input_string.compare(0, 8, "https://") == 0)
+									context.setReturn(input_string);
+								else
+								{
+									std::cout << "Error: Invalid http path \"" << input_string << "\".\n";
+									return (false);
+								}
+							}
 						}
 						else
 						{
@@ -274,87 +377,20 @@ namespace ft
 		return (true);
 	}
 
-	bool	Parser::setHttpDirectiveParameter(HttpBlock& context, std::vector<Directive> directive_list)
+	std::pair<bool, Token>	Parser::expectToken(enum TokenType type, const std::string& name)
 	{
-		std::vector<Directive>::iterator	current_directive = directive_list.begin();
-		std::vector<Directive>::iterator	end_directive = directive_list.end();
+		Token return_token;
 
-		for (; current_directive != end_directive; ++current_directive)
-			if (setBaseDirectiveParameter(context, current_directive) == false)
-				return (false);
-		return (true);
-	}
+		if (current_token_ == end_token_)
+			return (std::make_pair(false, return_token));
+		if (current_token_->type != type)
+			return (std::make_pair(false, return_token));
+		if (!name.empty() && current_token_->text != name)
+			return (std::make_pair(false, return_token));
 
-	bool	Parser::setBaseDirectiveParameter(BaseDirectives& context, std::vector<Directive>::iterator& current_directive)
-	{
-		if (current_directive->directive == CLIENT_MAX_BODY_SIZE)
-		{
-			unsigned long		value;
-			std::string		input_string = (*current_directive->parameters.begin());
-			std::string::size_type	n;
-
-			if (input_string.length() != 0)
-			{
-				n = input_string.find_first_not_of("0123456789");
-				if (n == std::string::npos)
-				{	
-					value = std::strtoul((*current_directive->parameters.begin()).c_str(), NULL, 10); // string to unsigned long
-					context.setClientMaxBodySize(value); 
-				}
-				else
-				{
-					std::cout << "Error: client_max_body_size parameter should be an integer literal.\n";
-					return (false);
-				}
-			}
-		}
-		else if (current_directive->directive == KEEPALIVE_TIMEOUT)
-		{
-			unsigned int		value;
-			std::string		input_string = (*current_directive->parameters.begin());
-			std::string::size_type	n;
-
-			if (input_string.length() != 0)
-			{
-				n = input_string.find_first_not_of("0123456789");
-				if (n == std::string::npos)
-				{	
-					std::istringstream(*current_directive->parameters.begin()) >> value; // string to unsigned int
-					context.setKeepaliveTimeout(value); 
-				}
-				else
-				{
-					std::cout << "Error: keepalive_timeout parameter should be an integer literal.\n";
-					return (false);
-				}
-			}
-		}
-		else if (current_directive->directive == AUTOINDEX)
-		{
-			if ((*current_directive->parameters.begin()) == "on")
-				context.setAutoindex(true);
-			else if ((*current_directive->parameters.begin()) == "off")
-				context.setAutoindex(false);
-			else
-			{
-				std::cout << "Error: autoindex parameter should be either 'on' or 'off'.\n";
-				return (false);
-			}
-		}
-		else if (current_directive->directive == ROOT)
-			context.setRoot((*current_directive->parameters.begin()));
-		else if (current_directive->directive == ERROR_PAGE)
-			context.setErrorPage(*(current_directive->parameters.begin()));
-		else if (current_directive->directive == INDEX)
-		{
-			std::vector<std::string>::iterator	current_parameter = current_directive->parameters.begin();
-			std::vector<std::string>::iterator	    end_parameter = current_directive->parameters.end();
-
-			context.clearIndex();
-			for (; current_parameter != end_parameter; ++current_parameter)
-				context.setIndex(*current_parameter);
-		}
-		return (true);
+		return_token = *current_token_;
+		++current_token_;
+		return (std::make_pair(true, return_token));
 	}
 
 	std::pair<bool, Directive>	Parser::expectHttpContext()
@@ -529,8 +565,8 @@ namespace ft
 	std::pair<bool, LocationBlock>	Parser::parseLocationContext(ServerBlock& server_context)
 	{
 		std::pair<bool, std::vector<Directive> > 	directives;
-		std::pair<bool, Token> 				token_pair;
-		LocationBlock					locationContext(server_context);
+		std::pair<bool, Token> 						token_pair;
+		LocationBlock								location_context(server_context);
 
 		token_pair = expectToken(OPERATOR, "}");
 		while (token_pair.first == false)
@@ -540,13 +576,13 @@ namespace ft
 			{
 				if (current_token_ == end_token_ && expectToken(OPERATOR, "}").first == false)
 					std::cout << "Error: Location context has not successfuly been enclosed with a closing curly bracket.\n";
-				return (std::make_pair(false, locationContext));
+				return (std::make_pair(false, location_context));
 			}
-			if (setLocationDirectiveParameter(locationContext, directives.second) == false)
-				return (std::make_pair(false, locationContext));
+			if (setLocationDirectiveParameter(location_context, directives.second) == false)
+				return (std::make_pair(false, location_context));
 			token_pair = expectToken(OPERATOR, "}");
 		}
-		return (std::make_pair(true, locationContext));
+		return (std::make_pair(true, location_context));
 	}
 
 	std::pair<bool, std::vector<Directive> > Parser::parseContextBody(enum DirectiveKind kind)
@@ -607,7 +643,7 @@ namespace ft
 	{
 		(void)ft::sTokenTypeStrings[current_token_->type]; // for debuging
 		std::vector<Token>::iterator 	start_token = current_token_;
-		std::pair<bool, Directive> 	directive_pair = checkValidDirective();
+		std::pair<bool, Directive> 		directive_pair = checkValidDirective();
 
 		if (directive_pair.first == true)
 		{
