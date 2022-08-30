@@ -96,6 +96,7 @@ class Connection
 		size_t			chunked_msg_size;
 		std::string		body_buf;
 		bool			autoindex_flag;
+		int				recv_error;
 
 	public:
 		Connection(int fd, std::vector<ServerBlock> block, Epoll *ep);
