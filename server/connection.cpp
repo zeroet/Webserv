@@ -121,6 +121,12 @@ void    Connection::processRequest(void) {
 		}
 		memset(&buffer_char, 0, n);
 	}
+	// recv (-1 case)
+	if (!(errno == EAGAIN)|| !(errno == EWOULDBLOCK))
+	{
+		std::cout << "read error" << std::endl;
+		exit(1);
+	}
 }
 
 void    Connection::processResponse()

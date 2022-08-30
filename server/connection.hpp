@@ -8,7 +8,6 @@
 #include "../response/cgi.hpp"
 #include "../config/src/ServerBlock.hpp"
 
-
 #include <iostream>
 #include <cstdio>
 #include <sys/epoll.h>

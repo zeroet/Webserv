@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-
+#include <errno.h>
 
 # define MAX_EVENT 1024
 # define TIMEOUT -1
