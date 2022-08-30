@@ -78,7 +78,7 @@ public:
     /* ******************************** */
     std::string         makeBodyCgi(int &reqStatusCode);
     void                executeChildProcess();
-    std::string         executeParentProcess();
+    std::string         executeParentProcess(int &reqStatusCode);
     
 private:
     /* ******************************** */
@@ -86,8 +86,8 @@ private:
     /* ******************************** */
     void                initialPipe(void);
     void                setPipe(void);
-    void                writeToCgi(void);
-    std::string         readFromCgi(void);
+    void                writeToCgi(int &reqStatusCode);
+    std::string         readFromCgi(int &reqStatusCode);
 
     /* ******************************** */
     /* ************ checker *********** */

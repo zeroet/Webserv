@@ -196,11 +196,16 @@ void    Connection::processResponse()
 	else {
 		header_ += response_.makeHeaderCgi(body_, req_status_code_);
 	}
+
+
+	// header for redirection
 	if (!locationConfig_.getReturn().empty() && falgHeaderRedirection_) {
 		header_ += "Location: ";
 		header_ += body_buf;
 		header_ += "\r\n";
 	}
+
+	// status code
 	if (!request_.getHeaderValue("Connection").empty()) {
 		if (request_.getHeaderValue("Connection") == "close") {
 			status_ = "Close";
@@ -216,8 +221,16 @@ void    Connection::processResponse()
 	returnBuffer_ = header_ + body_ + "\r\n";
 	
 	// send return buffer
-	send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
-
+	int	n;	
+	int	size_(returnBuffer_.size());
+	do {
+		n = send(clntFd_, const_cast<char*>(returnBuffer_.c_str()), returnBuffer_.size(), 0);
+		size_ -= n;
+	} while (n > 0 && size_ > 0);
+	if (n < 0) {
+		std::cerr << "Error send" << std::endl;
+		status_ = "Error";
+	}
 	// clean up buffer
 	header_.clear();
 	body_.clear();

@@ -105,7 +105,7 @@ std::string            Cgi::makeBodyCgi(int &reqStatusCode) {
                 if (request_.getMethod() == "GET") {
                     wait(NULL);
                 }
-                body_ += executeParentProcess();
+                body_ += executeParentProcess(reqStatusCode);
             }
             reqStatusCode = 200;
         }
@@ -140,7 +140,7 @@ void                    Cgi::executeChildProcess(void) {
     }
 }
 
-std::string             Cgi::executeParentProcess(void) {
+std::string             Cgi::executeParentProcess(int &reqStatusCode) {
     std::string     body_("");
 
     
@@ -152,47 +152,50 @@ std::string             Cgi::executeParentProcess(void) {
 
     // write to Cgi
     if (isPost_) {
-        writeToCgi();
+        writeToCgi(reqStatusCode);
         closeFd(writeToCgi_);
     }
-    body_ += readFromCgi();
+    body_ += readFromCgi(reqStatusCode);
     
     //close fd
     closeFd(readFromCgi_);
     return body_;
 }
 
-void                    Cgi::writeToCgi(void) {
+void                    Cgi::writeToCgi(int &reqStatusCode) {
     // resize body with content length
     std::string    body_(request_.getBody().substr(0, contentLength_));
     
     char    *buf_ = const_cast<char*>(body_.c_str());
     int     size_(body_.size());
     int     retWrite_;
-    (void)retWrite_;
+    //(void)retWrite_;
 
-    //do {
+    do {
         retWrite_ = write(writeToCgi_, buf_, size_);
-    //} while (retWrite_ > 0);
+    } while (retWrite_ > 0);
+    if (retWrite_ < 0) {
+        reqStatusCode = 500;
+    }
 }
 
-std::string             Cgi::readFromCgi(void) {
+std::string             Cgi::readFromCgi(int &reqStatusCode) {
     if (request_.getMethod() == "POST") {
         wait(NULL);
     }
     std::string     body_;
     char            buf_[65536 + 1];
     int             retRead_;
-   do {
+    
+    do {
       memset(buf_, 0, 65536);
       retRead_ = read(readFromCgi_, buf_, sizeof(buf_));
       body_ += buf_;
     } while (retRead_ > 0);
-
+    if (retRead_ < 0) {
+        reqStatusCode = 500;
+    }
     body_ = body_.substr(0, body_.size() - 1);
-    //std::cerr << "start" << std::endl;
-    //std::cerr << body_ << std::endl;
-    //std::cerr << "end" << std::endl;
     return body_;
 }
 

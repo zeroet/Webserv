@@ -378,7 +378,7 @@ void		Response::initialMapStatusCode()
 	this->mapStatus_.insert(std::make_pair("303", "See Other"));
 	this->mapStatus_.insert(std::make_pair("304", "Not Modified"));
 	this->mapStatus_.insert(std::make_pair("305", "Use Proxy"));
-	this->mapStatus_.insert(std::make_pair("306", "unsued"));
+	this->mapStatus_.insert(std::make_pair("306", "unused"));
 	this->mapStatus_.insert(std::make_pair("307", "Temporary Redirect"));
 	this->mapStatus_.insert(std::make_pair("308", "Permanent Redirect"));
 	this->mapStatus_.insert(std::make_pair("400", "Bad Request"));
