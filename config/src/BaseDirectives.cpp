@@ -54,6 +54,17 @@ namespace ft
 		return (*(--this->error_page_.end()));
 	}
 
+	const std::vector<std::string>		BaseDirectives::getErrorPageCode(void) const
+	{
+		std::vector<std::string>		code_vector;	
+		std::vector<std::string>::const_iterator	current_string = error_page_.begin();
+		std::vector<std::string>::const_iterator	end_string = error_page_.end();
+
+		for (; current_string != end_string - 1; ++current_string)
+			code_vector.push_back(*current_string);
+		return (code_vector);
+	}
+
 	const std::string		BaseDirectives::getConfigPath(void) const
 	{
 		return (this->config_path_);
