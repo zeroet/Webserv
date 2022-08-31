@@ -56,7 +56,7 @@ namespace ft
 
 	const std::vector<std::string>		BaseDirectives::getErrorPageCode(void) const
 	{
-		std::vector<std::string>		code_vector;	
+		std::vector<std::string>			code_vector;	
 		std::vector<std::string>::const_iterator	current_string = error_page_.begin();
 		std::vector<std::string>::const_iterator	end_string = error_page_.end();
 

@@ -15,6 +15,7 @@ namespace ft
 		this->index_ = context.getIndex();
 		this->autoindex_ = context.getAutoindex();
 		this->error_page_ = context.getErrorPage();
+		this->config_path_ = context.getConfigPath();
 	}
 	LocationBlock::LocationBlock(const LocationBlock& other)
 	{
@@ -26,6 +27,7 @@ namespace ft
 			this->setIndex(other.getIndex());
 			this->setAutoindex(other.getAutoindex());
 			this->setErrorPage(other.getErrorPage());
+			this->setConfigPath(other.getConfigPath());
 			this->setLimitExcept(other.getLimitExcept());
 			this->setReturn(other.getReturn());
 			this->setCgi(other.getCgi());
@@ -48,6 +50,7 @@ namespace ft
 			this->setIndex(other.getIndex());
 			this->setAutoindex(other.getAutoindex());
 			this->setErrorPage(other.getErrorPage());
+			this->setConfigPath(other.getConfigPath());
 			this->setLimitExcept(other.getLimitExcept());
 			this->setReturn(other.getReturn());
 			this->setCgi(other.getCgi());

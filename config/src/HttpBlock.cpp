@@ -15,6 +15,7 @@ namespace ft
 		this->setIndex(other.getIndex());
 		this->setAutoindex(other.getAutoindex());
 		this->setErrorPage(other.getErrorPage());
+		this->setConfigPath(other.getConfigPath());
 	}
 
 	HttpBlock::~HttpBlock()
@@ -31,6 +32,7 @@ namespace ft
 			this->setIndex(other.getIndex());
 			this->setAutoindex(other.getAutoindex());
 			this->setErrorPage(other.getErrorPage());
+			this->setConfigPath(other.getConfigPath());
 			this->server_list = other.getServerBlock();
 		}
 		return (*this);

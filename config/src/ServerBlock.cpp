@@ -14,6 +14,7 @@ namespace ft
 		this->setIndex(other.getIndex());
 		this->setAutoindex(other.getAutoindex());
 		this->setErrorPage(other.getErrorPage());
+		this->setConfigPath(other.getConfigPath());
 		this->setListen(other.getListen());
 		this->setServerName(other.getServerName());
 		this->setSocketFd(other.getSocketFd());
@@ -28,6 +29,7 @@ namespace ft
 		this->index_ = context.getIndex();
 		this->autoindex_ = context.getAutoindex();
 		this->error_page_ = context.getErrorPage();
+		this->config_path_ = context.getConfigPath();
 		this->listen_ = 80;
 		this->server_name_.push_back("");
 		this->socket_fd_ = -1;
@@ -47,6 +49,7 @@ namespace ft
 			this->setIndex(other.getIndex());
 			this->setAutoindex(other.getAutoindex());
 			this->setErrorPage(other.getErrorPage());
+			this->setConfigPath(other.getConfigPath());
 			this->setListen(other.getListen());
 			this->setServerName(other.getServerName());
 			this->setSocketFd(other.getSocketFd());

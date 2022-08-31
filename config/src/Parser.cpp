@@ -167,8 +167,8 @@ namespace ft
 			}
 			else if (current_directive->parameters.size() > 0)
 			{
-				unsigned int		value;
-				std::string		input_string = (*current_directive->parameters.begin());
+				unsigned int				value;
+				std::string				input_string = (*current_directive->parameters.begin());
 				std::vector<std::string>::iterator	current_string = current_directive->parameters.begin();
 				std::vector<std::string>::iterator	end_string = current_directive->parameters.end();
 
