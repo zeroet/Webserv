@@ -30,7 +30,7 @@ namespace ft
 		std::pair<bool, HttpBlock> 	http_pair;
 		std::pair<bool, Directive> 	directive_pair;
 
-		http_pair.second.setConfigPath(config_path);
+		//http_pair.second.setConfigPath(config_path);
 		while (current_token_ != end_token_)
 		{
 			directive_pair = expectHttpContext();
@@ -46,7 +46,7 @@ namespace ft
 			}
 			else
 			{
-				http_pair = parseHttpContext(directive_pair);
+				http_pair = parseHttpContext(config_path, directive_pair);
 				if (http_pair.first == false)
 					return (http_pair);
 			}
@@ -148,7 +148,10 @@ namespace ft
 				context.setAutoindex(false);
 			else
 			{
-				std::cout << "Error: autoindex parameter should be either 'on' or 'off'.\n";
+				std::cout << "Error: invalid value \"" << *current_directive->parameters.begin();
+				std::cout << "\" in \"" << current_directive->name << "\" directive, ";
+				std::cout << "it must be \"on\" or \"off\" in ";
+				std::cout << context.getConfigPath() << ":" << current_directive->line_num << std::endl;
 				return (false);
 			}
 		}
@@ -156,39 +159,46 @@ namespace ft
 			context.setRoot((*current_directive->parameters.begin()));
 		else if (current_directive->directive == ERROR_PAGE)
 		{
-			if (current_directive->parameters.size() > 2)
+			if (current_directive->parameters.size() < 2)
 			{
-				std::cout << "Error: Invalid number of arguments in \"error_page\" directive\n";
+				std::cout << "Error: Invalid number of arguments in \"error_page\" directive in ";
+				std::cout << context.getConfigPath() << ":" << current_directive->line_num << std::endl;
 				return (false);
 			}
 			else if (current_directive->parameters.size() > 0)
 			{
 				unsigned int		value;
 				std::string		input_string = (*current_directive->parameters.begin());
+				std::vector<std::string>::iterator	current_string = current_directive->parameters.begin();
+				std::vector<std::string>::iterator	end_string = current_directive->parameters.end();
 
 				context.clearErrorPage();
-				if (input_string.length() != 0)
+				for (; current_string != end_string - 1; ++current_string)
 				{
-					if (input_string.find_first_not_of("0123456789") == std::string::npos)
-					{	
-						std::istringstream(input_string) >> value;
-						if (value >= 300 && value <= 599)
-							context.setErrorPage(input_string);
+					input_string = (*current_string);
+					if (input_string.length() != 0)
+					{
+						if (input_string.find_first_not_of("0123456789") == std::string::npos)
+						{	
+							std::istringstream(input_string) >> value;
+							if (value >= 300 && value <= 599)
+								context.setErrorPage(input_string);
+							else
+							{
+								std::cout << "Error: value " << value << " must be between 300 and 599 in ";
+								std::cout << context.getConfigPath() << ":" << current_directive->line_num << std::endl;
+								return (false);
+							}
+						}
 						else
 						{
-							std::cout << "Error: value " << value << " must be between 300 and 599 in ";
+							std::cout << "Error: Invalid value \"" << input_string << "\" in ";
 							std::cout << context.getConfigPath() << ":" << current_directive->line_num << std::endl;
 							return (false);
 						}
-						if (current_directive->parameters.size() == 2)
-							context.setErrorPage(*(--current_directive->parameters.end()));
-					}
-					else
-					{
-						std::cout << "Error: Invalid return code \"" << input_string << "\".\n";
-						return (false);
 					}
 				}
+				context.setErrorPage(*current_string);
 			}
 		}
 		else if (current_directive->directive == INDEX)
@@ -458,17 +468,18 @@ namespace ft
 		return (std::make_pair(true, directive_pair.second));
 	}
 
-	std::pair<bool, HttpBlock>	Parser::parseHttpContext(std::pair<bool, Directive> directive_pair)
+	std::pair<bool, HttpBlock>	Parser::parseHttpContext(std::string config_path, std::pair<bool, Directive> directive_pair)
 	{
 		std::pair<bool, std::vector<Directive> > 	directives;
 		HttpBlock					http_context;
 
+		http_context.setConfigPath(config_path);
 		while (current_token_ != end_token_ - 1 && expectToken(OPERATOR, "}").first == false)
 		{
 			directive_pair = expectServerContext();
 			if (directive_pair.first == false)
 			{
-				directives = parseContextBody(HTTP);
+				directives = parseContextBody(config_path, HTTP);
 				if (directives.first == false)
 				{
 					if (current_token_ == end_token_ && expectToken(OPERATOR, "}").first == false)
@@ -530,7 +541,7 @@ namespace ft
 				return (std::make_pair(false, server_context));
 			else if (directive_pair.first == false)
 			{
-				directives = parseContextBody(SERVER);
+				directives = parseContextBody(server_context.getConfigPath(), SERVER);
 				if (directives.first == false)
 				{
 					if (current_token_ == end_token_ && expectToken(OPERATOR, "}").first == false)
@@ -609,7 +620,7 @@ namespace ft
 		token_pair = expectToken(OPERATOR, "}");
 		while (token_pair.first == false)
 		{
-			directives = parseContextBody(LOCATION);
+			directives = parseContextBody(server_context.getConfigPath(), LOCATION);
 			if (directives.first == false)
 			{
 				if (current_token_ == end_token_ && expectToken(OPERATOR, "}").first == false)
@@ -623,15 +634,15 @@ namespace ft
 		return (std::make_pair(true, location_context));
 	}
 
-	std::pair<bool, std::vector<Directive> > Parser::parseContextBody(enum DirectiveKind kind)
+	std::pair<bool, std::vector<Directive> > Parser::parseContextBody(std::string config_path, enum DirectiveKind kind)
 	{
 		std::vector<Directive>		directives;
-		std::pair<bool, Directive> 	simple_directive_pair = expectSimpleDirective(kind);
+		std::pair<bool, Directive> 	simple_directive_pair = expectSimpleDirective(config_path, kind);
 
 		while (simple_directive_pair.first == true)
 		{
 			directives.push_back(simple_directive_pair.second);
-			simple_directive_pair = expectSimpleDirective(kind);
+			simple_directive_pair = expectSimpleDirective(config_path, kind);
 		}
 		if (simple_directive_pair.first == false) // check if it is a context or an error
 		{
@@ -642,9 +653,12 @@ namespace ft
 				if (simple_directive_pair.second.directive == HTTP ||
 							simple_directive_pair.second.directive == LOCATION)
 				{
-					std::cout << "Error: There can't be any other block than server in http block, current directive is `";
-					std::cout << sDirectiveKindStrings[simple_directive_pair.second.directive] << "` in line ";
-					std::cout << current_token_->line_num << ".\n";
+					std::cout << "Error: \"" << sDirectiveKindStrings[simple_directive_pair.second.directive];
+					std::cout << "\" directive is not allowed here in ";
+					std::cout << config_path << ":" << current_token_->line_num << std::endl;
+					//std::cout << "Error: There can't be any other block than server in http block, current directive is `";
+					//std::cout << sDirectiveKindStrings[simple_directive_pair.second.directive] << "` in line ";
+					//std::cout << current_token_->line_num << ".\n";
 					return (std::make_pair(false, directives));
 				}
 			}
@@ -677,7 +691,7 @@ namespace ft
 		return (std::make_pair(false, directives));
 	}
 
-	std::pair<bool, Directive>	Parser::expectSimpleDirective(enum DirectiveKind kind)
+	std::pair<bool, Directive>	Parser::expectSimpleDirective(std::string config_path, enum DirectiveKind kind)
 	{
 		(void)ft::sTokenTypeStrings[current_token_->type]; // for debuging
 		std::vector<Token>::iterator 	start_token = current_token_;
@@ -692,35 +706,25 @@ namespace ft
 				current_token_ = start_token;
 				return (std::make_pair(false, directive_pair.second));
 			}
-			if (kind == HTTP && 
+			if ((kind == HTTP && 
 				(directive_pair.second.directive == LIMIT_EXCEPT || 
 				directive_pair.second.directive == LISTEN || 
 				directive_pair.second.directive == SERVER_NAME || 
 				directive_pair.second.directive == RETURN || 
 				directive_pair.second.directive == CGI || 
-				directive_pair.second.directive == CGI_PATH))
-			{
-				std::cout << "Error: There can't be " << sDirectiveKindStrings[directive_pair.second.directive];
-				std::cout << " directive in http block.\n";
-				current_token_ = start_token;
-				return (std::make_pair(false, directive_pair.second));
-			}
-			if (kind == SERVER && 
+				directive_pair.second.directive == CGI_PATH)) ||
+			(kind == SERVER && 
 				(directive_pair.second.directive == LIMIT_EXCEPT || 
 				directive_pair.second.directive == CGI || 
-				directive_pair.second.directive == CGI_PATH))
-			{
-				std::cout << "Error: There can't be " << sDirectiveKindStrings[directive_pair.second.directive];
-				std::cout << " directive in server block.\n";
-				current_token_ = start_token;
-				return (std::make_pair(false, directive_pair.second));
-			}
-			if (kind == LOCATION && 
+				directive_pair.second.directive == CGI_PATH)) ||
+			(kind == LOCATION && 
 				(directive_pair.second.directive == LISTEN || 
-				directive_pair.second.directive == SERVER_NAME))
+				directive_pair.second.directive == SERVER_NAME)))
+
 			{
-				std::cout << "Error: There can't be " << sDirectiveKindStrings[directive_pair.second.directive];
-				std::cout << " directive in location block.\n";
+				std::cout << "Error: \"" << sDirectiveKindStrings[directive_pair.second.directive];
+				std::cout << "\" directive is not allowed here in ";
+				std::cout << config_path << ":" << current_token_->line_num << std::endl;
 				current_token_ = start_token;
 				return (std::make_pair(false, directive_pair.second));
 			}
@@ -729,14 +733,17 @@ namespace ft
 		else if (directive_pair.first == false)
 		{
 			if (current_token_ != end_token_ && expectToken(OPERATOR, "}").first == false)
-				std::cout << "Error: Unexpected directive, " << current_token_->text << " in line, " << current_token_->line_num << "\n";
+			{
+				std::cout << "Error: Unknown directive \"" << current_token_->text << "\" in ";
+				std::cout << config_path << ":" << current_token_->line_num << std::endl;
+			}
 			current_token_ = start_token;
 			return (std::make_pair(false, directive_pair.second));
 		}
-		return (checkValidParameterNumber(directive_pair));
+		return (checkValidParameterNumber(config_path, directive_pair));
 	}
 
-	std::pair<bool, Directive> Parser::checkValidParameterNumber(std::pair<bool, Directive>& directive_pair)
+	std::pair<bool, Directive> Parser::checkValidParameterNumber(std::string config_path, std::pair<bool, Directive>& directive_pair)
 	{
 		std::pair<bool, Token> 		parameter_token_pair = expectToken(PARAMETER);
 
@@ -756,18 +763,22 @@ namespace ft
 				}
 			}
 			else
+			{
+				directive_pair.second.line_num = current_token_->line_num;
 				directive_pair.second.parameters.push_back(parameter_token_pair.second.text);
+			}
 		}
 		else
 		{
-			std::cout << "Error: Simple directive should at least one parameter\n";
+			std::cout << "Error: invalid number of arguments in \"" << sDirectiveKindStrings[directive_pair.second.directive];
+			std::cout << "\" directive in " << config_path << ":" << current_token_->line_num << std::endl;
 			return (std::make_pair(false, directive_pair.second));
 		}
 		parameter_token_pair = expectToken(PARAMETER);
 		if (parameter_token_pair.first == true)
 		{
-			std::cout << "Error: There can't be more parameters with directive " << directive_pair.second.name << ", ";
-			std::cout << "additional parameter is " << parameter_token_pair.second.text<< ".\n";
+			std::cout << "Error: invalid parameter \"" << parameter_token_pair.second.text << "\" in ";
+			std::cout << config_path << ":" << current_token_->line_num << std::endl;
 			return (std::make_pair(false, directive_pair.second));
 		}
 		std::pair<bool, Token> token_pair = expectToken(OPERATOR, ";");
@@ -775,7 +786,9 @@ namespace ft
 		{
 			//std::cout << "current token: " << current_token_->text << std::endl;
 			//std::cout << "line: " << current_token_->line_num << std::endl;
-			std::cout << "Error: Simple directive should be terminated by ';' \n";
+			std::cout << "Error: directive \"" << sDirectiveKindStrings[directive_pair.second.directive];
+			std::cout << "\" is not terminated by \";\" in ";
+			std::cout << config_path << ":" << (current_token_ - 1)->line_num << std::endl;
 			return (std::make_pair(false, directive_pair.second));
 		}
 		return (std::make_pair(true, directive_pair.second));

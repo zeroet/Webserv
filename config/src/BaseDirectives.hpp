@@ -27,6 +27,7 @@ namespace ft
 			bool				getAutoindex(void) const;
 			const std::vector<std::string>	getErrorPage(void) const;
 			const std::string		getErrorPage(size_t index) const;
+			const std::string		getErrorPagePath(void) const;
 			const std::string		getConfigPath(void) const;
 			
 			// Setter

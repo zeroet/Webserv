@@ -24,6 +24,7 @@ int main(int argc, char** argv)
 		try {
 			//std::cout << "server name: " << server_context.getServerName(0) << std::endl; // getServerName by index
 			std::pair<bool, ft::LocationBlock>  location_pair = server_context.getLocationBlock("/cgi_teste/dfjk"); // getLocationBlock by request_path
+			//std::cout << http_pair.second.getErrorPagePath() << std::endl;
 			if (location_pair.first == true)
 				std::cout << "selected uri: " << location_pair.second.getUriPath() << "\n";
 

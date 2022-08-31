@@ -49,6 +49,11 @@ namespace ft
 		return (this->error_page_.at(index));
 	}
 
+	const std::string		BaseDirectives::getErrorPagePath(void) const
+	{
+		return (*(--this->error_page_.end()));
+	}
+
 	const std::string		BaseDirectives::getConfigPath(void) const
 	{
 		return (this->config_path_);

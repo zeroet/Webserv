@@ -30,7 +30,7 @@ namespace ft
 			void						modifyIdentifierToken(std::vector<Token>& tokens);
 
 			std::pair<bool, Directive>			checkValidDirective();
-			std::pair<bool, Directive> 			checkValidParameterNumber(std::pair<bool, Directive>& directive_pair);
+			std::pair<bool, Directive> 			checkValidParameterNumber(std::string config_path, std::pair<bool, Directive>& directive_pair);
 
 			bool						setBaseDirectiveParameter(BaseDirectives& context, std::vector<Directive>::iterator& current_directive);
 			bool						setHttpDirectiveParameter(HttpBlock& context, std::vector<Directive> directive_list);
@@ -41,10 +41,10 @@ namespace ft
 			std::pair<bool, Directive>			expectHttpContext();
 			std::pair<bool, Directive>			expectServerContext();
 			std::pair<bool, Directive>			expectLocationContext();
-			std::pair<bool, Directive> 			expectSimpleDirective(enum DirectiveKind kind);
+			std::pair<bool, Directive> 			expectSimpleDirective(std::string config_path, enum DirectiveKind kind);
 
-			std::pair<bool, std::vector<Directive> >	parseContextBody(enum DirectiveKind kind);
-			std::pair<bool, HttpBlock>			parseHttpContext(std::pair<bool, Directive> directive_pair);
+			std::pair<bool, std::vector<Directive> >	parseContextBody(std::string config_path, enum DirectiveKind kind);
+			std::pair<bool, HttpBlock>			parseHttpContext(std::string config_path, std::pair<bool, Directive> directive_pair);
 			std::pair<bool, ServerBlock>			parseServerContext(HttpBlock& httpContext, std::pair<bool, Directive> directive_pair);
 			std::pair<bool, LocationBlock>			parseLocationContext(ServerBlock& server_context);
 
