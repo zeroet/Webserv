@@ -21,7 +21,7 @@ namespace ft
 		directives_["limit_except"] = Directive(LIMIT_EXCEPT, "limit_except");
 	}
 
-	std::pair<bool, HttpBlock>	Parser::parse(std::vector<Token>& tokens)
+	std::pair<bool, HttpBlock>	Parser::parse(std::vector<Token>& tokens, std::string config_path)
 	{
 		modifyIdentifierToken(tokens);
 		current_token_ = tokens.begin();
@@ -30,6 +30,7 @@ namespace ft
 		std::pair<bool, HttpBlock> 	http_pair;
 		std::pair<bool, Directive> 	directive_pair;
 
+		http_pair.second.setConfigPath(config_path);
 		while (current_token_ != end_token_)
 		{
 			directive_pair = expectHttpContext();
@@ -171,11 +172,12 @@ namespace ft
 					if (input_string.find_first_not_of("0123456789") == std::string::npos)
 					{	
 						std::istringstream(input_string) >> value;
-						if (value < 1000)
+						if (value >= 300 && value <= 599)
 							context.setErrorPage(input_string);
 						else
 						{
-							std::cout << "Error: Invalid return code \"" << input_string << "\".\n";
+							std::cout << "Error: value " << value << " must be between 300 and 599 in ";
+							std::cout << context.getConfigPath() << ":" << current_directive->line_num << std::endl;
 							return (false);
 						}
 						if (current_directive->parameters.size() == 2)
@@ -748,6 +750,7 @@ namespace ft
 			{
 				while (parameter_token_pair.first == true)
 				{
+					directive_pair.second.line_num = current_token_->line_num;
 					directive_pair.second.parameters.push_back(parameter_token_pair.second.text);
 					parameter_token_pair = expectToken(PARAMETER);
 				}

@@ -25,7 +25,7 @@ namespace ft
 
 		public:
 			Parser();
-			std::pair<bool, HttpBlock>			parse(std::vector<Token>& tokens);
+			std::pair<bool, HttpBlock>			parse(std::vector<Token>& tokens, std::string config_path);
 		private:
 			void						modifyIdentifierToken(std::vector<Token>& tokens);
 

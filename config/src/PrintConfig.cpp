@@ -122,7 +122,10 @@ namespace ft
 		FILE* fp;
 
 		if (config_path == NULL)
-			fp = fopen(CONFIG_PATH DEFALUT_CONF, "r");
+		{
+			config_path = (char*)DEFAULT_CONF;
+			fp = fopen(config_path, "r");
+		}
 		else
 			fp = fopen(config_path, "r");
 		if (!fp)
@@ -147,7 +150,7 @@ namespace ft
 				printTokens(tokens); // to print tokenized tokens.
 
 			ft::Parser	parser;
-			http_pair = parser.parse(tokens);
+			http_pair = parser.parse(tokens, config_path);
 
 			if ((flags & P_SERVER) == P_SERVER)
 				printConfig(http_pair, P_SERVER); // to print server directives

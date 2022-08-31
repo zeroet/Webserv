@@ -3,8 +3,6 @@
 #include "Parser.hpp"
 #include <bits/stdc++.h>
 
-#define CONFIG_PATH "./conf/"
-#define DEFALUT_CONF "sample.conf"
 #ifndef P_SERVER
 # define P_SERVER	   0b01
 #endif

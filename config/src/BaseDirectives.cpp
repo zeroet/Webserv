@@ -10,6 +10,7 @@ namespace ft
 		this->index_.push_back("index.html");
 		this->autoindex_ = false;
 		this->error_page_.push_back("");
+		this->config_path_ = DEFAULT_CONF;
 	}
 
 	// Getter	
@@ -46,6 +47,11 @@ namespace ft
 	const std::string		BaseDirectives::getErrorPage(size_t	index) const
 	{
 		return (this->error_page_.at(index));
+	}
+
+	const std::string		BaseDirectives::getConfigPath(void) const
+	{
+		return (this->config_path_);
 	}
 
 	// Setter
@@ -89,6 +95,10 @@ namespace ft
 		this->error_page_.push_back(x);
 	}
 
+	void				BaseDirectives::setConfigPath(const std::string x)
+	{
+		this->config_path_ = x;
+	}
 
 	void				BaseDirectives::clearIndex(void)
 	{

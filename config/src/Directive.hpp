@@ -51,10 +51,11 @@ namespace ft
 		public:
 			enum DirectiveKind		directive;
 			std::string			name;
+			size_t				line_num;
 			std::vector<std::string>	parameters;
 
 		public:
-			Directive(enum DirectiveKind directive = HTTP, const std::string& name = std::string()) : directive(directive), name(name) {}
+			Directive(enum DirectiveKind directive = HTTP, const std::string& name = std::string()) : directive(directive), name(name), line_num(0) {}
 	};
 }
 #endif
