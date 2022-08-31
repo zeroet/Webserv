@@ -126,12 +126,14 @@ class Connection
 		//utils
 		ServerBlock 	getServerConfigByServerName(std::string server_name);
 		void			clear(void);
+		bool			isErrorPageExist(ServerBlock const &serverBlock, int const &req_code) const;
     
 		void    		processRequest(void);
 		void    		processResponse(void);
 		
 		//tmp
 		void			printRequestMsg(void);
+		std::string 	TOString(const int& v) const;
 };
 
 }

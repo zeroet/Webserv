@@ -591,7 +591,6 @@ bool RequestHandler::isFileExist(Connection *c) {
 	if (stat(c->getRequest().getFilePath().c_str(), &stat_buf) == -1)
 		return (false);
 	return (true);
-
 }
 
 void	RequestHandler::setFilePathWithLocation(LocationBlock location, Connection *c) {

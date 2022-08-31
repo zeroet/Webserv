@@ -163,8 +163,7 @@ std::string		Response::makeBodyHtml(std::string const &filePath, bool isHTML) {
 	std::ifstream 	ifs;
 	
 	filePath_ = "./" + filePath;
-
-	//std::cout << filePath_ << std::endl;
+	//std::cout << filePath_ << "***************************"<< std::endl;
 	ifs.open(const_cast<char*>(filePath_.c_str()));
 	if (ifs.fail())
 	{
