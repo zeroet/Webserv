@@ -141,6 +141,9 @@ void    Connection::processResponse()
 	bool				isHTMLMimeType_(mime_.getMIMEType(Ext_) == "text/html");
 	bool				falgHeaderRedirection_(false);
 
+	if (currentMethod_ == "DELETE" && req_status_code_ == 404) {
+		req_status_code_ = NOT_DEFINE;
+	}
 	// intializer les valeurs de Request class
 	response_.setRequest(request_);
 	response_.setRequestValue();
@@ -231,8 +234,12 @@ void    Connection::processResponse()
 	}
 
 	// make return buffer
-	returnBuffer_ = header_ + body_ + "\r\n";
-	
+	if (currentMethod_ == "DELETE") {
+		returnBuffer_ = header_ + "\r\n";
+	}
+	else {
+		returnBuffer_ = header_ + body_ + "\r\n";
+	}
 	// send return buffer
 	int	n;	
 	int	buf_(0);
