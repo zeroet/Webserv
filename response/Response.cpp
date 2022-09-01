@@ -316,11 +316,11 @@ std::string		Response::fileTextIntoBody(const std::string &filepath, bool isHTML
 /* ************************************ method = DELETE **************************** */
 /* ********************************************************************************* */
 int				Response::execteDelete(void) {
-	int	status_code(204);
+	int	status_code(200);
 	std::string		filePath_("./" + request_.getFilePath());
 
 	if (remove(const_cast<char*>(filePath_.c_str())) == -1) {
-			status_code = 403;
+			status_code = 204;
 	}
 	return (status_code);
 }

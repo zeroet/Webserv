@@ -304,6 +304,6 @@ int        Epoll::check_status_connection(std::string status)
     else
     {   
         std::cout << "connection status error" << std::endl;
-        return (2);
+        return (1);
     }
 }
