@@ -12,7 +12,7 @@
 #include <fstream>
 #include <errno.h>
 
-# define MAX_EVENT 1024
+# define MAX_EVENT 4096
 # define TIMEOUT -1
 
 namespace ft{
@@ -46,6 +46,7 @@ public:
     void            init_server_socket();
     void            create_epoll_fd();
     int             epoll_add(int fd);
+    int             epoll_server_add(int fd);
     void            epoll_Ctl_Mode(int fd, int op);
 
 

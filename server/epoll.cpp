@@ -50,7 +50,7 @@ void    Epoll::init_server_socket()
 	epoll_add(0);
 	for (int i = 0; i < numServerFd; i++)
 	{
-        if (OK != (epoll_add(vecBloc_[i].getSocketFd())))
+        if (OK != (epoll_server_add(vecBloc_[i].getSocketFd())))
 			std::cout << RED << "PortNumber [" << vecBloc_[i].getListen() <<
             "] Epoll_Ctl_Add failed" << FIN <<std::endl;
         else
@@ -86,6 +86,19 @@ int    Epoll::epoll_add(int fd)
 
 	event ev;
 	ev.events = EPOLLIN | EPOLLET | EPOLLERR | EPOLLHUP;
+	ev.data.fd = fd;
+	if (epoll_ctl(this->epollFd_, EPOLL_CTL_ADD, fd, &ev) < 0)
+	{
+		close(fd);
+		return (ERROR);
+	}
+	return (OK);
+}
+
+int    Epoll::epoll_server_add(int fd)
+{
+    event ev;
+	ev.events = EPOLLIN | EPOLLERR | EPOLLHUP;
 	ev.data.fd = fd;
 	if (epoll_ctl(this->epollFd_, EPOLL_CTL_ADD, fd, &ev) < 0)
 	{
