@@ -122,7 +122,7 @@ void    Connection::processRequest(void) {
 		memset(&buffer_char, 0, n);
 	}
 	// recv (-1 case)
-	if (!(errno == EAGAIN)|| !(errno == EWOULDBLOCK))
+	if (n == -1 && phase_msg_ != BODY_COMPLETE)
 	{
 		std::cout << "read error" << std::endl;
 		this->status_ = "Close";

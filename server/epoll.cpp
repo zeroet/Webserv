@@ -80,7 +80,12 @@ void    Epoll::create_epoll_fd()
 	}
 }
 
-//Epoll_ctl ADD function
+/**
+ * @brief 
+ * 
+ * @param fd //with option EPOLLET: non blocking option
+ * @return int 
+ */
 int    Epoll::epoll_add(int fd)
 {
 
