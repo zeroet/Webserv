@@ -11,7 +11,8 @@ Resoponse Parsing: eyoo.
 ---
 ## Projet
 ---
-This is a Ecole 42 Project. This project implements a simple web server based on HTTP/1.1 protocol. It implements Get, Post, and Delete methods. This server provoide static web page and dynamic pages with CGI(PHP).  
+This is a Ecole 42 Project. This project implements a simple web server based on HTTP/1.1 protocol. It implements Get, Post, and Delete methods.  
+This server provoide static web page and dynamic pages with CGI(PHP).  
 The Configuration file was inspired by Nginx format and the server contorls event management with Epoll socket I/O.
 
 ---
