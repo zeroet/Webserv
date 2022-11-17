@@ -2,6 +2,11 @@
 
 Git wiki
 https://github.com/zeroet/Webserv.wiki.git
+ 
+## 📝 PDF
+- [**`FILE LINK`**](https://github.com/zeroet/Webserv/en.subject.pdf)
+
+
 
 ---
 ## Team
