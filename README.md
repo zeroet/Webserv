@@ -9,12 +9,16 @@ https://github.com/zeroet/Webserv.wiki.git
 
 
 ---
-## Team
+## 🚩Team
 ---
 Server Config : cjung-mo, hyungyoo.   
 SocketI/O : seyun.  
 Request Parsing: keulee.   
 Resoponse Parsing: eyoo.   
+
+
+
+## 🚀Content
 
 ---
 ## Projet
