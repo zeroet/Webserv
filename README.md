@@ -1,5 +1,8 @@
 # Webserv 42 Paris 09 / 06 / 2022 ~ 03 / 09 / 2022
 
+Git wiki
+https://github.com/zeroet/Webserv.wiki.git
+
 ---
 ## Team
 ---
