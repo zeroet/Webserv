@@ -16,12 +16,11 @@ SocketI/O : seyun.
 Request Parsing: keulee.   
 Resoponse Parsing: eyoo.   
 
-
-
+---
 ## 🚀Content
 
 ---
-## Projet
+### Projet
 ---
 This is a Ecole 42 Project with C++. This project implements a simple web server based on HTTP/1.1 protocol.  
 We tried to implement a web server similar to nginx as much as possible.  
@@ -30,7 +29,7 @@ This server provoide static web page and dynamic pages with CGI(PHP).
 The Configuration file was inspired by Nginx format and the server contorls event management with Epoll socket I/O.
 
 ---
-## Building
+### Building
 ---
 
 You can run Linux Os because, we used Epoll library.
