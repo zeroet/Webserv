@@ -2,6 +2,6 @@
 
 
 Server Config : cjung-mo, hyungyoo.   
-Socket : seyun.  
+SocketI/O,epoll : seyun.  
 Request : keulee.   
 Resoponse : eyoo.   
