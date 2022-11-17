@@ -20,13 +20,13 @@ The Configuration file was inspired by Nginx format and the server contorls even
 
 You can run Linux Os because, we used Epoll library.
 
-$> git clone git@github.com:zeroet/Webserv.git
+``$> git clone git@github.com:zeroet/Webserv.git``
 
-$> cd Webserv && make
+``$> cd Webserv && make``
 
-$> ./webserv
+``$> ./webserv``
 
-This will serve a local demo page on http://localhost:8080.
+This will serve a local demo page on ``http://localhost:8080``
 
 ---
 
